@@ -9,9 +9,9 @@ namespace Owin
 {
     public static class WebdavComponentExtensions
     {
-        public static void UseWebdav(this IAppBuilder app, WebdavConfig options)
+        public static IAppBuilder UseWebdav(this IAppBuilder app, WebdavConfig options)
         {
-            app.Use<WebdavComponent>(options);
+            return app.Use<WebdavComponent>(options);
         }
     }
 }

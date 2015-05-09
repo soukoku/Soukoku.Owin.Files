@@ -7,8 +7,8 @@
     <ProjectGuid>{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sample.FileStore</RootNamespace>
-    <AssemblyName>Sample.FileStore</AssemblyName>
+    <RootNamespace>Sample.LocalStore</RootNamespace>
+    <AssemblyName>Sample.LocalStore</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DriveMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -71,13 +72,25 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Owin.Webdav.LocalDataStore\Owin.Webdav.LocalDataStore.csproj">
+      <Project>{462b4eb9-48d5-40a2-8906-0a087172bfa6}</Project>
+      <Name>Owin.Webdav.LocalDataStore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Owin.Webdav\Owin.Webdav.csproj">
       <Project>{c54d5283-7f4d-4599-8930-086a8416c176}</Project>
       <Name>Owin.Webdav</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

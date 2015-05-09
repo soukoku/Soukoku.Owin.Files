@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{BC0F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Webdav", "src\Owin.Webdav\Owin.Webdav.csproj", "{C54D5283-7F4D-4599-8930-086A8416C176}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.FileStore", "samples\Sample.FileStore\Sample.FileStore.csproj", "{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Webdav.LocalDataStore", "src\Owin.Webdav.LocalDataStore\Owin.Webdav.LocalDataStore.csproj", "{462B4EB9-48D5-40A2-8906-0A087172BFA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.LocalStore", "samples\Sample.LocalStore\Sample.LocalStore.csproj", "{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{C54D5283-7F4D-4599-8930-086A8416C176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C54D5283-7F4D-4599-8930-086A8416C176}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C54D5283-7F4D-4599-8930-086A8416C176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462B4EB9-48D5-40A2-8906-0A087172BFA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462B4EB9-48D5-40A2-8906-0A087172BFA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462B4EB9-48D5-40A2-8906-0A087172BFA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462B4EB9-48D5-40A2-8906-0A087172BFA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +39,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C54D5283-7F4D-4599-8930-086A8416C176} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
+		{462B4EB9-48D5-40A2-8906-0A087172BFA6} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
 		{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D} = {BC0F5CBE-3217-4DCE-B73D-3F8A2802D35D}
 	EndGlobalSection
 EndGlobal

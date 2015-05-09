@@ -2,26 +2,25 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sample.FileStore
+namespace Sample.LocalStore
 {
     class Program
     {
         static void Main(string[] args)
         {
             string baseAddress = "http://localhost:9000/";
-
-            // Start OWIN host 
             using (WebApp.Start<Startup>(baseAddress))
+            using (DriveMapper.MapToNextAvailableDrive(baseAddress))
             {
-                Process.Start(baseAddress);
+                Console.WriteLine("Press enter to exit...");
                 Console.ReadLine();
             }
-
-
         }
+
     }
 }

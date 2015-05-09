@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Owin.Webdav.Impl;
+using Owin.Webdav;
 using System.IO;
 
-namespace Sample.FileStore
+namespace Sample.LocalStore
 {
     public class Startup
     {
@@ -16,7 +16,7 @@ namespace Sample.FileStore
             var path = Path.Combine(Environment.CurrentDirectory, "dav-store");
 
 
-            app.UseWebdav(new Owin.Webdav.WebdavConfig(new LocalFileStore(path))
+            app.UseWebdav(new Owin.Webdav.WebdavConfig(new LocalDataStore(path))
             {
 
             });

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owin.Webdav
+namespace Owin.Webdav.Models
 {
-    public interface IDataStore
+    public abstract class FolderResource : Resource
     {
     }
 }
