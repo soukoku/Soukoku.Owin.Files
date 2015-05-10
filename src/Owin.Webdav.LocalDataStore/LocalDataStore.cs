@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Owin.Webdav.Models;
 using System.Reflection;
+using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
@@ -24,15 +25,15 @@ namespace Owin.Webdav
 
         public string RootPath { get; private set; }
 
-        public Resource GetResource(string logicalPath)
+        public Resource GetResource(IOwinContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
-            return MakeIntoResource(logicalPath, fullPath);
+            return MakeIntoResource(context, logicalPath, fullPath);
         }
 
-        public IEnumerable<Resource> GetSubResources(Resource resource)
+        public IEnumerable<Resource> GetSubResources(IOwinContext context, Resource resource)
         {
-            if (resource.Type == ResourceType.Folder)
+            if (resource.Type == Resource.ResourceType.Folder)
             {
                 var fullPath = MapPath(resource.LogicalPath);
 
@@ -40,7 +41,7 @@ namespace Owin.Webdav
                 {
                     foreach (var item in Directory.GetFileSystemEntries(fullPath))
                     {
-                        yield return MakeIntoResource(Path.Combine(resource.LogicalPath, Path.GetFileName(item)), item);
+                        yield return MakeIntoResource(context, Path.Combine(resource.LogicalPath, Path.GetFileName(item)), item);
                     }
                 }
             }
@@ -65,16 +66,17 @@ namespace Owin.Webdav
             return path;
         }
 
-        private static Resource MakeIntoResource(string logicalPath, string fullPath)
+        private static Resource MakeIntoResource(IOwinContext context, string logicalPath, string fullPath)
         {
             if (Directory.Exists(fullPath))
             {
-                return new LocalFolderResource(logicalPath, fullPath);
+                return new LocalFolderResource(context, logicalPath, fullPath);
             }
             else if (File.Exists(fullPath))
             {
-                return new LocalFileResource(logicalPath, fullPath);
+                return new LocalFileResource(context, logicalPath, fullPath);
             }
+            // TODO: allow locknulls
             return null;
         }
 

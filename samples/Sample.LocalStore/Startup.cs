@@ -17,7 +17,7 @@ namespace Sample.LocalStore
 
             app.UseWebdav(new WebdavConfig(new LocalDataStore(path))
             {
-                AllowGetDirectoryBrowsing = true
+                AllowDirectoryBrowsing = true
             });
 
             // write dummy file

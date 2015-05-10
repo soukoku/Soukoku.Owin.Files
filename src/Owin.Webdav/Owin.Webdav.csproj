@@ -55,7 +55,18 @@
   <ItemGroup>
     <Compile Include="Models\IDataStore.cs" />
     <Compile Include="Models\Resource.cs" />
-    <Compile Include="Models\ResourceType.cs" />
+    <Compile Include="Responses\MultiStatusResponse.cs" />
+    <Compile Include="Responses\Properties\ContentType.cs" />
+    <Compile Include="Responses\Properties\ContentLength.cs" />
+    <Compile Include="Responses\Properties\ModifiedDate.cs" />
+    <Compile Include="Responses\Properties\CreationDate.cs" />
+    <Compile Include="Responses\Properties\DisplayName.cs" />
+    <Compile Include="Responses\Properties\PropertyBase.cs" />
+    <Compile Include="Responses\Properties\ResourceType.cs" />
+    <Compile Include="Responses\Properties\SupportedLock.cs" />
+    <Compile Include="Responses\PropertyStat.cs" />
+    <Compile Include="Responses\ResourceResponse.cs" />
+    <Compile Include="WebdavConsts.cs" />
     <Compile Include="WebdavMiddleware.cs" />
     <Compile Include="WebdavMiddlewareExtensions.cs" />
     <Compile Include="WebdavConfig.cs" />

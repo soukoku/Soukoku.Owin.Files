@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,8 @@ namespace Owin.Webdav.Models
 {
     public interface IDataStore
     {
-        Resource GetResource(string logicalPath);
+        Resource GetResource(IOwinContext context, string logicalPath);
 
-        IEnumerable<Resource> GetSubResources(Resource resource);
+        IEnumerable<Resource> GetSubResources(IOwinContext context, Resource resource);
     }
 }

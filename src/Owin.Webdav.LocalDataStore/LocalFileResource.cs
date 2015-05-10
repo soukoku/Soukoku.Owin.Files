@@ -1,6 +1,7 @@
 ﻿using Owin.Webdav.Models;
 using System.IO;
 using System;
+using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
@@ -8,12 +9,12 @@ namespace Owin.Webdav
     {
         private FileInfo _info;
 
-        public LocalFileResource(string logicalPath, string fullPath) : base(logicalPath)
+        public LocalFileResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
-            _info = new FileInfo(fullPath);
+            _info = new FileInfo(physicalPath);
         }
 
-        public string FullPath { get { return _info.FullName; } }
+        public string PhysicalPath { get { return _info.FullName; } }
         public override ResourceType Type { get { return ResourceType.File; } }
         public override DateTime CreateDate { get { return _info.CreationTimeUtc; } }
         public override DateTime ModifyDate { get { return _info.LastWriteTimeUtc; } }
@@ -21,7 +22,7 @@ namespace Owin.Webdav
 
         public override Stream GetReadStream()
         {
-            return new FileStream(FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return new FileStream(PhysicalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         }
     }
 }

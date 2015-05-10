@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace Owin.Webdav.Models
+namespace Owin.Webdav.Responses.Properties
 {
-    public enum ResourceType
+    public abstract class PropertyBase
     {
-        Folder,
-        File,
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Owin;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,10 +10,13 @@ namespace Owin.Webdav.Models
 {
     public abstract class Resource
     {
-        public Resource(string logicalPath)
+        public Resource(IOwinContext context, string logicalPath)
         {
-            LogicalPath = logicalPath ?? string.Empty;
+            Context = context;
+            LogicalPath = logicalPath;
         }
+
+        public IOwinContext Context { get; private set; }
         public string LogicalPath { get; private set; }
 
         string _name;
@@ -28,6 +32,13 @@ namespace Owin.Webdav.Models
         public virtual DateTime ModifyDate { get { return DateTime.MinValue; } }
         public virtual long Length { get { return 0; } }
         public abstract ResourceType Type { get; }
+        public virtual string Url
+        {
+            get
+            {
+                return string.Format("{0}://{1}{2}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+            }
+        }
 
         public override string ToString()
         {
@@ -37,6 +48,11 @@ namespace Owin.Webdav.Models
         public virtual Stream GetReadStream()
         {
             throw new NotSupportedException();
+        }
+        public enum ResourceType
+        {
+            Folder,
+            File,
         }
     }
 }

@@ -3,6 +3,7 @@ using Owin.Webdav;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,11 @@ namespace Owin
                 depth = int.MaxValue;
             }
             return depth;
+        }
+
+        internal static string GenerateStatusMessage(this HttpStatusCode code, string message = null)
+        {
+            return string.Format("HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }
     }
 }

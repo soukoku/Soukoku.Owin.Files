@@ -1,5 +1,7 @@
 ﻿using Microsoft.Owin;
+using MimeTypes;
 using Owin.Webdav.Models;
+using Owin.Webdav.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,16 +29,16 @@ namespace Owin.Webdav
         public override Task Invoke(IOwinContext context)
         {
             var path = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath);
-            Resource resource = _options.DataStore.GetResource(path);
+            Resource resource = _options.DataStore.GetResource(context, path);
             if (resource != null)
             {
                 switch (context.Request.Method.ToUpperInvariant())
                 {
-                    case "OPTIONS":
+                    case WebdavConsts.Methods.Options:
                         return HandleOptions(context);
-                    case "PROPFIND":
+                    case WebdavConsts.Methods.PropFind:
                         return HandlePropFindAsync(context, resource);
-                    case "GET":
+                    case WebdavConsts.Methods.Get:
                         return HandleGetAsync(context, resource);
                 }
             }
@@ -47,37 +49,58 @@ namespace Owin.Webdav
         {
             // lie and say we can deal with it all for now
 
-            context.Response.Headers.Append("DAV", "1, 2");
-            context.Response.Headers.Append("Allow", "OPTIONS, PROPFIND, PROPPATCH, COPY, MOVE, DELETE, MKCOL, LOCK, UNLOCK");
+            context.Response.Headers.AppendCommaSeparatedValues("DAV", "1", "2");
+            context.Response.Headers.AppendCommaSeparatedValues("Allow",
+                WebdavConsts.Methods.Options,
+                WebdavConsts.Methods.PropFind,
+                WebdavConsts.Methods.PropPatch,
+                WebdavConsts.Methods.MkCol,
+                WebdavConsts.Methods.Copy,
+                WebdavConsts.Methods.Move,
+                WebdavConsts.Methods.Delete,
+                WebdavConsts.Methods.Lock,
+                WebdavConsts.Methods.Unlock);
 
             return Task.FromResult(0);
         }
 
-        private Task HandlePropFindAsync(IOwinContext context, Resource resource)
+        private async Task HandlePropFindAsync(IOwinContext context, Resource resource)
         {
-            int depth = context.GetDepth();
-            if (!_options.AllowUnlimitedDepth)
+            int maxDepth = context.GetDepth();
+            if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
             {
                 // TODO: return dav error
             }
 
-            // TODO: client request is ignored for now
-            //List<Resource> retVal = new List<Resource>();
+            // TODO: support client request instead of always returning resource list
 
+            List<Resource> list = new List<Resource>();
+            var curDepth = 0;
+            WalkResourceTree(context, maxDepth, curDepth, list, resource);
+            var resp = new MultiStatusResponse();
+            resp.Responses.AddRange(list.Select(r => new ResourceResponse
+            {
+                Href = r.Url,
+                ProperyStat = new PropertyStat(r)
+                {
+                    Status = HttpStatusCode.OK.GenerateStatusMessage(),
+                }
+            }));
 
-            return Task.FromResult(0);
+            context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
+            await context.Response.WriteAsync(resp.Serialize());
         }
 
         private async Task HandleGetAsync(IOwinContext context, Resource resource)
         {
-            if (resource.Type == ResourceType.Folder)
+            if (resource.Type == Resource.ResourceType.Folder)
             {
-                if (_options.AllowGetDirectoryBrowsing)
+                if (_options.AllowDirectoryBrowsing)
                 {
                     await ShowDirectoryListingAsync(context, resource);
                 }
             }
-            else if (resource.Type == ResourceType.File)
+            else if (resource.Type == Resource.ResourceType.File)
             {
                 await SendFileAsync(context, resource);
             }
@@ -85,9 +108,21 @@ namespace Owin.Webdav
 
         #region utilities
 
+        private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<Resource> addToList, Resource resource)
+        {
+            addToList.Add(resource);
+            if (resource.Type == Resource.ResourceType.Folder && curDepth < maxDepth)
+            {
+                foreach (var subR in _options.DataStore.GetSubResources(context, resource))
+                {
+                    WalkResourceTree(context, maxDepth, curDepth + 1, addToList, subR);
+                }
+            }
+        }
+
         async Task ShowDirectoryListingAsync(IOwinContext context, Resource resource)
         {
-            context.Response.ContentType = "text/html";
+            context.Response.ContentType = MimeTypeMap.GetMimeType(".html");
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
@@ -95,10 +130,10 @@ namespace Owin.Webdav
             {
                 rows.Append("<tr><td><span class=\"glyphicon glyphicon-arrow-up\"></span><a href=\"..\">Up</a></td></tr>");
             }
-            foreach (var item in _options.DataStore.GetSubResources(resource).OrderBy(r => r.Type).ThenBy(r => r.Name))
+            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.Name))
             {
                 rows.Append("<tr>");
-                if (item.Type == ResourceType.Folder)
+                if (item.Type == Resource.ResourceType.Folder)
                 {
                     rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.LogicalPath)), WebUtility.HtmlEncode(item.Name)));
                 }
@@ -120,7 +155,7 @@ namespace Owin.Webdav
             {
                 context.Response.ContentLength = resource.Length;
             }
-            context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(resource.LogicalPath));
+            context.Response.ContentType = MimeTypeMap.GetMimeType(Path.GetExtension(resource.LogicalPath));
             context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.Name));
 
             using (Stream fs = resource.GetReadStream())
