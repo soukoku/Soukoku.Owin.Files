@@ -20,15 +20,23 @@ namespace Owin.Webdav.Responses
         [XmlElement(ElementName = "response")]
         public List<ResourceResponse> Responses { get; set; }
 
-        internal string Serialize()
+
+        internal byte[] Serialize()
         {
             try
             {
                 XmlSerializer xs = new XmlSerializer(typeof(MultiStatusResponse));
-                using (var writer = new StringWriter())
+
+
+                var ns = new XmlSerializerNamespaces();
+                ns.Add("", "");
+                ns.Add("d", WebdavConsts.XmlNamespace);
+
+                using (var stream = new MemoryStream())
+                using (var writer = new StreamWriter(stream, new UTF8Encoding(false)))
                 {
-                    xs.Serialize(writer, this);
-                    return writer.ToString();
+                    xs.Serialize(writer, this, ns);
+                    return stream.ToArray();
                 }
             }
             catch (Exception ex)

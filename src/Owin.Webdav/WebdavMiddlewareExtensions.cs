@@ -25,7 +25,8 @@ namespace Owin
         internal static int GetDepth(this IOwinContext context)
         {
             int depth;
-            int.TryParse(context.Request.Headers.GetValues("Depth").FirstOrDefault(), out depth);
+            var values = context.Request.Headers.GetValues("Depth");
+            int.TryParse(values.FirstOrDefault(), out depth);
             if (depth != 0 && depth != 1)
             {
                 depth = int.MaxValue;

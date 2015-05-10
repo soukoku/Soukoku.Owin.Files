@@ -36,7 +36,14 @@ namespace Owin.Webdav.Models
         {
             get
             {
-                return string.Format("{0}://{1}{2}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+                if (Type != ResourceType.Folder || LogicalPath.EndsWith("/"))
+                {
+                    return string.Format("{0}://{1}{2}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+                }
+                else
+                {
+                    return string.Format("{0}://{1}{2}/", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+                }
             }
         }
 

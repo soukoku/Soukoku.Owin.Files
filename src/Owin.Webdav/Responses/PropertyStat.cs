@@ -21,18 +21,29 @@ namespace Owin.Webdav.Responses
             Properties = new List<PropertyBase>();
 
             Properties.Add(new DisplayName(resource.Name));
+            Properties.Add(new ContentLength(resource.Length));
             if (resource.Type == Resource.ResourceType.Folder)
             {
+                Properties.Add(new ContentType());
                 Properties.Add(new ResourceType(new ResourceType.CollectionType()));
             }
             else if (resource.Type == Resource.ResourceType.File)
             {
-                Properties.Add(new ResourceType());
-                Properties.Add(new ContentLength(resource.Length));
                 Properties.Add(new ContentType(MimeTypes.MimeTypeMap.GetMimeType(resource.Name)));
+                Properties.Add(new ResourceType());
             }
             Properties.Add(new CreationDate(resource.CreateDate));
             Properties.Add(new ModifiedDate(resource.ModifyDate));
+
+            // TODO: not use the fake locks
+            Properties.Add(new SupportedLock
+            {
+                Locks = new List<LockEntry>
+                {
+                    new LockEntry { Scopes = new List<LockScope> { new LockScope.Exclusive() }, Types = new List<LockType> { new LockType.Write() } },
+                    new LockEntry { Scopes = new List<LockScope> { new LockScope.Shared() }, Types = new List<LockType> { new LockType.Write() } },
+                }
+            });
 
         }
 

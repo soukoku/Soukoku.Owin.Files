@@ -20,8 +20,7 @@ namespace Owin.Webdav.Responses.Properties
 
         [XmlElement("collection", typeof(CollectionType))]
         public List<KnownType> Values { get; set; }
-
-        [XmlInclude(typeof(CollectionType))]
+        
         public abstract class KnownType { }
         
         public class CollectionType : KnownType { }

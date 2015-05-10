@@ -27,7 +27,11 @@ namespace Owin.Webdav.Responses.Properties
         {
             get
             {
-                return Value.ToString();
+                if (Value > 0)
+                {
+                    return Value.ToString();
+                }
+                return null;
             }
             set
             {

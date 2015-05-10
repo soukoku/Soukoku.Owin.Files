@@ -28,10 +28,13 @@ namespace Owin.Webdav
 
         public override Task Invoke(IOwinContext context)
         {
+            Console.WriteLine("DAV received {0} for {1}.", context.Request.Method, context.Request.Uri);
+
             var path = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath);
             Resource resource = _options.DataStore.GetResource(context, path);
             if (resource != null)
             {
+                context.Response.Headers.Append("MS-Author-Via", "DAV");
                 switch (context.Request.Method.ToUpperInvariant())
                 {
                     case WebdavConsts.Methods.Options:
@@ -60,6 +63,16 @@ namespace Owin.Webdav
                 WebdavConsts.Methods.Delete,
                 WebdavConsts.Methods.Lock,
                 WebdavConsts.Methods.Unlock);
+            //context.Response.Headers.AppendCommaSeparatedValues("Public",
+            //    WebdavConsts.Methods.Options,
+            //    WebdavConsts.Methods.PropFind,
+            //    WebdavConsts.Methods.PropPatch,
+            //    WebdavConsts.Methods.MkCol,
+            //    WebdavConsts.Methods.Copy,
+            //    WebdavConsts.Methods.Move,
+            //    WebdavConsts.Methods.Delete,
+            //    WebdavConsts.Methods.Lock,
+            //    WebdavConsts.Methods.Unlock);
 
             return Task.FromResult(0);
         }
@@ -80,15 +93,20 @@ namespace Owin.Webdav
             var resp = new MultiStatusResponse();
             resp.Responses.AddRange(list.Select(r => new ResourceResponse
             {
-                Href = r.Url,
+                Href = Uri.EscapeUriString(r.Url),
                 ProperyStat = new PropertyStat(r)
                 {
                     Status = HttpStatusCode.OK.GenerateStatusMessage(),
                 }
             }));
 
+            //context.Response.Headers.Append("Cache-Control", "private");
             context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
-            await context.Response.WriteAsync(resp.Serialize());
+            var content = resp.Serialize();
+            context.Response.StatusCode = 207; // ???
+            context.Response.ContentLength = content.Length;
+            Console.WriteLine(Encoding.UTF8.GetString(content));
+            await context.Response.WriteAsync(content);
         }
 
         private async Task HandleGetAsync(IOwinContext context, Resource resource)
@@ -146,6 +164,7 @@ namespace Owin.Webdav
 
             var title = string.IsNullOrEmpty(resource.Name) ? "[root]" : WebUtility.HtmlEncode(resource.Name);
             var content = string.Format(await GetDirectoryListingTemplateAsync(), title, rows);
+            //context.Response.ContentLength = content.Length;
             await context.Response.WriteAsync(content);
         }
 
