@@ -22,16 +22,18 @@ namespace Owin.Webdav.Responses
 
             Properties.Add(new DisplayName(resource.Name));
             Properties.Add(new ContentLength(resource.Length));
+            var resType = new ResourceType();
             if (resource.Type == Resource.ResourceType.Folder)
             {
                 Properties.Add(new ContentType());
-                Properties.Add(new ResourceType(new ResourceType.CollectionType()));
+                // TODO: add if not fully dav capable
+                //resType.Values.Add(new ResourceType.CollectionType());
             }
             else if (resource.Type == Resource.ResourceType.File)
             {
                 Properties.Add(new ContentType(MimeTypes.MimeTypeMap.GetMimeType(resource.Name)));
-                Properties.Add(new ResourceType());
             }
+            Properties.Add(resType);
             Properties.Add(new CreationDate(resource.CreateDate));
             Properties.Add(new ModifiedDate(resource.ModifyDate));
 

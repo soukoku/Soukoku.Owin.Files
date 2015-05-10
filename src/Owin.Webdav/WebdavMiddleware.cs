@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Owin.Webdav
 {
@@ -31,7 +32,7 @@ namespace Owin.Webdav
             var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
             if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
 
-            Console.WriteLine("DAV received {0} for {1}.", context.Request.Method, logicalPath);
+            Console.WriteLine("DAV received {0} for [{1}]", context.Request.Method, logicalPath);
 
             Resource resource = _options.DataStore.GetResource(context, logicalPath);
             if (resource != null)
@@ -54,7 +55,7 @@ namespace Owin.Webdav
         {
             // lie and say we can deal with it all for now
 
-            context.Response.Headers.AppendCommaSeparatedValues("DAV", "1", "2");
+            context.Response.Headers.AppendCommaSeparatedValues("DAV", "1");//, "2");
             context.Response.Headers.AppendCommaSeparatedValues("Allow",
                 WebdavConsts.Methods.Options,
                 WebdavConsts.Methods.PropFind,
@@ -64,18 +65,22 @@ namespace Owin.Webdav
                 WebdavConsts.Methods.Move,
                 WebdavConsts.Methods.Delete,
                 WebdavConsts.Methods.Lock,
-                WebdavConsts.Methods.Unlock);
-            //context.Response.Headers.AppendCommaSeparatedValues("Public",
-            //    WebdavConsts.Methods.Options,
-            //    WebdavConsts.Methods.PropFind,
-            //    WebdavConsts.Methods.PropPatch,
-            //    WebdavConsts.Methods.MkCol,
-            //    WebdavConsts.Methods.Copy,
-            //    WebdavConsts.Methods.Move,
-            //    WebdavConsts.Methods.Delete,
-            //    WebdavConsts.Methods.Lock,
-            //    WebdavConsts.Methods.Unlock);
+                WebdavConsts.Methods.Unlock,
+                WebdavConsts.Methods.Get);
 
+            context.Response.Headers.AppendCommaSeparatedValues("Public",
+                WebdavConsts.Methods.Options,
+                WebdavConsts.Methods.PropFind,
+                WebdavConsts.Methods.PropPatch,
+                WebdavConsts.Methods.MkCol,
+                WebdavConsts.Methods.Copy,
+                WebdavConsts.Methods.Move,
+                WebdavConsts.Methods.Delete,
+                WebdavConsts.Methods.Lock,
+                WebdavConsts.Methods.Unlock,
+                WebdavConsts.Methods.Get);
+
+            context.Response.ContentLength = 0;
             return Task.FromResult(0);
         }
 
@@ -87,8 +92,18 @@ namespace Owin.Webdav
                 // TODO: return dav error
             }
 
-            // TODO: support client request instead of always returning resource list
+            Console.WriteLine("Depth=" + maxDepth);
 
+            // TODO: support client request instead of always returning fixed property list
+            var reqBody = await context.ReadRequestStringAsync();
+            if (!string.IsNullOrEmpty(reqBody))
+            {
+                Console.WriteLine(reqBody.PrettyXml());
+
+                XmlDocument reqXml = new XmlDocument();
+                reqXml.LoadXml(reqBody);
+            }
+            
             List<Resource> list = new List<Resource>();
             var curDepth = 0;
             WalkResourceTree(context, maxDepth, curDepth, list, resource);
@@ -194,10 +209,7 @@ namespace Owin.Webdav
 
         static async Task<string> GetDirectoryListingTemplateAsync()
         {
-            using (StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Owin.Webdav.Responses.DirectoryListing.html")))
-            {
-                return await reader.ReadToEndAsync();
-            }
+            return await Assembly.GetExecutingAssembly().GetManifestResourceStream("Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
         }
 
         #endregion
