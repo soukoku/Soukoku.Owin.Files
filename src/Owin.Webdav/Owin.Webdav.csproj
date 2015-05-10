@@ -34,12 +34,17 @@
       <HintPath>..\..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MimeTypeMap, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MediaTypeMap.2.0.0.0\lib\net40\MimeTypeMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,18 +55,18 @@
   <ItemGroup>
     <Compile Include="Models\IDataStore.cs" />
     <Compile Include="Models\Resource.cs" />
-    <Compile Include="Models\FileResource.cs" />
-    <Compile Include="Models\FolderResource.cs" />
-    <Compile Include="WebdavComponent.cs" />
-    <Compile Include="WebdavComponentExtensions.cs" />
+    <Compile Include="Models\ResourceType.cs" />
+    <Compile Include="WebdavMiddleware.cs" />
+    <Compile Include="WebdavMiddlewareExtensions.cs" />
     <Compile Include="WebdavConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Responses\" />
+    <EmbeddedResource Include="Responses\DirectoryListing.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

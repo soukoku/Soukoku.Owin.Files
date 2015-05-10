@@ -8,6 +8,8 @@ namespace Owin.Webdav.Models
 {
     public interface IDataStore
     {
-        Resource GetResource(string path);
+        Resource GetResource(string logicalPath);
+
+        IEnumerable<Resource> GetSubResources(Resource resource);
     }
 }

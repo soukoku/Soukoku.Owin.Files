@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Owin.Webdav.Models
 {
-    public abstract class FolderResource : Resource
+    public enum ResourceType
     {
+        Folder,
+        File,
     }
 }

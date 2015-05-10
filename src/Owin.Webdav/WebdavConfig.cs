@@ -16,6 +16,8 @@ namespace Owin.Webdav
             DataStore = dataStore;
         }
 
+        public bool AllowGetDirectoryBrowsing { get; set; }
+        public bool AllowUnlimitedDepth { get; set; }
         public IDataStore DataStore { get; private set; }
     }
 }

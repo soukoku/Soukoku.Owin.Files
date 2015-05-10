@@ -4,21 +4,19 @@ using System.IO;
 
 namespace Owin.Webdav
 {
-    class LocalFolderResource : FolderResource
+    class LocalFolderResource : Resource
     {
-        private string _localPath;
+        private DirectoryInfo _info;
 
-        public LocalFolderResource(string localPath)
+        public LocalFolderResource(string logicalPath, string fullPath) : base(logicalPath)
         {
-            this._localPath = localPath;
+            _info = new DirectoryInfo(fullPath);
         }
 
-        public override string Name
-        {
-            get
-            {
-                return Path.GetFileName(_localPath);
-            }
-        }
+        public string FullPath { get { return _info.FullName; } }
+        public override ResourceType Type { get { return ResourceType.Folder; } }
+        public override DateTime CreateDate { get { return _info.CreationTimeUtc; } }
+        public override DateTime ModifyDate { get { return _info.LastWriteTimeUtc; } }
+
     }
 }
