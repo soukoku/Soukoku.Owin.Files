@@ -38,11 +38,11 @@ namespace Owin.Webdav.Models
             {
                 if (Type != ResourceType.Folder || LogicalPath.EndsWith("/"))
                 {
-                    return string.Format("{0}://{1}{2}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+                    return string.Format("{0}://{1}{2}/{3}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, Context.Request.PathBase.Value, LogicalPath);
                 }
                 else
                 {
-                    return string.Format("{0}://{1}{2}/", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, LogicalPath);
+                    return string.Format("{0}://{1}{2}/{3}/", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, Context.Request.PathBase.Value, LogicalPath);
                 }
             }
         }

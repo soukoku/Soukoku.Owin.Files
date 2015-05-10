@@ -15,11 +15,13 @@ namespace Sample.LocalStore
         {
             var path = Path.Combine(Environment.CurrentDirectory, "dav-store");
 
-            app.UseWebdav(new WebdavConfig(new LocalDataStore(path))
-            {
-                AllowDirectoryBrowsing = true
-            });
-
+            //app.Map("/davroot", map =>
+            //{
+                app.UseWebdav(new WebdavConfig(new LocalDataStore(path))
+                {
+                    AllowDirectoryBrowsing = true
+                });
+            //});
             // write dummy file
             File.WriteAllText(Path.Combine(path, "dummy.txt"), "This is a dummy file.");
         }

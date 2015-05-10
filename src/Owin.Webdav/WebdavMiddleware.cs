@@ -28,10 +28,12 @@ namespace Owin.Webdav
 
         public override Task Invoke(IOwinContext context)
         {
-            Console.WriteLine("DAV received {0} for {1}.", context.Request.Method, context.Request.Uri);
+            var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
+            if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
 
-            var path = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath);
-            Resource resource = _options.DataStore.GetResource(context, path);
+            Console.WriteLine("DAV received {0} for {1}.", context.Request.Method, logicalPath);
+
+            Resource resource = _options.DataStore.GetResource(context, logicalPath);
             if (resource != null)
             {
                 context.Response.Headers.Append("MS-Author-Via", "DAV");
@@ -144,7 +146,7 @@ namespace Owin.Webdav
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            if (!string.IsNullOrEmpty(resource.Name))
+            if (!string.IsNullOrEmpty(resource.LogicalPath))
             {
                 rows.Append("<tr><td><span class=\"glyphicon glyphicon-arrow-up\"></span><a href=\"..\">Up</a></td></tr>");
             }
@@ -153,11 +155,11 @@ namespace Owin.Webdav
                 rows.Append("<tr>");
                 if (item.Type == Resource.ResourceType.Folder)
                 {
-                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.LogicalPath)), WebUtility.HtmlEncode(item.Name)));
+                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name)));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.LogicalPath)), WebUtility.HtmlEncode(item.Name)));
+                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name)));
                 }
                 rows.Append("</tr>");
             }
