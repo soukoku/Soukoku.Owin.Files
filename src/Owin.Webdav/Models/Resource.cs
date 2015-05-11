@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,16 @@ namespace Owin.Webdav.Models
     {
         public Resource(IOwinContext context, string logicalPath)
         {
-            Context = context;
+            OriginalContext = context;
             LogicalPath = logicalPath;
+            CustomProperties = new Dictionary<string, IProperty>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public IOwinContext Context { get; private set; }
-        public string LogicalPath { get; private set; }
+        public Dictionary<string, IProperty> CustomProperties { get; private set; }
+
+
+        public IOwinContext OriginalContext { get; private set; }
+        public string LogicalPath { get; set; }
 
         string _name;
         public string Name
@@ -27,7 +32,17 @@ namespace Owin.Webdav.Models
                 return _name ?? (_name = Path.GetFileName(LogicalPath));
             }
         }
-
+        public virtual string ContentType
+        {
+            get
+            {
+                if (Type == ResourceType.File)
+                {
+                    return MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(Name));
+                }
+                return null;
+            }
+        }
         public virtual DateTime CreateDate { get { return DateTime.MinValue; } }
         public virtual DateTime ModifyDate { get { return DateTime.MinValue; } }
         public virtual long Length { get { return 0; } }
@@ -36,7 +51,7 @@ namespace Owin.Webdav.Models
         {
             get
             {
-                var tentative = string.Format("{0}://{1}{2}/{3}", Context.Request.Uri.Scheme, Context.Request.Uri.Authority, Context.Request.PathBase.Value, LogicalPath);
+                var tentative = string.Format("{0}://{1}{2}/{3}", OriginalContext.Request.Uri.Scheme, OriginalContext.Request.Uri.Authority, OriginalContext.Request.PathBase.Value, LogicalPath);
                 if (Type == ResourceType.Folder && !tentative.EndsWith("/"))
                 {
                     tentative += "/";
