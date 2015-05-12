@@ -1,0 +1,1 @@
+﻿Only the public access interface (http) will be tested. Internal representation will not.

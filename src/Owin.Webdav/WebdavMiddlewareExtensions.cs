@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Owin
@@ -75,6 +76,16 @@ namespace Owin
         {
             string formattedXml = XElement.Parse(xml).ToString();
             return formattedXml;
+        }
+
+        internal static byte[] Serialize(this XmlDocument xmlDoc)
+        {
+            using (var ms = new MemoryStream())
+            using (var writer = new StreamWriter(ms))
+            {
+                xmlDoc.Save(writer);
+                return ms.ToArray();
+            }
         }
     }
 }

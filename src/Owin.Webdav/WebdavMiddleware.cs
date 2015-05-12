@@ -1,6 +1,7 @@
 ﻿using Microsoft.Owin;
 using MimeTypes;
 using Owin.Webdav.Models;
+using Owin.Webdav.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,97 +111,17 @@ namespace Owin.Webdav
             await WriteMultiStatusReponse(context, list);
         }
 
-        private async Task WriteMultiStatusReponse(IOwinContext context, List<Resource> list)
+        private Task WriteMultiStatusReponse(IOwinContext context, List<Resource> list)
         {
-            XmlDocument xmlDoc = new XmlDocument();
+            XmlDocument xmlDoc = MultiStatusResponse.Create(list);
 
-
-            XmlNode rootNode = xmlDoc.CreateElement(WebdavConsts.Xml.ResponseList, WebdavConsts.Xml.Namespace);
-            xmlDoc.AppendChild(rootNode);
-            
-            foreach (var resource in list)
-            {
-                XmlNode response = xmlDoc.CreateElement(WebdavConsts.Xml.Response, WebdavConsts.Xml.Namespace);
-                rootNode.AppendChild(response);
-
-                XmlNode respHref = xmlDoc.CreateElement(WebdavConsts.Xml.RespHref, WebdavConsts.Xml.Namespace);
-                respHref.InnerText = Uri.EscapeUriString(resource.Url);
-                response.AppendChild(respHref);
-
-                XmlNode respProperty = xmlDoc.CreateElement(WebdavConsts.Xml.RespProperty, WebdavConsts.Xml.Namespace);
-                response.AppendChild(respProperty);
-
-                XmlNode propStatus = xmlDoc.CreateElement(WebdavConsts.Xml.PropertyStatus, WebdavConsts.Xml.Namespace);
-                // todo: use real status code
-                propStatus.InnerText = HttpStatusCode.OK.GenerateStatusMessage();
-                respProperty.AppendChild(propStatus);
-
-
-                XmlNode propList = xmlDoc.CreateElement(WebdavConsts.Xml.PropertyList, WebdavConsts.Xml.Namespace);
-                respProperty.AppendChild(propList);
-
-                #region dav-properties
-
-                XmlNode nameNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropDisplayName, WebdavConsts.Xml.Namespace);
-                nameNode.InnerText = Path.GetFileName(resource.Url.Trim('/')); // must be actual url part name event if root of dav store
-                propList.AppendChild(nameNode);
-
-                XmlNode clNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentLength, WebdavConsts.Xml.Namespace);
-                clNode.InnerText = resource.Length.ToString();
-                propList.AppendChild(clNode);
-
-                XmlNode ctNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentType, WebdavConsts.Xml.Namespace);
-                if (!string.IsNullOrEmpty(resource.ContentType))
-                {
-                    ctNode.InnerText = resource.ContentType;
-                }
-                propList.AppendChild(ctNode);
-
-                XmlNode createNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropCreationDate, WebdavConsts.Xml.Namespace);
-                createNode.InnerText = XmlConvert.ToString(resource.CreateDate, XmlDateTimeSerializationMode.Utc); // rfc 3339?
-                propList.AppendChild(createNode);
-
-                XmlNode modNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetLastModified, WebdavConsts.Xml.Namespace);
-                modNode.InnerText = resource.ModifyDate.ToString("r"); // RFC1123
-                propList.AppendChild(modNode);
-                
-                XmlNode resTypeNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropResourceType, WebdavConsts.Xml.Namespace);
-                if (resource.Type == Resource.ResourceType.Folder)
-                {
-                    resTypeNode.AppendChild(xmlDoc.CreateElement("collection", WebdavConsts.Xml.Namespace));
-                }
-                propList.AppendChild(resTypeNode);
-
-                XmlNode lockNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropSupportedLock, WebdavConsts.Xml.Namespace);
-                propList.AppendChild(lockNode);
-
-                #endregion
-
-                // custom properties
-                foreach (var prop in resource.CustomProperties.Values)
-                {
-                    XmlNode propNode = prop.SerializeElement(xmlDoc);
-                    if (propNode != null)
-                    {
-                        propList.AppendChild(propNode);
-                    }
-                }
-            }
-
-
-            using (var ms = new MemoryStream())
-            using (var writer = new StreamWriter(ms))
-            {
-                xmlDoc.Save(writer);
-                ////context.Response.Headers.Append("Cache-Control", "private");
-                context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
-                var content = ms.ToArray();
-                context.Response.StatusCode = 207;
-                context.Response.ContentLength = content.Length;
-                Console.WriteLine(Encoding.UTF8.GetString(content));
-                await context.Response.WriteAsync(content);
-            }
-
+            ////context.Response.Headers.Append("Cache-Control", "private");
+            var content = xmlDoc.Serialize();
+            context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
+            context.Response.StatusCode = 207;
+            context.Response.ContentLength = content.Length;
+            Console.WriteLine(Encoding.UTF8.GetString(content));
+            return context.Response.WriteAsync(content);
         }
 
         private async Task HandleGetAsync(IOwinContext context, Resource resource)

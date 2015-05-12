@@ -17,7 +17,7 @@ namespace Sample.LocalStore
 
             Console.WriteLine("Staring server on {0}", baseAddress);
             using (WebApp.Start<Startup>(baseAddress))
-            using (DriveMapper.MapToNextAvailableDrive(baseAddress))
+            //using (DriveMapper.MapToNextAvailableDrive(baseAddress))
             {
                 Console.WriteLine("Press enter to exit...");
                 Console.ReadLine();
