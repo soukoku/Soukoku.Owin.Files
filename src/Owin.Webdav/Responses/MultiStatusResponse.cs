@@ -28,7 +28,8 @@ namespace Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(WebdavConsts.Xml.RespHref, WebdavConsts.Xml.Namespace);
-                    respHref.InnerText = Uri.EscapeUriString(resource.Url);
+                    respHref.InnerText = Uri.EscapeUriString(resource.Url); // required to get some clients working
+                    respHref.InnerText = resource.Url;
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(WebdavConsts.Xml.RespProperty, WebdavConsts.Xml.Namespace);
@@ -46,31 +47,19 @@ namespace Owin.Webdav.Responses
                     #region dav-properties
 
                     XmlNode nameNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropDisplayName, WebdavConsts.Xml.Namespace);
-                    nameNode.InnerText = Path.GetFileName(resource.Url.Trim('/')); // must be actual url part name event if root of dav store
+                    nameNode.InnerText = Uri.EscapeUriString(Path.GetFileName(resource.Url.Trim('/'))); // must be actual url part name event if root of dav store
                     propList.AppendChild(nameNode);
-
-                    XmlNode clNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentLength, WebdavConsts.Xml.Namespace);
-                    if (resource.Length >= 0)
+                    
+                    // properties
+                    foreach (var prop in resource.Properties)
                     {
-                        clNode.InnerText = resource.Length.ToString();
+                        XmlNode propNode = prop.Serialize(xmlDoc);
+                        if (propNode != null)
+                        {
+                            propList.AppendChild(propNode);
+                        }
                     }
-                    propList.AppendChild(clNode);
-
-                    XmlNode ctNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentType, WebdavConsts.Xml.Namespace);
-                    if (!string.IsNullOrEmpty(resource.ContentType))
-                    {
-                        ctNode.InnerText = resource.ContentType;
-                    }
-                    propList.AppendChild(ctNode);
-
-                    XmlNode createNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropCreationDate, WebdavConsts.Xml.Namespace);
-                    createNode.InnerText = XmlConvert.ToString(resource.CreateDate, XmlDateTimeSerializationMode.Utc); // rfc 3339?
-                    propList.AppendChild(createNode);
-
-                    XmlNode modNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetLastModified, WebdavConsts.Xml.Namespace);
-                    modNode.InnerText = resource.ModifyDate.ToString("r"); // RFC1123
-                    propList.AppendChild(modNode);
-
+                    
                     XmlNode resTypeNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropResourceType, WebdavConsts.Xml.Namespace);
                     if (resource.Type == Resource.ResourceType.Folder)
                     {
@@ -82,16 +71,6 @@ namespace Owin.Webdav.Responses
                     propList.AppendChild(lockNode);
 
                     #endregion
-
-                    // custom properties
-                    foreach (var prop in resource.Properties)
-                    {
-                        XmlNode propNode = prop.Serialize(xmlDoc);
-                        if (propNode != null)
-                        {
-                            propList.AppendChild(propNode);
-                        }
-                    }
                 }
             }
             return xmlDoc;

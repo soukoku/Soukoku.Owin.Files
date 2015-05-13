@@ -12,13 +12,13 @@ namespace Owin.Webdav
         public LocalFileResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new FileInfo(physicalPath);
+            Length.Value = _info.Length;
+            CreateDate.Value = _info.CreationTimeUtc;
+            ModifyDate.Value = _info.LastWriteTimeUtc;
         }
 
         public string PhysicalPath { get { return _info.FullName; } }
         public override ResourceType Type { get { return ResourceType.File; } }
-        public override DateTime CreateDate { get { return _info.CreationTimeUtc; } }
-        public override DateTime ModifyDate { get { return _info.LastWriteTimeUtc; } }
-        public override long Length { get { return _info.Length; } }
 
         public override Stream GetReadStream()
         {

@@ -164,28 +164,27 @@ namespace Owin.Webdav
                 rows.Append("<tr>");
                 if (item.Type == Resource.ResourceType.Folder)
                 {
-                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.ModifyDate.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.Length.PrettySize(), item.ModifyDate.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 rows.Append("</tr>");
             }
 
-            var title = WebUtility.HtmlEncode(context.Request.Uri.AbsolutePath);// string.IsNullOrEmpty(resource.Name) ? "[root]" : WebUtility.HtmlEncode(resource.Name);
+            var title = WebUtility.HtmlEncode(context.Request.Uri.AbsolutePath);
             var content = string.Format(await GetDirectoryListingTemplateAsync(), title, rows);
-            //context.Response.ContentLength = content.Length;
             await context.Response.WriteAsync(content);
         }
 
         static async Task SendFileAsync(IOwinContext context, Resource resource)
         {
-            if (resource.Length > 0)
+            if (resource.Length.Value > 0)
             {
-                context.Response.ContentLength = resource.Length;
+                context.Response.ContentLength = resource.Length.Value;
             }
-            context.Response.ContentType = MimeTypeMap.GetMimeType(Path.GetExtension(resource.LogicalPath));
+            context.Response.ContentType = resource.ContentType.Value;
             context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.Name));
 
             using (Stream fs = resource.GetReadStream())
