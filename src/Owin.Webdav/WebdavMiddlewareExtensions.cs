@@ -2,6 +2,7 @@
 using Owin.Webdav;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -77,6 +78,34 @@ namespace Owin
             string formattedXml = XElement.Parse(xml).ToString();
             return formattedXml;
         }
+
+        internal static string PrettySize(this long fileSize)
+        {
+            var format = "{0:0.##} B";
+            if (fileSize > 1024)
+            {
+                fileSize /= 1024;
+                format = "{0:0.##} KB";
+            }
+            if (fileSize > 1024)
+            {
+                fileSize /= 1024;
+                format = "{0:0.##} MB";
+            }
+            if (fileSize > 1024)
+            {
+                fileSize /= 1024;
+                format = "{0:0.##} GB";
+            }
+            if (fileSize > 1024)
+            {
+                fileSize /= 1024;
+                format = "{0:0.##} TB";
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, format, fileSize);
+        }
+
 
         internal static byte[] Serialize(this XmlDocument xmlDoc)
         {

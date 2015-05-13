@@ -50,7 +50,10 @@ namespace Owin.Webdav.Responses
                     propList.AppendChild(nameNode);
 
                     XmlNode clNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentLength, WebdavConsts.Xml.Namespace);
-                    clNode.InnerText = resource.Length.ToString();
+                    if (resource.Length >= 0)
+                    {
+                        clNode.InnerText = resource.Length.ToString();
+                    }
                     propList.AppendChild(clNode);
 
                     XmlNode ctNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropGetContentType, WebdavConsts.Xml.Namespace);
@@ -81,9 +84,9 @@ namespace Owin.Webdav.Responses
                     #endregion
 
                     // custom properties
-                    foreach (var prop in resource.CustomProperties.Values)
+                    foreach (var prop in resource.Properties)
                     {
-                        XmlNode propNode = prop.SerializeElement(xmlDoc);
+                        XmlNode propNode = prop.Serialize(xmlDoc);
                         if (propNode != null)
                         {
                             propList.AppendChild(propNode);

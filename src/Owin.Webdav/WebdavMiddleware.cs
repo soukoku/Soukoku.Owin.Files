@@ -159,25 +159,21 @@ namespace Owin.Webdav
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            if (!string.IsNullOrEmpty(resource.LogicalPath))
-            {
-                rows.Append("<tr><td><span class=\"glyphicon glyphicon-arrow-up\"></span><a href=\"..\">Up</a></td></tr>");
-            }
             foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.Name))
             {
                 rows.Append("<tr>");
                 if (item.Type == Resource.ResourceType.Folder)
                 {
-                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name)));
+                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.ModifyDate.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name)));
+                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.Length.PrettySize(), item.ModifyDate.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 rows.Append("</tr>");
             }
 
-            var title = string.IsNullOrEmpty(resource.Name) ? "[root]" : WebUtility.HtmlEncode(resource.Name);
+            var title = WebUtility.HtmlEncode(context.Request.Uri.AbsolutePath);// string.IsNullOrEmpty(resource.Name) ? "[root]" : WebUtility.HtmlEncode(resource.Name);
             var content = string.Format(await GetDirectoryListingTemplateAsync(), title, rows);
             //context.Response.ContentLength = content.Length;
             await context.Response.WriteAsync(content);

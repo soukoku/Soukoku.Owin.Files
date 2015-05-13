@@ -15,7 +15,7 @@ namespace Owin.Webdav.Models
 
         public T Value { get; set; }
 
-        public abstract XmlNode SerializeElement(XmlDocument doc);
+        public abstract XmlNode Serialize(XmlDocument doc);
     }
 
     public interface IProperty
@@ -24,6 +24,6 @@ namespace Owin.Webdav.Models
 
         string Name { get; set; }
 
-        XmlNode SerializeElement(XmlDocument doc);
+        XmlNode Serialize(XmlDocument doc);
     }
 }

@@ -4,21 +4,26 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Owin.Webdav.Models
 {
-    public abstract class Resource
+    public abstract class Resource : IResource
     {
         public Resource(IOwinContext context, string logicalPath)
         {
             OriginalContext = context;
             LogicalPath = logicalPath;
-            CustomProperties = new Dictionary<string, IProperty>(StringComparer.OrdinalIgnoreCase);
+            _properties = new List<IProperty>();
         }
 
-        public Dictionary<string, IProperty> CustomProperties { get; private set; }
+        private List<IProperty> _properties;
+        public IEnumerable<IProperty> Properties
+        {
+            get { return _properties; }
+        }
 
 
         public IOwinContext OriginalContext { get; private set; }

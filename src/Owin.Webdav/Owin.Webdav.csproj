@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\IDataStore.cs" />
+    <Compile Include="Models\IResource.cs" />
     <Compile Include="Models\Property.cs" />
     <Compile Include="Models\Resource.cs" />
     <Compile Include="Responses\MultiStatusResponse.cs" />
