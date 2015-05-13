@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     public interface IResource
     {

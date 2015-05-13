@@ -2,8 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Owin.Testing;
 using System.Net.Http;
-using Owin;
 using System.Threading.Tasks;
+using Soukoku.Owin.Webdav;
 
 namespace Owin.Webdav.Test
 {

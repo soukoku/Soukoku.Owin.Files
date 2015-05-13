@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     public abstract class Property<T> : IProperty
     {
-        public Property(string name) : this(name, WebdavConsts.Xml.Namespace) { }
+        public Property(string name) : this(name, Consts.Xml.Namespace) { }
         public Property(string name, string @namespace)
         {
             if (string.IsNullOrWhiteSpace(name)) { throw new ArgumentException("Name is required.", "name"); }

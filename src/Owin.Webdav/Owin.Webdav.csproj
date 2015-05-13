@@ -7,8 +7,8 @@
     <ProjectGuid>{C54D5283-7F4D-4599-8930-086A8416C176}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Owin.Webdav</RootNamespace>
-    <AssemblyName>Owin.Webdav</AssemblyName>
+    <RootNamespace>Soukoku.Owin.Webdav</RootNamespace>
+    <AssemblyName>Soukoku.Owin.Webdav</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllowedActions.cs" />
     <Compile Include="Models\DerivedProperty.cs" />
     <Compile Include="Models\NumberProperty.cs" />
     <Compile Include="Models\StringProperty.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Models\Property.cs" />
     <Compile Include="Models\Resource.cs" />
     <Compile Include="Responses\MultiStatusResponse.cs" />
-    <Compile Include="WebdavConsts.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="WebdavMiddleware.cs" />
     <Compile Include="WebdavMiddlewareExtensions.cs" />
     <Compile Include="WebdavConfig.cs" />

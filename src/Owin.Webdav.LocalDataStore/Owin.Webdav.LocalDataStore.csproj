@@ -7,8 +7,8 @@
     <ProjectGuid>{462B4EB9-48D5-40A2-8906-0A087172BFA6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Owin.Webdav</RootNamespace>
-    <AssemblyName>Owin.Webdav.LocalFileStore</AssemblyName>
+    <RootNamespace>Soukoku.Owin.Webdav</RootNamespace>
+    <AssemblyName>Soukoku.Owin.Webdav.LocalFileStore</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

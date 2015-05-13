@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using MimeTypes;
-using Owin.Webdav.Models;
-using Owin.Webdav.Responses;
+using Soukoku.Owin.Webdav.Models;
+using Soukoku.Owin.Webdav.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,23 +12,29 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Owin;
 
-namespace Owin.Webdav
+namespace Soukoku.Owin.Webdav
 {
-    public class WebdavMiddleware : OwinMiddleware
+    public class WebdavMiddleware
     {
         readonly WebdavConfig _options;
+        readonly Func<IDictionary<string, object>, Task> _next;
 
-        public WebdavMiddleware(OwinMiddleware next, WebdavConfig options) : base(next)
+        public WebdavMiddleware(Func<IDictionary<string, object>, Task> next, WebdavConfig options)
         {
+            if (next == null) { throw new ArgumentException("next"); }
             if (options == null) { throw new ArgumentException("options"); }
 
+            _next = next;
             _options = options;
         }
 
 
-        public override Task Invoke(IOwinContext context)
+        public Task Invoke(IDictionary<string, object> environment)
         {
+            var context = new OwinContext(environment);
+
             var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
             if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
 
@@ -40,15 +46,15 @@ namespace Owin.Webdav
                 context.Response.Headers.Append("MS-Author-Via", "DAV");
                 switch (context.Request.Method.ToUpperInvariant())
                 {
-                    case WebdavConsts.Methods.Options:
+                    case Consts.Methods.Options:
                         return HandleOptions(context);
-                    case WebdavConsts.Methods.PropFind:
+                    case Consts.Methods.PropFind:
                         return HandlePropFindAsync(context, resource);
-                    case WebdavConsts.Methods.Get:
+                    case Consts.Methods.Get:
                         return HandleGetAsync(context, resource);
                 }
             }
-            return Next.Invoke(context);
+            return _next.Invoke(environment);
         }
 
         private Task HandleOptions(IOwinContext context)
@@ -57,28 +63,28 @@ namespace Owin.Webdav
 
             context.Response.Headers.AppendCommaSeparatedValues("DAV", "1");//, "2");
             context.Response.Headers.AppendCommaSeparatedValues("Allow",
-                WebdavConsts.Methods.Options,
-                WebdavConsts.Methods.PropFind,
-                WebdavConsts.Methods.PropPatch,
-                WebdavConsts.Methods.MkCol,
-                WebdavConsts.Methods.Copy,
-                WebdavConsts.Methods.Move,
-                WebdavConsts.Methods.Delete,
-                WebdavConsts.Methods.Lock,
-                WebdavConsts.Methods.Unlock,
-                WebdavConsts.Methods.Get);
+                Consts.Methods.Options,
+                Consts.Methods.PropFind,
+                Consts.Methods.PropPatch,
+                Consts.Methods.MkCol,
+                Consts.Methods.Copy,
+                Consts.Methods.Move,
+                Consts.Methods.Delete,
+                Consts.Methods.Lock,
+                Consts.Methods.Unlock,
+                Consts.Methods.Get);
 
             context.Response.Headers.AppendCommaSeparatedValues("Public",
-                WebdavConsts.Methods.Options,
-                WebdavConsts.Methods.PropFind,
-                WebdavConsts.Methods.PropPatch,
-                WebdavConsts.Methods.MkCol,
-                WebdavConsts.Methods.Copy,
-                WebdavConsts.Methods.Move,
-                WebdavConsts.Methods.Delete,
-                WebdavConsts.Methods.Lock,
-                WebdavConsts.Methods.Unlock,
-                WebdavConsts.Methods.Get);
+                Consts.Methods.Options,
+                Consts.Methods.PropFind,
+                Consts.Methods.PropPatch,
+                Consts.Methods.MkCol,
+                Consts.Methods.Copy,
+                Consts.Methods.Move,
+                Consts.Methods.Delete,
+                Consts.Methods.Lock,
+                Consts.Methods.Unlock,
+                Consts.Methods.Get);
 
             context.Response.ContentLength = 0;
             return Task.FromResult(0);
@@ -159,16 +165,16 @@ namespace Owin.Webdav
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.Name))
+            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.DisplayName.Value))
             {
                 rows.Append("<tr>");
                 if (item.Type == Resource.ResourceType.Folder)
                 {
-                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.Name), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 rows.Append("</tr>");
             }
@@ -185,7 +191,7 @@ namespace Owin.Webdav
                 context.Response.ContentLength = resource.Length.Value;
             }
             context.Response.ContentType = resource.ContentType.Value;
-            context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.Name));
+            context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName.Value));
 
             using (Stream fs = resource.GetReadStream())
             {

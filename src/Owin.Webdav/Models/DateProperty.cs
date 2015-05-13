@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     public class DateProperty : Property<DateTime>
     {
-        public DateProperty(string name) : base(name, WebdavConsts.Xml.Namespace) { }
+        public DateProperty(string name) : base(name, Consts.Xml.Namespace) { }
         public DateProperty(string name, string @namespace) : base(name, @namespace) { }
 
         public string FormatString { get; set; }

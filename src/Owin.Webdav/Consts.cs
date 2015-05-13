@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav
+namespace Soukoku.Owin.Webdav
 {
-    static class WebdavConsts
+    static class Consts
     {
         public static class Methods
         {
@@ -36,22 +36,33 @@ namespace Owin.Webdav
             
             public const string PropertyStatus = "status";
             public const string PropertyList = "prop";
-            public const string PropDisplayName = "displayname";
-            public const string PropGetContentLength = "getcontentlength";
-            public const string PropGetContentType = "getcontenttype";
-            public const string PropCreationDate = "creationdate";
-            public const string PropGetLastModified = "getlastmodified";
-            public const string PropResourceType = "resourcetype";
-
-            // locks
-            public const string PropSupportedLock = "supportedlock";
-            public const string LockEntry = "lockentry";
-            public const string LockScope = "lockscope";
-            public const string LockScopeExclusive = "exclusive";
-            public const string LockScopeShared = "shared";
-            public const string LockType = "locktype";
-            public const string LockTypeWrite = "write";
 
         }
+
+
+        public class LockNames
+        {
+            public const string Entry = "lockentry";
+            public const string Scope = "lockscope";
+            public const string ScopeExclusive = "exclusive";
+            public const string ScopeShared = "shared";
+            public const string Type = "locktype";
+            public const string TypeWrite = "write";
+        }
+
+
+        public class PropertyNames
+        {
+            public const string DisplayName = "displayname";
+            public const string GetContentLength = "getcontentlength";
+            public const string GetContentType = "getcontenttype";
+            public const string CreationDate = "creationdate";
+            public const string GetLastModified = "getlastmodified";
+            public const string ResourceType = "resourcetype";
+
+            // locks
+            public const string SupportedLock = "supportedlock";
+        }
+
     }
 }

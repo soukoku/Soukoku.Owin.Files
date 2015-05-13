@@ -1,4 +1,4 @@
-﻿using Owin.Webdav.Models;
+﻿using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +7,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Owin;
 
-namespace Owin.Webdav.Responses
+namespace Soukoku.Owin.Webdav.Responses
 {
     class MultiStatusResponse
     {
@@ -17,40 +18,35 @@ namespace Owin.Webdav.Responses
             XmlDocument xmlDoc = new XmlDocument();
 
 
-            XmlNode rootNode = xmlDoc.CreateElement(WebdavConsts.Xml.ResponseList, WebdavConsts.Xml.Namespace);
+            XmlNode rootNode = xmlDoc.CreateElement(Consts.Xml.ResponseList, Consts.Xml.Namespace);
             xmlDoc.AppendChild(rootNode);
 
             if (resources != null)
             {
                 foreach (var resource in resources)
                 {
-                    XmlNode response = xmlDoc.CreateElement(WebdavConsts.Xml.Response, WebdavConsts.Xml.Namespace);
+                    XmlNode response = xmlDoc.CreateElement(Consts.Xml.Response, Consts.Xml.Namespace);
                     rootNode.AppendChild(response);
 
-                    XmlNode respHref = xmlDoc.CreateElement(WebdavConsts.Xml.RespHref, WebdavConsts.Xml.Namespace);
+                    XmlNode respHref = xmlDoc.CreateElement(Consts.Xml.RespHref, Consts.Xml.Namespace);
                     respHref.InnerText = Uri.EscapeUriString(resource.Url); // required to get some clients working
                     respHref.InnerText = resource.Url;
                     response.AppendChild(respHref);
 
-                    XmlNode respProperty = xmlDoc.CreateElement(WebdavConsts.Xml.RespProperty, WebdavConsts.Xml.Namespace);
+                    XmlNode respProperty = xmlDoc.CreateElement(Consts.Xml.RespProperty, Consts.Xml.Namespace);
                     response.AppendChild(respProperty);
 
-                    XmlNode propStatus = xmlDoc.CreateElement(WebdavConsts.Xml.PropertyStatus, WebdavConsts.Xml.Namespace);
+                    XmlNode propStatus = xmlDoc.CreateElement(Consts.Xml.PropertyStatus, Consts.Xml.Namespace);
                     // todo: use real status code
                     propStatus.InnerText = HttpStatusCode.OK.GenerateStatusMessage();
                     respProperty.AppendChild(propStatus);
 
 
-                    XmlNode propList = xmlDoc.CreateElement(WebdavConsts.Xml.PropertyList, WebdavConsts.Xml.Namespace);
+                    XmlNode propList = xmlDoc.CreateElement(Consts.Xml.PropertyList, Consts.Xml.Namespace);
                     respProperty.AppendChild(propList);
 
                     #region dav-properties
 
-                    //XmlNode nameNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropDisplayName, WebdavConsts.Xml.Namespace);
-                    //nameNode.InnerText = Uri.EscapeUriString(Path.GetFileName(resource.Url.Trim('/'))); // must be actual url part name event if root of dav store
-                    //propList.AppendChild(nameNode);
-                    
-                    // properties
                     foreach (var prop in resource.Properties)
                     {
                         XmlNode propNode = prop.Serialize(xmlDoc);
@@ -60,14 +56,14 @@ namespace Owin.Webdav.Responses
                         }
                     }
                     
-                    XmlNode resTypeNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropResourceType, WebdavConsts.Xml.Namespace);
+                    XmlNode resTypeNode = xmlDoc.CreateElement(Consts.PropertyNames.ResourceType, Consts.Xml.Namespace);
                     if (resource.Type == Resource.ResourceType.Folder)
                     {
-                        resTypeNode.AppendChild(xmlDoc.CreateElement("collection", WebdavConsts.Xml.Namespace));
+                        resTypeNode.AppendChild(xmlDoc.CreateElement("collection", Consts.Xml.Namespace));
                     }
                     propList.AppendChild(resTypeNode);
 
-                    XmlNode lockNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropSupportedLock, WebdavConsts.Xml.Namespace);
+                    XmlNode lockNode = xmlDoc.CreateElement(Consts.PropertyNames.SupportedLock, Consts.Xml.Namespace);
                     propList.AppendChild(lockNode);
 
                     #endregion

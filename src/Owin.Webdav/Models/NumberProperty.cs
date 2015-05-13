@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     public class NumberProperty : Property<long>
     {
-        public NumberProperty(string name) : base(name, WebdavConsts.Xml.Namespace) { }
+        public NumberProperty(string name) : base(name, Consts.Xml.Namespace) { }
         public NumberProperty(string name, string @namespace) : base(name, @namespace) { }
 
         public override XmlNode Serialize(XmlDocument doc)

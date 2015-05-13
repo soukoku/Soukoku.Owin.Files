@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     public abstract class Resource : IResource
     {
@@ -18,21 +18,34 @@ namespace Owin.Webdav.Models
             OriginalContext = context;
             LogicalPath = logicalPath.Replace("\\", "/");
             _properties = new List<IProperty>();
-            _properties.Add(new NumberProperty(WebdavConsts.Xml.PropGetContentLength));
-            _properties.Add(new DateProperty(WebdavConsts.Xml.PropCreationDate)
+            _properties.Add(new NumberProperty(Consts.PropertyNames.GetContentLength));
+            _properties.Add(new DateProperty(Consts.PropertyNames.CreationDate)
             {
                 Formatter = (value) => XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc) // valid rfc 3339?
             });
-            _properties.Add(new DateProperty(WebdavConsts.Xml.PropGetLastModified)
+            _properties.Add(new DateProperty(Consts.PropertyNames.GetLastModified)
             {
                 FormatString = "r" // RFC1123 
             });
-            _properties.Add(new DerivedProperty<string>(WebdavConsts.Xml.PropGetContentType)
+            _properties.Add(new DerivedProperty<string>(Consts.PropertyNames.GetContentType)
             {
-                 DeriveRoutine = () =>
-                 {
-                     return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(Name)) : null;
-                 }
+                DeriveRoutine = () =>
+                {
+                    return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
+                }
+            });
+            _properties.Add(new DerivedProperty<string>(Consts.PropertyNames.DisplayName)
+            {
+                DeriveRoutine = () =>
+                {
+                    return Path.GetFileName(Url.Trim('/')); // must be actual url part name event if root of dav store
+                },
+                SerializeRoutine = (prop, doc) =>
+                {
+                    var node = doc.CreateElement(prop.Name, prop.Namespace);
+                    node.InnerText = Uri.EscapeUriString(prop.Value);
+                    return node;
+                }
             });
         }
 
@@ -45,7 +58,7 @@ namespace Owin.Webdav.Models
 
         public T FindProperty<T>(string name) where T : class, IProperty
         {
-            return FindProperty<T>(name, WebdavConsts.Xml.Namespace);
+            return FindProperty<T>(name, Consts.Xml.Namespace);
         }
         public T FindProperty<T>(string name, string nameSpace) where T : class, IProperty
         {
@@ -74,18 +87,11 @@ namespace Owin.Webdav.Models
         public IOwinContext OriginalContext { get; private set; }
         public string LogicalPath { get; set; }
 
-        string _name;
-        public string Name
-        {
-            get
-            {
-                return _name ?? (_name = Path.GetFileName(LogicalPath));
-            }
-        }
-        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(WebdavConsts.Xml.PropGetContentType); } }
-        public DateProperty CreateDate { get { return FindProperty<DateProperty>(WebdavConsts.Xml.PropCreationDate); } }
-        public DateProperty ModifyDate { get { return FindProperty<DateProperty>(WebdavConsts.Xml.PropGetLastModified); } }
-        public NumberProperty Length { get { return FindProperty<NumberProperty>(WebdavConsts.Xml.PropGetContentLength); } }
+        public DerivedProperty<string> DisplayName { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyNames.DisplayName); } }
+        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyNames.GetContentType); } }
+        public DateProperty CreateDate { get { return FindProperty<DateProperty>(Consts.PropertyNames.CreationDate); } }
+        public DateProperty ModifyDate { get { return FindProperty<DateProperty>(Consts.PropertyNames.GetLastModified); } }
+        public NumberProperty Length { get { return FindProperty<NumberProperty>(Consts.PropertyNames.GetContentLength); } }
 
         public abstract ResourceType Type { get; }
         public virtual string Url

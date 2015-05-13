@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Owin.Webdav.LocalFileStore")]
+[assembly: AssemblyTitle("Soukoku.Owin.Webdav.LocalFileStore")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Yin-Chun Wang")]
-[assembly: AssemblyProduct("Owin.Webdav.LocalFileStore")]
+[assembly: AssemblyProduct("Soukoku.Owin.Webdav.LocalFileStore")]
 [assembly: AssemblyCopyright("Copyright © Yin-Chun Wang 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

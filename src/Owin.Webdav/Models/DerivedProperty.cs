@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Owin.Webdav.Models
+namespace Soukoku.Owin.Webdav.Models
 {
     // property value is computed from other properties and is readonly
 
     public class DerivedProperty<T> : IProperty
     {
-        public DerivedProperty(string name) : this(name, WebdavConsts.Xml.Namespace) { }
+        public DerivedProperty(string name) : this(name, Consts.Xml.Namespace) { }
         public DerivedProperty(string name, string @namespace)
         {
             if (string.IsNullOrWhiteSpace(name)) { throw new ArgumentException("Name is required.", "name"); }
@@ -27,7 +27,7 @@ namespace Owin.Webdav.Models
         public bool IsReadOnly { get { return true; } }
 
         public Func<T> DeriveRoutine { get; set; }
-        public Func<XmlDocument, XmlNode> SerializeRoutine { get; set; }
+        public Func<DerivedProperty<T>, XmlDocument, XmlNode> SerializeRoutine { get; set; }
 
         public T Value
         {
@@ -50,7 +50,7 @@ namespace Owin.Webdav.Models
                 }
                 return node;
             }
-            return SerializeRoutine(doc);
+            return SerializeRoutine(this, doc);
         }
 
     }
