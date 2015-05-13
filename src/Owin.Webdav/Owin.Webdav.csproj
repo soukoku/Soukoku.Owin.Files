@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\DerivedProperty.cs" />
     <Compile Include="Models\NumberProperty.cs" />
     <Compile Include="Models\StringProperty.cs" />
     <Compile Include="Models\DateProperty.cs" />

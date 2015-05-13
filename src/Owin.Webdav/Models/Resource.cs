@@ -27,9 +27,12 @@ namespace Owin.Webdav.Models
             {
                 FormatString = "r" // RFC1123 
             });
-            _properties.Add(new StringProperty(WebdavConsts.Xml.PropGetContentType)
+            _properties.Add(new DerivedProperty<string>(WebdavConsts.Xml.PropGetContentType)
             {
-                Value = (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(Name)) : null
+                 DeriveRoutine = () =>
+                 {
+                     return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(Name)) : null;
+                 }
             });
         }
 
@@ -79,7 +82,7 @@ namespace Owin.Webdav.Models
                 return _name ?? (_name = Path.GetFileName(LogicalPath));
             }
         }
-        public StringProperty ContentType { get { return FindProperty<StringProperty>(WebdavConsts.Xml.PropGetContentType); } }
+        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(WebdavConsts.Xml.PropGetContentType); } }
         public DateProperty CreateDate { get { return FindProperty<DateProperty>(WebdavConsts.Xml.PropCreationDate); } }
         public DateProperty ModifyDate { get { return FindProperty<DateProperty>(WebdavConsts.Xml.PropGetLastModified); } }
         public NumberProperty Length { get { return FindProperty<NumberProperty>(WebdavConsts.Xml.PropGetContentLength); } }

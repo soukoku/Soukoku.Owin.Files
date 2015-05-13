@@ -46,9 +46,9 @@ namespace Owin.Webdav.Responses
 
                     #region dav-properties
 
-                    XmlNode nameNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropDisplayName, WebdavConsts.Xml.Namespace);
-                    nameNode.InnerText = Uri.EscapeUriString(Path.GetFileName(resource.Url.Trim('/'))); // must be actual url part name event if root of dav store
-                    propList.AppendChild(nameNode);
+                    //XmlNode nameNode = xmlDoc.CreateElement(WebdavConsts.Xml.PropDisplayName, WebdavConsts.Xml.Namespace);
+                    //nameNode.InnerText = Uri.EscapeUriString(Path.GetFileName(resource.Url.Trim('/'))); // must be actual url part name event if root of dav store
+                    //propList.AppendChild(nameNode);
                     
                     // properties
                     foreach (var prop in resource.Properties)
