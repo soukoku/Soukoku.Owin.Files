@@ -9,7 +9,7 @@ namespace Soukoku.Owin.Webdav.Models
 {
     public class NumberProperty : Property<long>
     {
-        public NumberProperty(string name) : base(name, Consts.Xml.Namespace) { }
+        public NumberProperty(string name) : base(name, Consts.XmlNamespace) { }
         public NumberProperty(string name, string @namespace) : base(name, @namespace) { }
 
         public override XmlElement Serialize(XmlDocument doc)

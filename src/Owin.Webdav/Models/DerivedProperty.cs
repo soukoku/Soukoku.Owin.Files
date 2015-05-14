@@ -11,7 +11,7 @@ namespace Soukoku.Owin.Webdav.Models
 
     public class DerivedProperty<T> : IProperty
     {
-        public DerivedProperty(string name) : this(name, Consts.Xml.Namespace) { }
+        public DerivedProperty(string name) : this(name, Consts.XmlNamespace) { }
         public DerivedProperty(string name, string @namespace)
         {
             if (string.IsNullOrWhiteSpace(name)) { throw new ArgumentException("Name is required.", "name"); }

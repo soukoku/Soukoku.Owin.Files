@@ -46,11 +46,11 @@ namespace Soukoku.Owin.Webdav
                 context.Response.Headers.Append("MS-Author-Via", "DAV");
                 switch (context.Request.Method.ToUpperInvariant())
                 {
-                    case Consts.Methods.Options:
+                    case Consts.Method.Options:
                         return HandleOptions(context);
-                    case Consts.Methods.PropFind:
+                    case Consts.Method.PropFind:
                         return HandlePropFindAsync(context, resource);
-                    case Consts.Methods.Get:
+                    case Consts.Method.Get:
                         return HandleGetAsync(context, resource);
                 }
             }
@@ -63,28 +63,28 @@ namespace Soukoku.Owin.Webdav
 
             context.Response.Headers.AppendCommaSeparatedValues("DAV", "1");//, "2");
             context.Response.Headers.AppendCommaSeparatedValues("Allow",
-                Consts.Methods.Options,
-                Consts.Methods.PropFind,
-                Consts.Methods.PropPatch,
-                Consts.Methods.MkCol,
-                Consts.Methods.Copy,
-                Consts.Methods.Move,
-                Consts.Methods.Delete,
-                Consts.Methods.Lock,
-                Consts.Methods.Unlock,
-                Consts.Methods.Get);
+                Consts.Method.Options,
+                Consts.Method.PropFind,
+                Consts.Method.PropPatch,
+                Consts.Method.MkCol,
+                Consts.Method.Copy,
+                Consts.Method.Move,
+                Consts.Method.Delete,
+                Consts.Method.Lock,
+                Consts.Method.Unlock,
+                Consts.Method.Get);
 
             context.Response.Headers.AppendCommaSeparatedValues("Public",
-                Consts.Methods.Options,
-                Consts.Methods.PropFind,
-                Consts.Methods.PropPatch,
-                Consts.Methods.MkCol,
-                Consts.Methods.Copy,
-                Consts.Methods.Move,
-                Consts.Methods.Delete,
-                Consts.Methods.Lock,
-                Consts.Methods.Unlock,
-                Consts.Methods.Get);
+                Consts.Method.Options,
+                Consts.Method.PropFind,
+                Consts.Method.PropPatch,
+                Consts.Method.MkCol,
+                Consts.Method.Copy,
+                Consts.Method.Move,
+                Consts.Method.Delete,
+                Consts.Method.Lock,
+                Consts.Method.Unlock,
+                Consts.Method.Get);
 
             context.Response.ContentLength = 0;
             return Task.FromResult(0);
@@ -124,7 +124,7 @@ namespace Soukoku.Owin.Webdav
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();
             context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
-            context.Response.StatusCode = 207;
+            context.Response.StatusCode = (int)Consts.StatusCode.MultiStatus;
             context.Response.ContentLength = content.Length;
             Console.WriteLine(Encoding.UTF8.GetString(content));
             return context.Response.WriteAsync(content);

@@ -18,23 +18,23 @@ namespace Soukoku.Owin.Webdav.Models
             OriginalContext = context;
             LogicalPath = logicalPath.Replace("\\", "/");
             _properties = new List<IProperty>();
-            _properties.Add(new NumberProperty(Consts.PropertyNames.GetContentLength));
-            _properties.Add(new DateProperty(Consts.PropertyNames.CreationDate)
+            _properties.Add(new NumberProperty(Consts.PropertyName.GetContentLength));
+            _properties.Add(new DateProperty(Consts.PropertyName.CreationDate)
             {
                 Formatter = (value) => XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc) // valid rfc 3339?
             });
-            _properties.Add(new DateProperty(Consts.PropertyNames.GetLastModified)
+            _properties.Add(new DateProperty(Consts.PropertyName.GetLastModified)
             {
                 FormatString = "r" // RFC1123 
             });
-            _properties.Add(new DerivedProperty<string>(Consts.PropertyNames.GetContentType)
+            _properties.Add(new DerivedProperty<string>(Consts.PropertyName.GetContentType)
             {
                 DeriveRoutine = () =>
                 {
                     return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
                 }
             });
-            _properties.Add(new DerivedProperty<string>(Consts.PropertyNames.DisplayName)
+            _properties.Add(new DerivedProperty<string>(Consts.PropertyName.DisplayName)
             {
                 DeriveRoutine = () =>
                 {
@@ -58,7 +58,7 @@ namespace Soukoku.Owin.Webdav.Models
 
         public T FindProperty<T>(string name) where T : class, IProperty
         {
-            return FindProperty<T>(name, Consts.Xml.Namespace);
+            return FindProperty<T>(name, Consts.XmlNamespace);
         }
         public T FindProperty<T>(string name, string nameSpace) where T : class, IProperty
         {
@@ -87,11 +87,11 @@ namespace Soukoku.Owin.Webdav.Models
         public IOwinContext OriginalContext { get; private set; }
         public string LogicalPath { get; set; }
 
-        public DerivedProperty<string> DisplayName { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyNames.DisplayName); } }
-        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyNames.GetContentType); } }
-        public DateProperty CreateDate { get { return FindProperty<DateProperty>(Consts.PropertyNames.CreationDate); } }
-        public DateProperty ModifyDate { get { return FindProperty<DateProperty>(Consts.PropertyNames.GetLastModified); } }
-        public NumberProperty Length { get { return FindProperty<NumberProperty>(Consts.PropertyNames.GetContentLength); } }
+        public DerivedProperty<string> DisplayName { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyName.DisplayName); } }
+        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyName.GetContentType); } }
+        public DateProperty CreateDate { get { return FindProperty<DateProperty>(Consts.PropertyName.CreationDate); } }
+        public DateProperty ModifyDate { get { return FindProperty<DateProperty>(Consts.PropertyName.GetLastModified); } }
+        public NumberProperty Length { get { return FindProperty<NumberProperty>(Consts.PropertyName.GetContentLength); } }
 
         public abstract ResourceType Type { get; }
         public virtual string Url
