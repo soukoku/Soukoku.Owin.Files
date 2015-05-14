@@ -18,23 +18,18 @@ namespace Soukoku.Owin.Webdav.Models
             OriginalContext = context;
             LogicalPath = logicalPath.Replace("\\", "/");
             _properties = new List<IProperty>();
-            _properties.Add(new NumberProperty(Consts.PropertyName.GetContentLength));
+
+            MakeBuiltInProperties();
+        }
+
+        private void MakeBuiltInProperties()
+        {
             _properties.Add(new DateProperty(Consts.PropertyName.CreationDate)
             {
                 Formatter = (value) => XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc) // valid rfc 3339?
             });
-            _properties.Add(new DateProperty(Consts.PropertyName.GetLastModified)
-            {
-                FormatString = "r" // RFC1123 
-            });
-            _properties.Add(new DerivedProperty<string>(Consts.PropertyName.GetContentType)
-            {
-                DeriveRoutine = () =>
-                {
-                    return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
-                }
-            });
-            _properties.Add(new DerivedProperty<string>(Consts.PropertyName.DisplayName)
+
+            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.DisplayName)
             {
                 DeriveRoutine = () =>
                 {
@@ -46,6 +41,28 @@ namespace Soukoku.Owin.Webdav.Models
                     node.InnerText = Uri.EscapeUriString(prop.Value);
                     return node;
                 }
+            });
+
+            _properties.Add(new StringProperty(Consts.PropertyName.GetContentLanguage));
+
+            _properties.Add(new NumberProperty(Consts.PropertyName.GetContentLength));
+
+            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.GetContentType)
+            {
+                DeriveRoutine = () =>
+                {
+                    return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
+                }
+            });
+
+            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.GetETag)
+            {
+                DeriveRoutine = () => OnGetETag()
+            });
+
+            _properties.Add(new DateProperty(Consts.PropertyName.GetLastModified)
+            {
+                FormatString = "r" // RFC1123 
             });
         }
 
@@ -87,8 +104,13 @@ namespace Soukoku.Owin.Webdav.Models
         public IOwinContext OriginalContext { get; private set; }
         public string LogicalPath { get; set; }
 
-        public DerivedProperty<string> DisplayName { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyName.DisplayName); } }
-        public DerivedProperty<string> ContentType { get { return FindProperty<DerivedProperty<string>>(Consts.PropertyName.GetContentType); } }
+
+        protected virtual string OnGetETag()
+        {
+            return null;
+        }
+        public ReadOnlyStringProperty DisplayName { get { return FindProperty<ReadOnlyStringProperty>(Consts.PropertyName.DisplayName); } }
+        public ReadOnlyStringProperty ContentType { get { return FindProperty<ReadOnlyStringProperty>(Consts.PropertyName.GetContentType); } }
         public DateProperty CreateDate { get { return FindProperty<DateProperty>(Consts.PropertyName.CreationDate); } }
         public DateProperty ModifyDate { get { return FindProperty<DateProperty>(Consts.PropertyName.GetLastModified); } }
         public NumberProperty Length { get { return FindProperty<NumberProperty>(Consts.PropertyName.GetContentLength); } }

@@ -13,7 +13,7 @@ namespace Sample.LocalStore
     {
         static void Main(string[] args)
         {
-            string baseAddress = "http://localhost:9000/approot";
+            string baseAddress = "http://localhost:9000";
 
             Console.WriteLine("Staring server on {0}", baseAddress);
             using (WebApp.Start<Startup>(baseAddress))

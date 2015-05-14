@@ -57,11 +57,13 @@ namespace Soukoku.Owin.Webdav
             return _next.Invoke(environment);
         }
 
+        #region http method handling
+
         private Task HandleOptions(IOwinContext context)
         {
             // lie and say we can deal with it all for now
 
-            context.Response.Headers.AppendCommaSeparatedValues("DAV", "1");//, "2");
+            context.Response.Headers.AppendCommaSeparatedValues(Consts.Header.Dav, "1", "2", "3");
             context.Response.Headers.AppendCommaSeparatedValues("Allow",
                 Consts.Method.Options,
                 Consts.Method.PropFind,
@@ -117,19 +119,6 @@ namespace Soukoku.Owin.Webdav
             await WriteMultiStatusReponse(context, list);
         }
 
-        private Task WriteMultiStatusReponse(IOwinContext context, List<Resource> list)
-        {
-            XmlDocument xmlDoc = MultiStatusResponse.Create(list);
-
-            ////context.Response.Headers.Append("Cache-Control", "private");
-            var content = xmlDoc.Serialize();
-            context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
-            context.Response.StatusCode = (int)Consts.StatusCode.MultiStatus;
-            context.Response.ContentLength = content.Length;
-            Console.WriteLine(Encoding.UTF8.GetString(content));
-            return context.Response.WriteAsync(content);
-        }
-
         private async Task HandleGetAsync(IOwinContext context, Resource resource)
         {
             if (resource.Type == Resource.ResourceType.Folder)
@@ -145,7 +134,22 @@ namespace Soukoku.Owin.Webdav
             }
         }
 
+        #endregion
+
         #region utilities
+
+        private Task WriteMultiStatusReponse(IOwinContext context, List<Resource> list)
+        {
+            XmlDocument xmlDoc = MultiStatusResponse.Create(list);
+
+            ////context.Response.Headers.Append("Cache-Control", "private");
+            var content = xmlDoc.Serialize();
+            context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
+            context.Response.StatusCode = (int)Consts.StatusCode.MultiStatus;
+            context.Response.ContentLength = content.Length;
+            Console.WriteLine(Encoding.UTF8.GetString(content));
+            return context.Response.WriteAsync(content);
+        }
 
         private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<Resource> addToList, Resource resource)
         {
@@ -208,7 +212,7 @@ namespace Soukoku.Owin.Webdav
 
         static async Task<string> GetDirectoryListingTemplateAsync()
         {
-            return await Assembly.GetExecutingAssembly().GetManifestResourceStream("Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
+            return await typeof(WebdavMiddleware).Assembly.GetManifestResourceStream("Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
         }
 
         #endregion

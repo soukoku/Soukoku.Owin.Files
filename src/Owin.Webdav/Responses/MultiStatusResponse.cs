@@ -59,7 +59,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     XmlNode resTypeNode = xmlDoc.CreateElement(Consts.PropertyName.ResourceType, Consts.XmlNamespace);
                     if (resource.Type == Resource.ResourceType.Folder)
                     {
-                        resTypeNode.AppendChild(xmlDoc.CreateElement("collection", Consts.XmlNamespace));
+                        resTypeNode.AppendChild(xmlDoc.CreateElement(Consts.ElementName.Collection, Consts.XmlNamespace));
                     }
                     propList.AppendChild(resTypeNode);
 

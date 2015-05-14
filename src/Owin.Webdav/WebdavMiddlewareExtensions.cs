@@ -29,7 +29,7 @@ namespace Owin
         internal static int GetDepth(this IOwinContext context)
         {
             int depth;
-            var values = context.Request.Headers.GetValues("Depth");
+            var values = context.Request.Headers.GetValues(Consts.Header.Depth);
             int.TryParse(values.FirstOrDefault(), out depth);
             if (depth != 0 && depth != 1)
             {
@@ -39,6 +39,11 @@ namespace Owin
         }
 
         internal static string GenerateStatusMessage(this HttpStatusCode code, string message = null)
+        {
+            return string.Format("HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
+        }
+
+        internal static string GenerateStatusMessage(this Consts.StatusCode code, string message = null)
         {
             return string.Format("HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActions.cs" />
+    <Compile Include="Models\DecimalProperty.cs" />
     <Compile Include="Models\DerivedProperty.cs" />
     <Compile Include="Models\NumberProperty.cs" />
     <Compile Include="Models\StringProperty.cs" />

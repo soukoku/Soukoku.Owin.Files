@@ -22,4 +22,12 @@ namespace Soukoku.Owin.Webdav.Models
             return node;
         }
     }
+
+    public class ReadOnlyStringProperty : DerivedProperty<string>
+    {
+        public ReadOnlyStringProperty(string name) : base(name, Consts.XmlNamespace) { }
+        public ReadOnlyStringProperty(string name, string @namespace) : base(name, @namespace) { }
+
+
+    }
 }
