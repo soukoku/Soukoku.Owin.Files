@@ -15,9 +15,9 @@ namespace Soukoku.Owin.Webdav.Models
         public string FormatString { get; set; }
         public Func<DateTime, string> Formatter { get; set; }
 
-        public override XmlNode Serialize(XmlDocument doc)
+        public override XmlElement Serialize(XmlDocument doc)
         {
-            XmlNode node = doc.CreateElement(Name, Namespace);
+            var node = doc.CreateElement(Name, Namespace);
             if (Formatter != null)
             {
                 node.InnerText = Formatter(Value);

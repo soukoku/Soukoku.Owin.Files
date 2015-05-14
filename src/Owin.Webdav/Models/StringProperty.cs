@@ -12,9 +12,9 @@ namespace Soukoku.Owin.Webdav.Models
         public StringProperty(string name) : base(name, Consts.Xml.Namespace) { }
         public StringProperty(string name, string @namespace) : base(name, @namespace) { }
 
-        public override XmlNode Serialize(XmlDocument doc)
+        public override XmlElement Serialize(XmlDocument doc)
         {
-            XmlNode node = doc.CreateElement(Name, Namespace);
+            var node = doc.CreateElement(Name, Namespace);
             if (!string.IsNullOrEmpty(Value))
             {
                 node.InnerText = Value;

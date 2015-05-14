@@ -27,7 +27,7 @@ namespace Soukoku.Owin.Webdav.Models
         public bool IsReadOnly { get { return true; } }
 
         public Func<T> DeriveRoutine { get; set; }
-        public Func<DerivedProperty<T>, XmlDocument, XmlNode> SerializeRoutine { get; set; }
+        public Func<DerivedProperty<T>, XmlDocument, XmlElement> SerializeRoutine { get; set; }
 
         public T Value
         {
@@ -38,11 +38,11 @@ namespace Soukoku.Owin.Webdav.Models
             }
         }
 
-        public virtual XmlNode Serialize(XmlDocument doc)
+        public virtual XmlElement Serialize(XmlDocument doc)
         {
             if (SerializeRoutine == null)
             {
-                XmlNode node = doc.CreateElement(Name, Namespace);
+                var node = doc.CreateElement(Name, Namespace);
                 var val = Value;
                 if (val != null)
                 {

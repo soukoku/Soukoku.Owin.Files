@@ -26,7 +26,7 @@ namespace Soukoku.Owin.Webdav.Models
 
         public virtual T Value { get; set; }
 
-        public abstract XmlNode Serialize(XmlDocument doc);
+        public abstract XmlElement Serialize(XmlDocument doc);
     }
 
     public interface IProperty
@@ -37,6 +37,6 @@ namespace Soukoku.Owin.Webdav.Models
 
         bool IsReadOnly { get; }
 
-        XmlNode Serialize(XmlDocument doc);
+        XmlElement Serialize(XmlDocument doc);
     }
 }
