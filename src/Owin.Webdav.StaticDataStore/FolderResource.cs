@@ -17,7 +17,7 @@ namespace Owin.Webdav
         }
 
         public string PhysicalPath { get { return _info.FullName; } }
-        public override ResourceType Type { get { return ResourceType.Folder; } }
+        public override ResourceType Type { get { return ResourceType.Collection; } }
 
     }
 }

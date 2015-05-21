@@ -33,7 +33,7 @@ namespace Owin.Webdav
 
         public IEnumerable<Resource> GetSubResources(IOwinContext context, Resource resource)
         {
-            if (resource.Type == Resource.ResourceType.Folder)
+            if (resource.Type == ResourceType.Collection)
             {
                 var fullPath = MapPath(resource.LogicalPath);
 

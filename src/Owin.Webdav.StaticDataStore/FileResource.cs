@@ -18,7 +18,7 @@ namespace Owin.Webdav
         }
 
         public string PhysicalPath { get { return _info.FullName; } }
-        public override ResourceType Type { get { return ResourceType.File; } }
+        public override ResourceType Type { get { return ResourceType.Resource; } }
 
         public override Stream GetReadStream()
         {

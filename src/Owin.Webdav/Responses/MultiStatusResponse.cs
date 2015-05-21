@@ -13,7 +13,7 @@ namespace Soukoku.Owin.Webdav.Responses
 {
     class MultiStatusResponse
     {
-        public static XmlDocument Create(IEnumerable<Resource> resources = null)
+        public static XmlDocument Create(IEnumerable<IResource> resources = null)
         {
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -29,8 +29,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(Consts.ElementName.Href, Consts.XmlNamespace);
-                    respHref.InnerText = Uri.EscapeUriString(resource.Url); // required to get some clients working
-                    respHref.InnerText = resource.Url;
+                    respHref.InnerText = Uri.EscapeUriString(resource.Url); // escape required to get some clients working
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(Consts.ElementName.PropStat, Consts.XmlNamespace);
@@ -57,7 +56,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     }
                     
                     XmlNode resTypeNode = xmlDoc.CreateElement(Consts.PropertyName.ResourceType, Consts.XmlNamespace);
-                    if (resource.Type == Resource.ResourceType.Folder)
+                    if (resource.Type == ResourceType.Collection)
                     {
                         resTypeNode.AppendChild(xmlDoc.CreateElement(Consts.ElementName.Collection, Consts.XmlNamespace));
                     }

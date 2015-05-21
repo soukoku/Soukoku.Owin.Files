@@ -38,12 +38,15 @@ namespace Soukoku.Owin.Webdav
             var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
             if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
 
-            Console.WriteLine("DAV received {0} for [{1}]", context.Request.Method, logicalPath);
+            _options.Log.Debug("DAV received {0} for [{1}]", context.Request.Method, logicalPath);
 
             Resource resource = _options.DataStore.GetResource(context, logicalPath);
             if (resource != null)
             {
-                context.Response.Headers.Append("MS-Author-Via", "DAV");
+                if (resource.Type == ResourceType.Collection && !context.Request.Uri.ToString().EndsWith("/"))
+                {
+                    context.Response.Headers.Append("Content-Location", context.Request.Uri.ToString() + "/");
+                }
                 switch (context.Request.Method.ToUpperInvariant())
                 {
                     case Consts.Method.Options:
@@ -63,6 +66,7 @@ namespace Soukoku.Owin.Webdav
         {
             // lie and say we can deal with it all for now
 
+            context.Response.Headers.Append("MS-Author-Via", "DAV");
             context.Response.Headers.AppendCommaSeparatedValues(Consts.Header.Dav, "1", "2", "3");
             context.Response.Headers.AppendCommaSeparatedValues("Allow",
                 Consts.Method.Options,
@@ -100,13 +104,13 @@ namespace Soukoku.Owin.Webdav
                 // TODO: return dav error
             }
 
-            Console.WriteLine("Depth=" + maxDepth);
+            _options.Log.Debug("Depth={0}", maxDepth);
 
             // TODO: support client request instead of always returning fixed property list
             var reqBody = await context.ReadRequestStringAsync();
             if (!string.IsNullOrEmpty(reqBody))
             {
-                Console.WriteLine(reqBody.PrettyXml());
+                _options.Log.Debug("Request:{0}{1}", Environment.NewLine, reqBody.PrettyXml());
 
                 XmlDocument reqXml = new XmlDocument();
                 reqXml.LoadXml(reqBody);
@@ -121,14 +125,14 @@ namespace Soukoku.Owin.Webdav
 
         private async Task HandleGetAsync(IOwinContext context, Resource resource)
         {
-            if (resource.Type == Resource.ResourceType.Folder)
+            if (resource.Type == ResourceType.Collection)
             {
                 if (_options.AllowDirectoryBrowsing)
                 {
                     await ShowDirectoryListingAsync(context, resource);
                 }
             }
-            else if (resource.Type == Resource.ResourceType.File)
+            else if (resource.Type == ResourceType.Resource)
             {
                 await SendFileAsync(context, resource);
             }
@@ -147,14 +151,15 @@ namespace Soukoku.Owin.Webdav
             context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
             context.Response.StatusCode = (int)Consts.StatusCode.MultiStatus;
             context.Response.ContentLength = content.Length;
-            Console.WriteLine(Encoding.UTF8.GetString(content));
+
+            _options.Log.Debug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
             return context.Response.WriteAsync(content);
         }
 
         private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<Resource> addToList, Resource resource)
         {
             addToList.Add(resource);
-            if (resource.Type == Resource.ResourceType.Folder && curDepth < maxDepth)
+            if (resource.Type == ResourceType.Collection && curDepth < maxDepth)
             {
                 foreach (var subR in _options.DataStore.GetSubResources(context, resource))
                 {
@@ -172,7 +177,7 @@ namespace Soukoku.Owin.Webdav
             foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.DisplayName.Value))
             {
                 rows.Append("<tr>");
-                if (item.Type == Resource.ResourceType.Folder)
+                if (item.Type == ResourceType.Collection)
                 {
                     rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }

@@ -41,7 +41,7 @@ namespace Owin.Webdav.Test
         {
             get
             {
-                return ResourceType.Folder;
+                return ResourceType.Collection;
             }
         }
     }
@@ -56,7 +56,7 @@ namespace Owin.Webdav.Test
         {
             get
             {
-                return ResourceType.File;
+                return ResourceType.Resource;
             }
         }
     }

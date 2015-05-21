@@ -18,10 +18,11 @@ namespace Sample.StaticDataStore
 
             //app.Map("/davroot", map =>
             //{
-                app.UseWebdav(new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
-                {
-                    AllowDirectoryBrowsing = true
-                });
+            app.UseWebdav(new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
+            {
+                AllowDirectoryBrowsing = true,
+                Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+            });
             //});
             // write dummy file
             File.WriteAllText(Path.Combine(path, "dummy.txt"), "This is a dummy file.");

@@ -15,7 +15,7 @@ namespace Soukoku.Owin.Webdav.Models
     {
         public Resource(IOwinContext context, string logicalPath)
         {
-            OriginalContext = context;
+            RequestContext = context;
             LogicalPath = logicalPath.Replace("\\", "/");
             _properties = new List<IProperty>();
 
@@ -34,7 +34,7 @@ namespace Soukoku.Owin.Webdav.Models
                 DeriveRoutine = () =>
                 {
                     // must be actual url part name even if logical root 
-                    var tentative = string.Format("{0}/{1}", OriginalContext.Request.PathBase.Value, LogicalPath);
+                    var tentative = string.Format("{0}/{1}", RequestContext.Request.PathBase.Value, LogicalPath);
 
                     return Path.GetFileName(tentative); 
                 },
@@ -58,7 +58,7 @@ namespace Soukoku.Owin.Webdav.Models
             {
                 DeriveRoutine = () =>
                 {
-                    return (Type == ResourceType.File) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
+                    return (Type == ResourceType.Resource) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
                 }
             });
 
@@ -108,7 +108,7 @@ namespace Soukoku.Owin.Webdav.Models
             }
         }
 
-        public IOwinContext OriginalContext { get; private set; }
+        public IOwinContext RequestContext { get; private set; }
         public string LogicalPath { get; set; }
 
 
@@ -127,8 +127,8 @@ namespace Soukoku.Owin.Webdav.Models
         {
             get
             {
-                var tentative = string.Format("{0}://{1}{2}/{3}", OriginalContext.Request.Uri.Scheme, OriginalContext.Request.Uri.Authority, OriginalContext.Request.PathBase.Value, LogicalPath);
-                if (Type == ResourceType.Folder && !tentative.EndsWith("/"))
+                var tentative = string.Format("{0}://{1}{2}/{3}", RequestContext.Request.Uri.Scheme, RequestContext.Request.Uri.Authority, RequestContext.Request.PathBase.Value, LogicalPath);
+                if (Type == ResourceType.Collection && !tentative.EndsWith("/"))
                 {
                     tentative += "/";
                 }
@@ -144,11 +144,6 @@ namespace Soukoku.Owin.Webdav.Models
         public virtual Stream GetReadStream()
         {
             throw new NotSupportedException();
-        }
-        public enum ResourceType
-        {
-            Folder,
-            File,
         }
     }
 }
