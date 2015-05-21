@@ -33,12 +33,19 @@ namespace Soukoku.Owin.Webdav.Models
             {
                 DeriveRoutine = () =>
                 {
-                    return Path.GetFileName(Url.Trim('/')); // must be actual url part name event if root of dav store
+                    // must be actual url part name even if logical root 
+                    var tentative = string.Format("{0}/{1}", OriginalContext.Request.PathBase.Value, LogicalPath);
+
+                    return Path.GetFileName(tentative); 
                 },
                 SerializeRoutine = (prop, doc) =>
                 {
                     var node = doc.CreateElement(prop.Name, prop.Namespace);
-                    node.InnerText = Uri.EscapeUriString(prop.Value);
+                    var val = Uri.EscapeUriString(prop.Value);
+                    if (!string.IsNullOrEmpty(val))
+                    {
+                        node.InnerText = val;
+                    }
                     return node;
                 }
             });
