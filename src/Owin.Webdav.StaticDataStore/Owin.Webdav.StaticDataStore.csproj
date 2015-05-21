@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Soukoku.Owin.Webdav</RootNamespace>
-    <AssemblyName>Soukoku.Owin.Webdav.LocalFileStore</AssemblyName>
+    <AssemblyName>Soukoku.Owin.Webdav.StaticDataStore</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,9 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalDataStore.cs" />
-    <Compile Include="LocalFileResource.cs" />
-    <Compile Include="LocalFolderResource.cs" />
+    <Compile Include="StaticDataStore.cs" />
+    <Compile Include="FileResource.cs" />
+    <Compile Include="FolderResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

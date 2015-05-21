@@ -5,11 +5,11 @@ using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
-    class LocalFolderResource : Resource
+    class FolderResource : Resource
     {
         private DirectoryInfo _info;
 
-        public LocalFolderResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
+        public FolderResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new DirectoryInfo(physicalPath);
             CreateDate.Value = _info.CreationTimeUtc;

@@ -8,17 +8,17 @@ using Owin.Webdav;
 using System.IO;
 using Soukoku.Owin.Webdav;
 
-namespace Sample.LocalStore
+namespace Sample.StaticDataStore
 {
     public class Startup
     {
         public void Configuration(IAppBuilder app)
         {
-            var path = Path.Combine(Environment.CurrentDirectory, "dav-store");
+            var path = Path.Combine(Environment.CurrentDirectory, @"..\..\dav-store");
 
             //app.Map("/davroot", map =>
             //{
-                app.UseWebdav(new WebdavConfig(new LocalDataStore(path))
+                app.UseWebdav(new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
                 {
                     AllowDirectoryBrowsing = true
                 });

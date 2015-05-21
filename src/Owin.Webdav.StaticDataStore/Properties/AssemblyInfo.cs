@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sample.LocalStore")]
+[assembly: AssemblyTitle("Soukoku.Owin.Webdav.StaticDataStore")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Sample.LocalStore")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Yin-Chun Wang")]
+[assembly: AssemblyProduct("Soukoku.Owin.Webdav.StaticDataStore")]
+[assembly: AssemblyCopyright("Copyright © Yin-Chun Wang 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("69e05b58-e6b1-47b5-ab8a-70785c1f2e6d")]
+[assembly: Guid("462b4eb9-48d5-40a2-8906-0a087172bfa6")]
 
 // Version information for an assembly consists of the following four values:
 //

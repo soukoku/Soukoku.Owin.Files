@@ -212,7 +212,7 @@ namespace Soukoku.Owin.Webdav
 
         static async Task<string> GetDirectoryListingTemplateAsync()
         {
-            return await typeof(WebdavMiddleware).Assembly.GetManifestResourceStream("Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
+            return await typeof(WebdavMiddleware).Assembly.GetManifestResourceStream("Soukoku.Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
         }
 
         #endregion

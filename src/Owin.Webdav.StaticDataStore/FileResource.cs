@@ -5,11 +5,11 @@ using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
-    class LocalFileResource : Resource
+    class FileResource : Resource
     {
         private FileInfo _info;
 
-        public LocalFileResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
+        public FileResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new FileInfo(physicalPath);
             Length.Value = _info.Length;

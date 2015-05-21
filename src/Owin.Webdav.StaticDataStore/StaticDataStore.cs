@@ -10,9 +10,9 @@ using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
-    public class LocalDataStore : IDataStore
+    public class StaticDataStore : IDataStore
     {
-        public LocalDataStore(string rootPath)
+        public StaticDataStore(string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath)) { throw new ArgumentException("Invalid root path.", "rootPath"); }
             rootPath = Path.GetFullPath(rootPath);
@@ -70,11 +70,11 @@ namespace Owin.Webdav
         {
             if (Directory.Exists(fullPath))
             {
-                return new LocalFolderResource(context, logicalPath, fullPath);
+                return new FolderResource(context, logicalPath, fullPath);
             }
             else if (File.Exists(fullPath))
             {
-                return new LocalFileResource(context, logicalPath, fullPath);
+                return new FileResource(context, logicalPath, fullPath);
             }
             // TODO: allow locknulls
             return null;

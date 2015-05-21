@@ -7,8 +7,8 @@
     <ProjectGuid>{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sample.LocalStore</RootNamespace>
-    <AssemblyName>Sample.LocalStore</AssemblyName>
+    <RootNamespace>Sample.StaticDataStore</RootNamespace>
+    <AssemblyName>Sample.StaticDataStore</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -72,9 +72,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Owin.Webdav.LocalDataStore\Owin.Webdav.LocalDataStore.csproj">
+    <ProjectReference Include="..\..\src\Owin.Webdav.StaticDataStore\Owin.Webdav.StaticDataStore.csproj">
       <Project>{462b4eb9-48d5-40a2-8906-0a087172bfa6}</Project>
-      <Name>Owin.Webdav.LocalDataStore</Name>
+      <Name>Owin.Webdav.StaticDataStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Owin.Webdav\Owin.Webdav.csproj">
       <Project>{c54d5283-7f4d-4599-8930-086a8416c176}</Project>
@@ -91,6 +91,10 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dav-store\dummy.txt" />
+    <None Include="dav-store\subfolder\New%2520Bitmap Image.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
