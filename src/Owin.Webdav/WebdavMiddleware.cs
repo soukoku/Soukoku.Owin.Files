@@ -35,17 +35,19 @@ namespace Soukoku.Owin.Webdav
         {
             var context = new OwinContext(environment);
 
+
             var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
             if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
 
-            _options.Log.Debug("DAV received {0} for [{1}]", context.Request.Method, logicalPath);
 
             Resource resource = _options.DataStore.GetResource(context, logicalPath);
             if (resource != null)
             {
-                if (resource.Type == ResourceType.Collection && !context.Request.Uri.ToString().EndsWith("/"))
+                var fullUrl = context.Request.Uri.ToString();
+                _options.Log.Debug("{0} for {1}@{2}", context.Request.Method, resource.Type, resource.LogicalPath);
+                if (resource.Type == ResourceType.Collection && !fullUrl.EndsWith("/"))
                 {
-                    context.Response.Headers.Append("Content-Location", context.Request.Uri.ToString() + "/");
+                    context.Response.Headers.Append("Content-Location", fullUrl + "/");
                 }
                 switch (context.Request.Method.ToUpperInvariant())
                 {
@@ -174,16 +176,16 @@ namespace Soukoku.Owin.Webdav
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderBy(r => r.Type).ThenBy(r => r.DisplayName.Value))
+            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderByDescending(r => r.Type).ThenBy(r => r.DisplayName.Value))
             {
                 rows.Append("<tr>");
                 if (item.Type == ResourceType.Collection)
                 {
-                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 rows.Append("</tr>");
             }
