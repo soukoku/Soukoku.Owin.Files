@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin;
-using Soukoku.Owin.Webdav.Handlers;
+﻿using Soukoku.Owin.Webdav.Handlers;
 using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
@@ -7,13 +6,7 @@ using System.Threading.Tasks;
 
 namespace Soukoku.Owin.Webdav
 {
-    /// <summary>
-    /// Named delegate for owin middleware invocation.
-    /// </summary>
-    /// <param name="environment">The environment.</param>
-    /// <returns></returns>
-    public delegate Task MiddlewareFunc(IDictionary<string, object> environment);
-
+    using AppFunc = Func<IDictionary<string, object>, Task>;
 
     /// <summary>
     /// Owin middle ware for webdav function.
@@ -21,7 +14,7 @@ namespace Soukoku.Owin.Webdav
     public class WebdavMiddleware
     {
         readonly WebdavConfig _options;
-        readonly MiddlewareFunc _next;
+        readonly AppFunc _next;
         readonly Dictionary<string, IMethodHandler> _handlers;
 
         /// <summary>
@@ -34,7 +27,8 @@ namespace Soukoku.Owin.Webdav
         /// or
         /// options
         /// </exception>
-        public WebdavMiddleware(MiddlewareFunc next, WebdavConfig options)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "This is how Owin works.")]
+        public WebdavMiddleware(AppFunc next, WebdavConfig options)
         {
             if (next == null) { throw new ArgumentNullException("next"); }
             if (options == null) { throw new ArgumentNullException("options"); }
@@ -42,9 +36,9 @@ namespace Soukoku.Owin.Webdav
             _next = next;
             _options = options;
             _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
-            _handlers.Add(Consts.Methods.Options, new OptionsHandler(_options));
-            _handlers.Add(Consts.Methods.Get, new GetHandler(_options));
-            _handlers.Add(Consts.Methods.PropFind, new PropFindHandler(_options));
+            _handlers.Add(DavConsts.Methods.Options, new OptionsHandler(_options));
+            _handlers.Add(DavConsts.Methods.Get, new GetHandler(_options));
+            _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler(_options));
         }
 
 
@@ -55,21 +49,19 @@ namespace Soukoku.Owin.Webdav
         /// <returns></returns>
         public async Task Invoke(IDictionary<string, object> environment)
         {
-            var context = new OwinContext(environment);
+            var context = new Context(environment);
 
             try
             {
-                var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
-                if (logicalPath.StartsWith("/", StringComparison.Ordinal)) { logicalPath = logicalPath.Substring(1); }
-                _options.Log.LogDebug("{0} for {1}", context.Request.Method, logicalPath);
+                _options.Log.LogDebug("{0} for {1}", context.Request.Method, context.Request.Path);
 
+                IResource resource = _options.DataStore.GetResource(context.Request.PathBase, context.Request.Path);
 
-                IResource resource = _options.DataStore.GetResource(context, logicalPath);
-
+                // TODO: handle query string part?
                 var fullUrl = context.Request.Uri.ToString();
-                if (resource != null && resource.Type == ResourceType.Collection && !fullUrl.EndsWith("/", StringComparison.Ordinal))
+                if (resource != null && resource.ResourceType == ResourceType.Collection && !fullUrl.EndsWith("/", StringComparison.Ordinal))
                 {
-                    context.Response.Headers.Append("Content-Location", fullUrl + "/");
+                    context.Response.Headers.Replace("Content-Location", fullUrl + "/");
                 }
 
                 var handled = false;

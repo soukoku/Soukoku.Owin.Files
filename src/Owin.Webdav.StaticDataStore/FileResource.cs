@@ -1,7 +1,7 @@
 ﻿using Soukoku.Owin.Webdav.Models;
 using System.IO;
 using System;
-using Microsoft.Owin;
+using Soukoku.Owin;
 
 namespace Owin.Webdav
 {
@@ -13,19 +13,19 @@ namespace Owin.Webdav
         private FileInfo _info;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileResource"/> class.
+        /// Initializes a new instance of the <see cref="FileResource" /> class.
         /// </summary>
-        /// <param name="context">The context.</param>
+        /// <param name="pathBase">The path base.</param>
         /// <param name="logicalPath">The logical path.</param>
         /// <param name="physicalPath">The physical path.</param>
-        public FileResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
+        public FileResource(string pathBase, string logicalPath, string physicalPath) : base(pathBase, logicalPath)
         {
             _info = new FileInfo(physicalPath);
         }
 
         string PhysicalPath { get { return _info.FullName; } }
 
-        public override ResourceType Type { get { return ResourceType.Resource; } }
+        public override ResourceType ResourceType { get { return ResourceType.Resource; } }
 
         public override long Length { get { return _info.Length; } }
 

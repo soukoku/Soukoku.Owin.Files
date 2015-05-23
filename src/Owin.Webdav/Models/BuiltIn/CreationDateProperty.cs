@@ -16,7 +16,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyNames.CreationDate;
+                return DavConsts.PropertyNames.CreationDate;
             }
         }
 

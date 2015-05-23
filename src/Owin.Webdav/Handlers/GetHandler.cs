@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin;
-using Soukoku.Owin.Webdav.Models;
+﻿using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Owin;
 
 namespace Soukoku.Owin.Webdav.Handlers
 {
@@ -21,18 +19,18 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public async Task<bool> HandleAsync(IOwinContext context, IResource resource)
+        public async Task<bool> HandleAsync(Context context, IResource resource)
         {
             if (resource != null)
             {
-                if (resource.Type == ResourceType.Collection)
+                if (resource.ResourceType == ResourceType.Collection)
                 {
                     if (_options.AllowDirectoryBrowsing)
                     {
                         await ShowDirectoryListingAsync(context, resource);
                     }
                 }
-                else if (resource.Type == ResourceType.Resource)
+                else if (resource.ResourceType == ResourceType.Resource)
                 {
                     await SendFileAsync(context, resource);
                 }
@@ -42,17 +40,17 @@ namespace Soukoku.Owin.Webdav.Handlers
         }
 
 
-        async Task ShowDirectoryListingAsync(IOwinContext context, IResource resource)
+        async Task ShowDirectoryListingAsync(Context context, IResource resource)
         {
-            context.Response.ContentType = MimeTypeMap.GetMimeType(".html");
+            context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".html");
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderByDescending(r => r.Type).ThenBy(r => r.DisplayName))
+            foreach (var item in _options.DataStore.GetSubResources(context.Request.PathBase, resource).OrderByDescending(r => r.ResourceType).ThenBy(r => r.DisplayName))
             {
                 rows.Append("<tr>");
                 var url = context.GenerateUrl(item);
-                if (item.Type == ResourceType.Collection)
+                if (item.ResourceType == ResourceType.Collection)
                 {
                     rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
                 }
@@ -62,30 +60,29 @@ namespace Soukoku.Owin.Webdav.Handlers
                 }
                 rows.Append("</tr>");
             }
-
-            var title = WebUtility.HtmlEncode(context.Request.Uri.AbsolutePath);
+            
+            var title = WebUtility.HtmlEncode(context.Request.PathBase + context.Request.Path);
             var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync(), title, rows);
-            await context.Response.WriteAsync(content);
+            await context.Response.WriteAsync(content, context.CancellationToken);
         }
 
-        static async Task SendFileAsync(IOwinContext context, IResource resource)
+        static async Task SendFileAsync(Context context, IResource resource)
         {
             if (resource.Length > 0)
             {
-                context.Response.ContentLength = resource.Length;
+                context.Response.Headers.ContentLength = resource.Length;
             }
-            context.Response.ContentType = resource.ContentType;
+            context.Response.Headers.ContentType = resource.ContentType;
             context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));
 
             using (Stream fs = resource.OpenReadStream())
             {
                 byte[] buff = new byte[4096];
                 int read = 0;
-                var ctk = context.GetCancellationToken();
 
                 while ((read = await fs.ReadAsync(buff, 0, buff.Length)) > 0)
                 {
-                    await context.Response.WriteAsync(buff, 0, read, ctk);
+                    await context.Response.Body.WriteAsync(buff, 0, read, context.CancellationToken);
                 }
             }
         }

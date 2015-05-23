@@ -15,15 +15,18 @@ namespace Sample.StaticDataStore
         public void Configuration(IAppBuilder app)
         {
             var path = Path.Combine(Environment.CurrentDirectory, @"..\..\dav-store");
-
-            //app.Map("/davroot", map =>
-            //{
-            app.UseWebdav(new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
+            var davCfg = new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
             {
                 AllowDirectoryBrowsing = true,
                 DavClass = DavClasses.Class1 | DavClasses.Class2,
                 Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
-            });
+            };
+
+
+
+            //app.Map("/davroot", map =>
+            //{
+            app.Use<WebdavMiddleware>(davCfg);
             //});
             // write dummy file
             File.WriteAllText(Path.Combine(path, "dummy.txt"), "This is a dummy file.");

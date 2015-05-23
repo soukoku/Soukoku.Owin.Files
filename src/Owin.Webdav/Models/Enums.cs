@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Soukoku.Owin.Webdav.Models;
 using System.Net;
 
-namespace Soukoku.Owin.Webdav
+namespace Soukoku.Owin.Webdav.Models
 {
     /// <summary>
     /// Indicates the allowed actions on a <see cref="IResource"/>.
@@ -60,20 +60,6 @@ namespace Soukoku.Owin.Webdav
     }
 
     /// <summary>
-    /// Indicates the function level of a webdav implementation.
-    /// </summary>
-    [Flags]
-    public enum DavClasses
-    {
-        /// <summary>
-        /// Basic webdav.
-        /// </summary>
-        Class1 = 1,
-        Class2 = 2,
-        Class3 = 4
-    }
-
-    /// <summary>
     /// Http status codes used by webdav.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Not for http codes it ain't.")]
@@ -95,5 +81,12 @@ namespace Soukoku.Owin.Webdav
         Conflict = HttpStatusCode.Conflict,
         NoContent = HttpStatusCode.NoContent,
         Forbidden = HttpStatusCode.Forbidden,
+    }
+
+    public enum LockType
+    {
+        None = 0,
+        Exclusive,
+        Shared
     }
 }

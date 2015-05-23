@@ -1,7 +1,7 @@
 ﻿using System;
 using Soukoku.Owin.Webdav.Models;
 using System.IO;
-using Microsoft.Owin;
+using Soukoku.Owin;
 
 namespace Owin.Webdav
 {
@@ -12,14 +12,14 @@ namespace Owin.Webdav
     {
         private DirectoryInfo _info;
 
-        public FolderResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
+        public FolderResource(string pathBase, string logicalPath, string physicalPath) : base(pathBase, logicalPath)
         {
             _info = new DirectoryInfo(physicalPath);
         }
 
-        string PhysicalPath { get { return _info.FullName; } }
+        public string PhysicalPath { get { return _info.FullName; } }
 
-        public override ResourceType Type { get { return ResourceType.Collection; } }
+        public override ResourceType ResourceType { get { return ResourceType.Collection; } }
 
         public override DateTime CreationDateUtc { get { return _info.CreationTimeUtc; } }
 

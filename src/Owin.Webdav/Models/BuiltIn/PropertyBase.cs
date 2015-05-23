@@ -19,7 +19,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
 
         public abstract string Name { get; }
 
-        public string NamespaceUri { get { return Consts.XmlNamespace; } }
+        public string NamespaceUri { get { return DavConsts.XmlNamespace; } }
 
         public abstract void SerializeValue(XPathNavigator element);
         public virtual void DeserializeValue(XPathNavigator element) { }

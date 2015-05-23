@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin;
-using Soukoku.Owin.Webdav.Models.BuiltIn;
+﻿using Soukoku.Owin.Webdav.Models.BuiltIn;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -19,13 +18,13 @@ namespace Soukoku.Owin.Webdav.Models
     public abstract class DavResource : IResource
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DavResource"/> class.
+        /// Initializes a new instance of the <see cref="DavResource" /> class.
         /// </summary>
-        /// <param name="requestContext">The original request context.</param>
+        /// <param name="pathBase">The path base.</param>
         /// <param name="logicalPath">The logical path.</param>
-        protected DavResource(IOwinContext requestContext, string logicalPath)
+        protected DavResource(string pathBase, string logicalPath)
         {
-            RequestContext = requestContext;
+            PathBase = pathBase ?? string.Empty;
             LogicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.Replace("\\", "/");
 
             MakeBuiltInProperties();
@@ -79,7 +78,13 @@ namespace Soukoku.Owin.Webdav.Models
         //    }
         //}
 
-        public IOwinContext RequestContext { get; private set; }
+        /// <summary>
+        /// Gets the path base before the dav root.
+        /// </summary>
+        /// <value>
+        /// The path base.
+        /// </value>
+        public string PathBase { get; private set; }
 
         /// <summary>
         /// Gets the logical path.
@@ -100,8 +105,8 @@ namespace Soukoku.Owin.Webdav.Models
         {
             get
             {
-                // must be actual url part name even if logical root 
-                var tentative = string.Format(CultureInfo.InvariantCulture, "{0}/{1}", RequestContext.Request.PathBase.Value, LogicalPath);
+                // must include path base part in case logical root is not absolute root
+                var tentative = PathBase + LogicalPath;
                 return Path.GetFileName(tentative);
             }
         }
@@ -111,7 +116,7 @@ namespace Soukoku.Owin.Webdav.Models
         /// <value>
         /// The mime type.
         /// </value>
-        public virtual string ContentType { get { return (Type == ResourceType.Resource) ? MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName)) : null; } }
+        public virtual string ContentType { get { return (ResourceType == ResourceType.Resource) ? MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName)) : null; } }
 
         /// <summary>
         /// Gets the content language.
@@ -147,7 +152,7 @@ namespace Soukoku.Owin.Webdav.Models
 
         public virtual string ETag { get { return null; } }
 
-        public abstract ResourceType Type { get; }
+        public abstract ResourceType ResourceType { get; }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

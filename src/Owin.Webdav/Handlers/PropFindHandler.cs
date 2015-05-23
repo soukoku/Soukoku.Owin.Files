@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin;
-using Soukoku.Owin.Webdav.Models;
+﻿using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Owin;
 using System.Xml;
 using Soukoku.Owin.Webdav.Responses;
 
@@ -23,7 +21,7 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public async Task<bool> HandleAsync(IOwinContext context, IResource resource)
+        public async Task<bool> HandleAsync(Context context, IResource resource)
         {
             if (resource != null)
             {
@@ -56,26 +54,26 @@ namespace Soukoku.Owin.Webdav.Handlers
         }
 
 
-        private Task WriteMultiStatusReponse(IOwinContext context, List<IResource> list)
+        private Task WriteMultiStatusReponse(Context context, List<IResource> list)
         {
             XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list);
 
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();
-            context.Response.ContentType = MimeTypeMap.GetMimeType(".xml");
             context.Response.StatusCode = (int)StatusCode.MultiStatus;
-            context.Response.ContentLength = content.Length;
+            context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".xml");
+            context.Response.Headers.ContentLength = content.Length;
 
             _options.Log.LogDebug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
-            return context.Response.WriteAsync(content);
+            return context.Response.Body.WriteAsync(content, 0, content.Length, context.CancellationToken);
         }
 
-        private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<IResource> addToList, IResource resource)
+        private void WalkResourceTree(Context context, int maxDepth, int curDepth, List<IResource> addToList, IResource resource)
         {
             addToList.Add(resource);
-            if (resource.Type == ResourceType.Collection && curDepth < maxDepth)
+            if (resource.ResourceType == ResourceType.Collection && curDepth < maxDepth)
             {
-                foreach (var subR in _options.DataStore.GetSubResources(context, resource))
+                foreach (var subR in _options.DataStore.GetSubResources(context.Request.PathBase, resource))
                 {
                     WalkResourceTree(context, maxDepth, curDepth + 1, addToList, subR);
                 }

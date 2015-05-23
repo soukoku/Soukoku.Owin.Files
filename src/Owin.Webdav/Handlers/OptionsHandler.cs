@@ -1,5 +1,4 @@
-﻿using Microsoft.Owin;
-using Soukoku.Owin.Webdav.Models;
+﻿using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Owin;
 
 namespace Soukoku.Owin.Webdav.Handlers
 {
@@ -21,39 +19,39 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public Task<bool> HandleAsync(IOwinContext context, IResource resource)
+        public Task<bool> HandleAsync(Context context, IResource resource)
         {
             if (resource != null)
             {
                 // lie and say we can deal with it all for now
 
-                context.Response.Headers.Append("MS-Author-Via", "DAV");
-                context.Response.Headers.Append(Consts.Headers.Dav, _options.DavClass.ToString().Replace("Class", ""));
-                context.Response.Headers.AppendCommaSeparatedValues("Allow",
-                    Consts.Methods.Options,
-                    Consts.Methods.PropFind,
-                    Consts.Methods.PropPatch,
-                    Consts.Methods.MkCol,
-                    Consts.Methods.Copy,
-                    Consts.Methods.Move,
-                    Consts.Methods.Delete,
-                    Consts.Methods.Lock,
-                    Consts.Methods.Unlock,
-                    Consts.Methods.Get);
+                context.Response.Headers.Replace("MS-Author-Via", "DAV");
+                context.Response.Headers.Replace(DavConsts.Headers.Dav, _options.DavClass.ToString().Replace("Class", ""));
+                context.Response.Headers.Replace("Allow",
+                    DavConsts.Methods.Options,
+                    DavConsts.Methods.PropFind,
+                    DavConsts.Methods.PropPatch,
+                    DavConsts.Methods.MkCol,
+                    DavConsts.Methods.Copy,
+                    DavConsts.Methods.Move,
+                    DavConsts.Methods.Delete,
+                    DavConsts.Methods.Lock,
+                    DavConsts.Methods.Unlock,
+                    DavConsts.Methods.Get);
 
-                context.Response.Headers.AppendCommaSeparatedValues("Public",
-                    Consts.Methods.Options,
-                    Consts.Methods.PropFind,
-                    Consts.Methods.PropPatch,
-                    Consts.Methods.MkCol,
-                    Consts.Methods.Copy,
-                    Consts.Methods.Move,
-                    Consts.Methods.Delete,
-                    Consts.Methods.Lock,
-                    Consts.Methods.Unlock,
-                    Consts.Methods.Get);
+                context.Response.Headers.Replace("Public",
+                    DavConsts.Methods.Options,
+                    DavConsts.Methods.PropFind,
+                    DavConsts.Methods.PropPatch,
+                    DavConsts.Methods.MkCol,
+                    DavConsts.Methods.Copy,
+                    DavConsts.Methods.Move,
+                    DavConsts.Methods.Delete,
+                    DavConsts.Methods.Lock,
+                    DavConsts.Methods.Unlock,
+                    DavConsts.Methods.Get);
 
-                context.Response.ContentLength = 0;
+                context.Response.Headers.ContentLength = 0;
                 return Task.FromResult(true);
             }
             return Task.FromResult(false);

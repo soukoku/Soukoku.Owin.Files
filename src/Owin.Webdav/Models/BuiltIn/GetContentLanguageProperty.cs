@@ -15,7 +15,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyNames.GetContentLanguage;
+                return DavConsts.PropertyNames.GetContentLanguage;
             }
         }
 

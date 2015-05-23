@@ -73,4 +73,19 @@ namespace Soukoku.Owin.Webdav
         }
 
     }
+
+
+    /// <summary>
+    /// Indicates the function level of a webdav implementation.
+    /// </summary>
+    [Flags]
+    public enum DavClasses
+    {
+        /// <summary>
+        /// Basic webdav.
+        /// </summary>
+        Class1 = 1,
+        Class2 = 2,
+        Class3 = 4
+    }
 }

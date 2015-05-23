@@ -13,7 +13,15 @@ namespace Soukoku.Owin.Webdav.Models
     public interface IResource
     {
         /// <summary>
-        /// Gets the logical path.
+        /// Gets the path base before the dav root.
+        /// </summary>
+        /// <value>
+        /// The path base.
+        /// </value>
+        string PathBase { get; }
+
+        /// <summary>
+        /// Gets the logical path from dav root.
         /// </summary>
         /// <value>
         /// The logical path.
@@ -83,7 +91,7 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         DateTime ModifiedDateUtc { get; }
 
-        ResourceType Type { get; }
+        ResourceType ResourceType { get; }
         string ETag { get; }
 
         #endregion

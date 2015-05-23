@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Soukoku.Owin.Webdav.Models;
 using System.Reflection;
-using Microsoft.Owin;
+using Soukoku.Owin;
 
 namespace Owin.Webdav
 {
@@ -42,24 +42,24 @@ namespace Owin.Webdav
         /// <summary>
         /// Gets the resource.
         /// </summary>
-        /// <param name="context">The context.</param>
+        /// <param name="pathBase">The path base.</param>
         /// <param name="logicalPath">The logical path.</param>
         /// <returns></returns>
-        public IResource GetResource(IOwinContext context, string logicalPath)
+        public IResource GetResource(string pathBase, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
-            return OnCreateResource(context, logicalPath, fullPath);
+            return OnCreateResource(pathBase, logicalPath, fullPath);
         }
 
         /// <summary>
         /// Gets the resources under a collection resource.
         /// </summary>
-        /// <param name="context">The context.</param>
+        /// <param name="pathBase">The path base.</param>
         /// <param name="collectionResource">The collection resource.</param>
         /// <returns></returns>
-        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource collectionResource)
+        public IEnumerable<IResource> GetSubResources(string pathBase, IResource collectionResource)
         {
-            if (collectionResource.Type == ResourceType.Collection)
+            if (collectionResource.ResourceType == ResourceType.Collection)
             {
                 var fullPath = MapPath(collectionResource.LogicalPath);
 
@@ -67,13 +67,25 @@ namespace Owin.Webdav
                 {
                     foreach (var itemPath in Directory.GetFileSystemEntries(fullPath))
                     {
-                        yield return OnCreateResource(context, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(itemPath)), itemPath);
+                        yield return OnCreateResource(pathBase, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(itemPath)), itemPath);
                     }
                 }
             }
         }
 
         #region utilities
+
+
+        /// <summary>
+        /// Maps the logical path into the full physical path.
+        /// </summary>
+        /// <param name="logicalPath">The logical path.</param>
+        /// <returns></returns>
+        /// <exception cref="System.UnauthorizedAccessException">Accessing paths outside of root is not allowed.</exception>
+        protected string MapPath(string logicalPath)
+        {
+            return MapPath(logicalPath, true);
+        }
 
         /// <summary>
         /// Maps the logical path into the full physical path.
@@ -82,9 +94,13 @@ namespace Owin.Webdav
         /// <param name="throwIfOutsideRoot">if set to <c>true</c> then throw an exception if outside root.</param>
         /// <returns></returns>
         /// <exception cref="System.UnauthorizedAccessException">Accessing paths outside of root is not allowed.</exception>
-        protected string MapPath(string logicalPath, bool throwIfOutsideRoot = true)
+        protected string MapPath(string logicalPath, bool throwIfOutsideRoot)
         {
-            if (logicalPath.StartsWith("/", StringComparison.Ordinal))
+            if (logicalPath == null)
+            {
+                logicalPath = "";
+            }
+            else if (logicalPath.StartsWith("/", StringComparison.Ordinal))
             {
                 logicalPath = logicalPath.Substring(1);
             }
@@ -99,15 +115,15 @@ namespace Owin.Webdav
             return fullPath;
         }
 
-        protected virtual IResource OnCreateResource(IOwinContext context, string logicalPath, string fullPath)
+        protected virtual IResource OnCreateResource(string pathBase, string logicalPath, string fullPath)
         {
             if (Directory.Exists(fullPath))
             {
-                return new FolderResource(context, logicalPath, fullPath);
+                return new FolderResource(pathBase, logicalPath, fullPath);
             }
             else if (File.Exists(fullPath))
             {
-                return new FileResource(context, logicalPath, fullPath);
+                return new FileResource(pathBase, logicalPath, fullPath);
             }
             // TODO: allow temp lock resources?
             return null;

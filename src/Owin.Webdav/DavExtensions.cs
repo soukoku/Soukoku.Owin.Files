@@ -1,4 +1,4 @@
-﻿using Microsoft.Owin;
+﻿using Soukoku.Owin;
 using Soukoku.Owin.Webdav;
 using Soukoku.Owin.Webdav.Models;
 using System;
@@ -13,36 +13,29 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Owin", Justification = "Easier to use by developers in this namespace.")]
-
-namespace Owin
+namespace Soukoku.Owin.Webdav
 {
     /// <summary>
     /// Contains extension methods for webdav component.
     /// </summary>
-    public static class WebdavMiddlewareExtensions
+    static class WebdavMiddlewareExtensions
     {
-        /// <summary>
-        /// Uses the webdav middleware.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        /// <param name="options">The options.</param>
-        /// <returns></returns>
-        public static IAppBuilder UseWebdav(this IAppBuilder app, WebdavConfig options)
-        {
-            return app.Use<WebdavMiddleware>(options);
-        }
+        ///// <summary>
+        ///// Uses the webdav middleware.
+        ///// </summary>
+        ///// <param name="app">The application.</param>
+        ///// <param name="options">The options.</param>
+        ///// <returns></returns>
+        //public static IAppBuilder UseWebdav(this IAppBuilder app, WebdavConfig options)
+        //{
+        //    return app.Use<WebdavMiddleware>(options);
+        //}
 
-        internal static CancellationToken GetCancellationToken(this IOwinContext context)
-        {
-            return (CancellationToken)context.Environment["owin.CallCancelled"];
-        }
-
-        internal static int GetDepth(this IOwinContext context)
+        internal static int GetDepth(this Context context)
         {
             int depth;
-            var values = context.Request.Headers.GetValues(Consts.Headers.Depth);
-            if (int.TryParse(values.FirstOrDefault(), out depth))
+            var values = context.Request.Headers[DavConsts.Headers.Depth];
+            if (int.TryParse(values, out depth))
             {
                 if (depth != 0 && depth != 1)
                 {
@@ -52,10 +45,10 @@ namespace Owin
             return depth;
         }
 
-        internal static string GenerateUrl(this IOwinContext context, IResource resource)
+        internal static string GenerateUrl(this Context context, IResource resource)
         {
-            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}/{3}", context.Request.Uri.Scheme, context.Request.Uri.Authority, context.Request.PathBase.Value, resource.LogicalPath).TrimEnd('/');
-            if (resource.Type == ResourceType.Collection)
+            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}{3}", context.Request.Scheme, context.Request.Host, context.Request.PathBase, resource.LogicalPath);//.TrimEnd('/');
+            if (resource.ResourceType == ResourceType.Collection)
             {
                 tentative += "/";
             }
@@ -67,7 +60,7 @@ namespace Owin
             return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }
 
-        internal static async Task<string> ReadRequestStringAsync(this IOwinContext context)
+        internal static async Task<string> ReadRequestStringAsync(this Context context)
         {
             string body = null;
             if (context.Request.Body != null)

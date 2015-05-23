@@ -16,17 +16,17 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyNames.ResourceType;
+                return DavConsts.PropertyNames.ResourceType;
             }
         }
 
         public override void SerializeValue(XPathNavigator element)
         {
             if (element == null) { throw new ArgumentNullException("element"); }
-            if (Resource.Type == ResourceType.Collection)
+            if (Resource.ResourceType == ResourceType.Collection)
             {
-                var pfx = element.LookupPrefix(Consts.XmlNamespace);
-                element.AppendChildElement(pfx, Consts.ElementNames.Collection, Consts.XmlNamespace, null);
+                var pfx = element.LookupPrefix(DavConsts.XmlNamespace);
+                element.AppendChildElement(pfx, DavConsts.ElementNames.Collection, DavConsts.XmlNamespace, null);
             }
         }
     }

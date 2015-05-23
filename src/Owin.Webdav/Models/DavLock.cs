@@ -8,5 +8,8 @@ namespace Soukoku.Owin.Webdav.Models
 {
     public class DavLock
     {
+        public string Token { get; set; }
+
+        public LockType LockType { get; set; }
     }
 }

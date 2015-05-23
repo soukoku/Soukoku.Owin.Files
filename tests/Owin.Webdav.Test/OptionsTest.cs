@@ -11,19 +11,19 @@ namespace Owin.Webdav.Test
     public class OptionsTest
     {
         [TestMethod]
-        public async Task TestMethod1()
+        public void TestMethod1()
         {
-            using (var server = TestServer.Create(app =>
-            {
-                app.UseWebdav(new WebdavConfig(new FakeDataStore()) { });
-            }))
-            {
-                HttpResponseMessage response = await server.CreateRequest("/")
-                                               .AddHeader("header1", "headervalue1")
-                                               .GetAsync();
+            //using (var server = TestServer.Create(app =>
+            //{
+            //    app.UseWebdav(new WebdavConfig(new FakeDataStore()) { });
+            //}))
+            //{
+            //    HttpResponseMessage response = await server.CreateRequest("/")
+            //                                   .AddHeader("header1", "headervalue1")
+            //                                   .GetAsync();
                 // TODO: Validate response
                 Assert.Fail("Not implemented.");
-            }
+            //}
         }
     }
 }

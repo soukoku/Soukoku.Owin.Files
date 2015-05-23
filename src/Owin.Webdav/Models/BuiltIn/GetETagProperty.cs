@@ -16,7 +16,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyNames.GetETag;
+                return DavConsts.PropertyNames.GetETag;
             }
         }
 

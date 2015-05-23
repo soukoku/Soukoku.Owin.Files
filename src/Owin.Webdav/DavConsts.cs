@@ -11,7 +11,7 @@ namespace Soukoku.Owin.Webdav
     /// <summary>
     /// Contains constant values used by webdav.
     /// </summary>
-    static class Consts
+    static class DavConsts
     {
         /// <summary>
         /// The namespace for all built-in webdav xml names.

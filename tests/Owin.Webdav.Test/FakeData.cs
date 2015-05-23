@@ -1,10 +1,10 @@
-﻿using Soukoku.Owin.Webdav.Models;
+﻿using Soukoku.Owin;
+using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Owin;
 
 namespace Owin.Webdav.Test
 {
@@ -20,12 +20,12 @@ namespace Owin.Webdav.Test
         }
 
 
-        public IResource GetResource(IOwinContext context, string logicalPath)
+        public IResource GetResource(string pathBase, string logicalPath)
         {
             return _getSingleDelegate();
         }
 
-        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource resource)
+        public IEnumerable<IResource> GetSubResources(string pathBase, IResource resource)
         {
             return _getSubDelegate();
         }
@@ -33,11 +33,11 @@ namespace Owin.Webdav.Test
 
     class FakeFolderResource : DavResource
     {
-        public FakeFolderResource(IOwinContext context, string logicalPath) : base(context, logicalPath)
+        public FakeFolderResource(string pathBase, string logicalPath) : base(pathBase, logicalPath)
         {
 
         }
-        public override ResourceType Type
+        public override ResourceType ResourceType
         {
             get
             {
@@ -48,11 +48,11 @@ namespace Owin.Webdav.Test
 
     class FakeFileResource : DavResource
     {
-        public FakeFileResource(IOwinContext context, string logicalPath) : base(context, logicalPath)
+        public FakeFileResource(string pathBase, string logicalPath) : base(pathBase, logicalPath)
         {
 
         }
-        public override ResourceType Type
+        public override ResourceType ResourceType
         {
             get
             {

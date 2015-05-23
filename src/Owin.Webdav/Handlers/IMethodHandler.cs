@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Owin;
 using Soukoku.Owin.Webdav.Models;
 
 namespace Soukoku.Owin.Webdav.Handlers
@@ -15,6 +14,6 @@ namespace Soukoku.Owin.Webdav.Handlers
         /// <param name="context">The context.</param>
         /// <param name="resource">The resource.</param>
         /// <returns>Returns <code>true</code> if handled by the method, <code>false</code> if not.</returns>
-        Task<bool> HandleAsync(IOwinContext context, IResource resource);
+        Task<bool> HandleAsync(Context context, IResource resource);
     }
 }
