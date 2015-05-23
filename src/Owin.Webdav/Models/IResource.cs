@@ -20,7 +20,7 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         string LogicalPath { get; }
 
-        IEnumerable<IDavProperty> Properties { get; }
+        IEnumerable<IProperty> Properties { get; }
 
         //T FindProperty<T>(string name, string namespaceUri) where T : class, IDavProperty;
 

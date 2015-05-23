@@ -16,7 +16,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyName.ResourceType;
+                return Consts.PropertyNames.ResourceType;
             }
         }
 
@@ -26,7 +26,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             if (Resource.Type == ResourceType.Collection)
             {
                 var pfx = element.LookupPrefix(Consts.XmlNamespace);
-                element.AppendChildElement(pfx, Consts.ElementName.Collection, Consts.XmlNamespace, null);
+                element.AppendChildElement(pfx, Consts.ElementNames.Collection, Consts.XmlNamespace, null);
             }
         }
     }

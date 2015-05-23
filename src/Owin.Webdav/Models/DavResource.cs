@@ -16,14 +16,14 @@ namespace Soukoku.Owin.Webdav.Models
     /// <summary>
     /// A base implementation of <see cref="IResource"/>.
     /// </summary>
-    public abstract class Resource : IResource
+    public abstract class DavResource : IResource
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Resource"/> class.
+        /// Initializes a new instance of the <see cref="DavResource"/> class.
         /// </summary>
         /// <param name="requestContext">The original request context.</param>
         /// <param name="logicalPath">The logical path.</param>
-        protected Resource(IOwinContext requestContext, string logicalPath)
+        protected DavResource(IOwinContext requestContext, string logicalPath)
         {
             RequestContext = requestContext;
             LogicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.Replace("\\", "/");
@@ -33,7 +33,7 @@ namespace Soukoku.Owin.Webdav.Models
 
         private void MakeBuiltInProperties()
         {
-            _properties = new List<IDavProperty>();
+            _properties = new List<IProperty>();
             _properties.Add(new CreationDateProperty(this));
             _properties.Add(new DisplayNameProperty(this));
             _properties.Add(new GetContentLanguageProperty(this));
@@ -44,8 +44,8 @@ namespace Soukoku.Owin.Webdav.Models
             _properties.Add(new ResourceTypeProperty(this));
         }
 
-        private List<IDavProperty> _properties;
-        public IEnumerable<IDavProperty> Properties
+        private List<IProperty> _properties;
+        public IEnumerable<IProperty> Properties
         {
             get { return _properties; }
         }

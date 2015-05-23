@@ -21,7 +21,7 @@ namespace Soukoku.Owin.Webdav
         /// <summary>
         /// Contains the http methods used by webdav.
         /// </summary>
-        public static class Method
+        public static class Methods
         {
             // spec section 9
 
@@ -44,7 +44,7 @@ namespace Soukoku.Owin.Webdav
         /// <summary>
         /// Contains the http header names used by webdav.
         /// </summary>
-        public static class Header
+        public static class Headers
         {
             // spec section 10
             
@@ -61,7 +61,7 @@ namespace Soukoku.Owin.Webdav
         /// Contains the xml element names used by webdav
         /// </summary>
         /// public class
-        public static class ElementName
+        public static class ElementNames
         {
             // spec section 14
 
@@ -101,7 +101,7 @@ namespace Soukoku.Owin.Webdav
         /// <summary>
         /// Contains property names defined by webdav.
         /// </summary>
-        public static class PropertyName
+        public static class PropertyNames
         {
             // spec section 15
 

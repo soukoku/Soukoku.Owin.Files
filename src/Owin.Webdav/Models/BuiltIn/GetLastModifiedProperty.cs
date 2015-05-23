@@ -15,7 +15,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyName.GetLastModified;
+                return Consts.PropertyNames.GetLastModified;
             }
         }
 

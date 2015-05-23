@@ -5,7 +5,10 @@ using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
-    class FolderResource : Resource
+    /// <summary>
+    /// Represenets a static directory on a file system.
+    /// </summary>
+    public class FolderResource : DavResource
     {
         private DirectoryInfo _info;
 
@@ -14,9 +17,12 @@ namespace Owin.Webdav
             _info = new DirectoryInfo(physicalPath);
         }
 
-        //string PhysicalPath { get { return _info.FullName; } }
+        string PhysicalPath { get { return _info.FullName; } }
+
         public override ResourceType Type { get { return ResourceType.Collection; } }
+
         public override DateTime CreationDateUtc { get { return _info.CreationTimeUtc; } }
+
         public override DateTime ModifiedDateUtc { get { return _info.LastWriteTimeUtc; } }
 
     }

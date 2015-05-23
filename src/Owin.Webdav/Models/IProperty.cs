@@ -11,7 +11,7 @@ namespace Soukoku.Owin.Webdav.Models
     /// <summary>
     /// Represents a property of a webdav resource.
     /// </summary>
-    public interface IDavProperty
+    public interface IProperty
     {
         /// <summary>
         /// Gets the namespace URI.
@@ -30,6 +30,16 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         string Name { get; }
 
+        /// <summary>
+        /// Serializes the value into the xml element.
+        /// </summary>
+        /// <param name="element">The element.</param>
         void SerializeValue(XPathNavigator element);
+
+        /// <summary>
+        /// Deserializes the value from the xml element.
+        /// </summary>
+        /// <param name="element">The element.</param>
+        void DeserializeValue(XPathNavigator element);
     }
 }

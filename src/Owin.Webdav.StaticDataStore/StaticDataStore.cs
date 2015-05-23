@@ -48,7 +48,7 @@ namespace Owin.Webdav
         public IResource GetResource(IOwinContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
-            return MakeIntoResource(context, logicalPath, fullPath);
+            return OnCreateResource(context, logicalPath, fullPath);
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace Owin.Webdav
 
                 if (Directory.Exists(fullPath))
                 {
-                    foreach (var item in Directory.GetFileSystemEntries(fullPath))
+                    foreach (var itemPath in Directory.GetFileSystemEntries(fullPath))
                     {
-                        yield return MakeIntoResource(context, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(item)), item);
+                        yield return OnCreateResource(context, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(itemPath)), itemPath);
                     }
                 }
             }
@@ -75,24 +75,31 @@ namespace Owin.Webdav
 
         #region utilities
 
-        private string MapPath(string path, bool throwIfOutsideRoot = true)
+        /// <summary>
+        /// Maps the logical path into the full physical path.
+        /// </summary>
+        /// <param name="logicalPath">The logical path.</param>
+        /// <param name="throwIfOutsideRoot">if set to <c>true</c> then throw an exception if outside root.</param>
+        /// <returns></returns>
+        /// <exception cref="System.UnauthorizedAccessException">Accessing paths outside of root is not allowed.</exception>
+        protected string MapPath(string logicalPath, bool throwIfOutsideRoot = true)
         {
-            if (path.StartsWith("/", StringComparison.Ordinal))
+            if (logicalPath.StartsWith("/", StringComparison.Ordinal))
             {
-                path = path.Substring(1);
+                logicalPath = logicalPath.Substring(1);
             }
-            path = Path.GetFullPath(Path.Combine(RootPath, path));
+            var fullPath = Path.GetFullPath(Path.Combine(RootPath, logicalPath));
 
             // verify path is not outside root
-            if (throwIfOutsideRoot && !path.StartsWith(RootPath, StringComparison.OrdinalIgnoreCase))
+            if (throwIfOutsideRoot && !fullPath.StartsWith(RootPath, StringComparison.OrdinalIgnoreCase))
             {
                 throw new UnauthorizedAccessException("Accessing paths outside of root is not allowed.");
             }
 
-            return path;
+            return fullPath;
         }
 
-        private static Resource MakeIntoResource(IOwinContext context, string logicalPath, string fullPath)
+        protected virtual IResource OnCreateResource(IOwinContext context, string logicalPath, string fullPath)
         {
             if (Directory.Exists(fullPath))
             {
@@ -102,7 +109,7 @@ namespace Owin.Webdav
             {
                 return new FileResource(context, logicalPath, fullPath);
             }
-            // TODO: allow locknulls
+            // TODO: allow temp lock resources?
             return null;
         }
 

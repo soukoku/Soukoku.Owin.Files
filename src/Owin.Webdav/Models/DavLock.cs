@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Soukoku.Owin.Webdav.Models
 {
-    public class Lock
+    public class DavLock
     {
     }
 }

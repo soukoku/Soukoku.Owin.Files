@@ -7,7 +7,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    abstract class PropertyBase : IDavProperty
+    abstract class PropertyBase : IProperty
     {
         public PropertyBase(IResource resource)
         {
@@ -22,5 +22,6 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         public string NamespaceUri { get { return Consts.XmlNamespace; } }
 
         public abstract void SerializeValue(XPathNavigator element);
+        public virtual void DeserializeValue(XPathNavigator element) { }
     }
 }

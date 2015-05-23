@@ -1,31 +1,27 @@
 ﻿using Microsoft.Owin;
+using Soukoku.Owin.Webdav.Handlers;
 using Soukoku.Owin.Webdav.Models;
-using Soukoku.Owin.Webdav.Responses;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using Owin;
-using System.Globalization;
-
-using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
-using Soukoku.Owin.Webdav.Handlers;
 
 namespace Soukoku.Owin.Webdav
 {
+    /// <summary>
+    /// Named delegate for owin middleware invocation.
+    /// </summary>
+    /// <param name="environment">The environment.</param>
+    /// <returns></returns>
+    public delegate Task MiddlewareFunc(IDictionary<string, object> environment);
+
+
     /// <summary>
     /// Owin middle ware for webdav function.
     /// </summary>
     public class WebdavMiddleware
     {
         readonly WebdavConfig _options;
-        readonly AppFunc _next;
+        readonly MiddlewareFunc _next;
         readonly Dictionary<string, IMethodHandler> _handlers;
 
         /// <summary>
@@ -38,8 +34,7 @@ namespace Soukoku.Owin.Webdav
         /// or
         /// options
         /// </exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "This is what Owin does.")]
-        public WebdavMiddleware(AppFunc next, WebdavConfig options)
+        public WebdavMiddleware(MiddlewareFunc next, WebdavConfig options)
         {
             if (next == null) { throw new ArgumentNullException("next"); }
             if (options == null) { throw new ArgumentNullException("options"); }
@@ -47,9 +42,9 @@ namespace Soukoku.Owin.Webdav
             _next = next;
             _options = options;
             _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
-            _handlers.Add(Consts.Method.Options, new OptionsHandler(_options));
-            _handlers.Add(Consts.Method.Get, new GetHandler(_options));
-            _handlers.Add(Consts.Method.PropFind, new PropFindHandler(_options));
+            _handlers.Add(Consts.Methods.Options, new OptionsHandler(_options));
+            _handlers.Add(Consts.Methods.Get, new GetHandler(_options));
+            _handlers.Add(Consts.Methods.PropFind, new PropFindHandler(_options));
         }
 
 

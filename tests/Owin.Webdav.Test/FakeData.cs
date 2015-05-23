@@ -13,7 +13,7 @@ namespace Owin.Webdav.Test
         private Func<IEnumerable<IResource>> _getSubDelegate;
         private Func<IResource> _getSingleDelegate;
 
-        public FakeDataStore(Func<IResource> getResource = null, Func<IEnumerable<Resource>> getSubResources = null)
+        public FakeDataStore(Func<IResource> getResource = null, Func<IEnumerable<DavResource>> getSubResources = null)
         {
             _getSingleDelegate = getResource;
             _getSubDelegate = getSubResources;
@@ -31,7 +31,7 @@ namespace Owin.Webdav.Test
         }
     }
 
-    class FakeFolderResource : Resource
+    class FakeFolderResource : DavResource
     {
         public FakeFolderResource(IOwinContext context, string logicalPath) : base(context, logicalPath)
         {
@@ -46,7 +46,7 @@ namespace Owin.Webdav.Test
         }
     }
 
-    class FakeFileResource : Resource
+    class FakeFileResource : DavResource
     {
         public FakeFileResource(IOwinContext context, string logicalPath) : base(context, logicalPath)
         {

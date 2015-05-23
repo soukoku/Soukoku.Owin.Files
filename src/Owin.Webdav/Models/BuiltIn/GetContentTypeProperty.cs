@@ -15,7 +15,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
         {
             get
             {
-                return Consts.PropertyName.GetContentType;
+                return Consts.PropertyNames.GetContentType;
             }
         }
 

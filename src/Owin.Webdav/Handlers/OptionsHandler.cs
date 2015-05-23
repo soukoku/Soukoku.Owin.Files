@@ -28,30 +28,30 @@ namespace Soukoku.Owin.Webdav.Handlers
                 // lie and say we can deal with it all for now
 
                 context.Response.Headers.Append("MS-Author-Via", "DAV");
-                context.Response.Headers.Append(Consts.Header.Dav, _options.DavClass.ToString().Replace("Class", ""));
+                context.Response.Headers.Append(Consts.Headers.Dav, _options.DavClass.ToString().Replace("Class", ""));
                 context.Response.Headers.AppendCommaSeparatedValues("Allow",
-                    Consts.Method.Options,
-                    Consts.Method.PropFind,
-                    Consts.Method.PropPatch,
-                    Consts.Method.MkCol,
-                    Consts.Method.Copy,
-                    Consts.Method.Move,
-                    Consts.Method.Delete,
-                    Consts.Method.Lock,
-                    Consts.Method.Unlock,
-                    Consts.Method.Get);
+                    Consts.Methods.Options,
+                    Consts.Methods.PropFind,
+                    Consts.Methods.PropPatch,
+                    Consts.Methods.MkCol,
+                    Consts.Methods.Copy,
+                    Consts.Methods.Move,
+                    Consts.Methods.Delete,
+                    Consts.Methods.Lock,
+                    Consts.Methods.Unlock,
+                    Consts.Methods.Get);
 
                 context.Response.Headers.AppendCommaSeparatedValues("Public",
-                    Consts.Method.Options,
-                    Consts.Method.PropFind,
-                    Consts.Method.PropPatch,
-                    Consts.Method.MkCol,
-                    Consts.Method.Copy,
-                    Consts.Method.Move,
-                    Consts.Method.Delete,
-                    Consts.Method.Lock,
-                    Consts.Method.Unlock,
-                    Consts.Method.Get);
+                    Consts.Methods.Options,
+                    Consts.Methods.PropFind,
+                    Consts.Methods.PropPatch,
+                    Consts.Methods.MkCol,
+                    Consts.Methods.Copy,
+                    Consts.Methods.Move,
+                    Consts.Methods.Delete,
+                    Consts.Methods.Lock,
+                    Consts.Methods.Unlock,
+                    Consts.Methods.Get);
 
                 context.Response.ContentLength = 0;
                 return Task.FromResult(true);

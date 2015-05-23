@@ -76,12 +76,12 @@
     <Compile Include="Models\BuiltIn\GetLastModifiedProperty.cs" />
     <Compile Include="Models\BuiltIn\GetContentTypeProperty.cs" />
     <Compile Include="Models\BuiltIn\GetContentLengthProperty.cs" />
-    <Compile Include="Models\Lock.cs" />
+    <Compile Include="Models\DavLock.cs" />
     <Compile Include="TraceLog.cs" />
     <Compile Include="Models\IDataStore.cs" />
     <Compile Include="Models\IResource.cs" />
-    <Compile Include="Models\IDavProperty.cs" />
-    <Compile Include="Models\Resource.cs" />
+    <Compile Include="Models\IProperty.cs" />
+    <Compile Include="Models\DavResource.cs" />
     <Compile Include="Responses\XmlGenerator.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="WebdavMiddleware.cs" />
