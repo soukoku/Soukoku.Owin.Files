@@ -28,7 +28,7 @@ namespace Soukoku.Owin.Webdav.Handlers
                 // lie and say we can deal with it all for now
 
                 context.Response.Headers.Append("MS-Author-Via", "DAV");
-                context.Response.Headers.AppendCommaSeparatedValues(Consts.Header.Dav, _options.DavClass.ToString());
+                context.Response.Headers.Append(Consts.Header.Dav, _options.DavClass.ToString().Replace("Class", ""));
                 context.Response.Headers.AppendCommaSeparatedValues("Allow",
                     Consts.Method.Options,
                     Consts.Method.PropFind,
@@ -58,6 +58,6 @@ namespace Soukoku.Owin.Webdav.Handlers
             }
             return Task.FromResult(false);
         }
-        
+
     }
 }

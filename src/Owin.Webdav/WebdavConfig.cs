@@ -23,6 +23,7 @@ namespace Soukoku.Owin.Webdav
 
             DataStore = dataStore;
             _defaultLog = new NullLog();
+            DavClass = DavClasses.Class1;
         }
 
         /// <summary>

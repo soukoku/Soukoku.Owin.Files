@@ -21,6 +21,7 @@ namespace Sample.StaticDataStore
             app.UseWebdav(new WebdavConfig(new Owin.Webdav.StaticDataStore(path))
             {
                 AllowDirectoryBrowsing = true,
+                DavClass = DavClasses.Class1 | DavClasses.Class2,
                 Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
             });
             //});
