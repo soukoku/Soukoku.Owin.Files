@@ -7,9 +7,9 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    abstract class BuiltInPropertyBase : IDavProperty
+    abstract class PropertyBase : IDavProperty
     {
-        public BuiltInPropertyBase(IResource resource)
+        public PropertyBase(IResource resource)
         {
             if (resource == null) { throw new ArgumentNullException("resource"); }
             Resource = resource;

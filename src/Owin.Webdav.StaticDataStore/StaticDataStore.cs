@@ -10,8 +10,16 @@ using Microsoft.Owin;
 
 namespace Owin.Webdav
 {
+    /// <summary>
+    /// Implements <see cref="IDataStore"/> over static files.
+    /// </summary>
     public class StaticDataStore : IDataStore
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StaticDataStore"/> class.
+        /// </summary>
+        /// <param name="rootPath">The root path.</param>
+        /// <exception cref="System.ArgumentException">Invalid root path.;rootPath</exception>
         public StaticDataStore(string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath)) { throw new ArgumentException("Invalid root path.", "rootPath"); }
@@ -23,14 +31,32 @@ namespace Owin.Webdav
             RootPath = rootPath;
         }
 
+        /// <summary>
+        /// Gets the root path.
+        /// </summary>
+        /// <value>
+        /// The root path.
+        /// </value>
         public string RootPath { get; private set; }
 
+        /// <summary>
+        /// Gets the resource.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="logicalPath">The logical path.</param>
+        /// <returns></returns>
         public IResource GetResource(IOwinContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
             return MakeIntoResource(context, logicalPath, fullPath);
         }
 
+        /// <summary>
+        /// Gets the sub resources.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="resource">The resource.</param>
+        /// <returns></returns>
         public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource resource)
         {
             if (resource.Type == ResourceType.Collection)

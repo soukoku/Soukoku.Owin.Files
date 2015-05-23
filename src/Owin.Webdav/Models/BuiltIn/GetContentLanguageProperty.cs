@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    sealed class GetContentLanguageProperty : BuiltInPropertyBase
+    sealed class GetContentLanguageProperty : PropertyBase
     {
         public GetContentLanguageProperty(IResource resource) : base(resource) { }
         public override string Name

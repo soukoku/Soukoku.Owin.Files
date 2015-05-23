@@ -9,7 +9,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    class CreationDateProperty : BuiltInPropertyBase
+    class CreationDateProperty : PropertyBase
     {
         public CreationDateProperty(IResource resource) : base(resource) { }
         public override string Name

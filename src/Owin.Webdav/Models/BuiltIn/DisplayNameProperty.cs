@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    sealed class DisplayNameProperty : BuiltInPropertyBase
+    sealed class DisplayNameProperty : PropertyBase
     {
         public DisplayNameProperty(IResource resource) : base(resource) { }
         public override string Name

@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    sealed class GetContentLengthProperty : BuiltInPropertyBase
+    sealed class GetContentLengthProperty : PropertyBase
     {
         public GetContentLengthProperty(IResource resource) : base(resource) { }
         public override string Name

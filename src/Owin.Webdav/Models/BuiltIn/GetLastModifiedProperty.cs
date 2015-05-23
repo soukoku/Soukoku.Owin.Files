@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
 {
-    sealed class GetLastModifiedProperty : BuiltInPropertyBase
+    sealed class GetLastModifiedProperty : PropertyBase
     {
         public GetLastModifiedProperty(IResource resource) : base(resource) { }
         public override string Name
