@@ -58,28 +58,6 @@ namespace Soukoku.Owin.Webdav
         }
 
         /// <summary>
-        /// Http status codes used by webdav.
-        /// </summary>
-        public enum StatusCode
-        {
-            // spec section 11
-
-            MultiStatus = 207,
-            UnprocessableEntity = 422,
-            Locked = 423,
-            FailedDependency = 424,
-            InsufficientStorage = 507,
-
-            // standard codes
-            OK = HttpStatusCode.OK,
-            NotFound = HttpStatusCode.NotFound,
-            PreconditionFailed = HttpStatusCode.PreconditionFailed,
-            Conflict = HttpStatusCode.Conflict,
-            NoContent = HttpStatusCode.NoContent,
-            Forbidden = HttpStatusCode.Forbidden,
-        }
-
-        /// <summary>
         /// Contains the xml element names used by webdav
         /// </summary>
         /// public class

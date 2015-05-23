@@ -49,6 +49,14 @@ namespace Soukoku.Owin.Webdav
         /// </value>
         public IDataStore DataStore { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the supported webdav class number when queried by client.
+        /// </summary>
+        /// <value>
+        /// The dav class.
+        /// </value>
+        public DavClasses DavClass { get; set; }
+
         NullLog _defaultLog;
         private ILog _log;
         /// <summary>

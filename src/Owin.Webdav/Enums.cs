@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Soukoku.Owin.Webdav.Models;
+using System.Net;
 
 namespace Soukoku.Owin.Webdav
 {
@@ -56,5 +57,43 @@ namespace Soukoku.Owin.Webdav
         //Write = 0x200,
         //Write = 0x400,
         //Write = 0x800,
+    }
+
+    /// <summary>
+    /// Indicates the function level of a webdav implementation.
+    /// </summary>
+    [Flags]
+    public enum DavClasses
+    {
+        /// <summary>
+        /// Basic webdav.
+        /// </summary>
+        Class1 = 1,
+        Class2 = 2,
+        Class3 = 4
+    }
+
+    /// <summary>
+    /// Http status codes used by webdav.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Not for http codes it ain't.")]
+    public enum StatusCode
+    {
+        // spec section 11
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi", Justification = "Useless word block from ancient times.")]
+        MultiStatus = 207,
+        UnprocessableEntity = 422,
+        Locked = 423,
+        FailedDependency = 424,
+        InsufficientStorage = 507,
+
+        // standard codes
+        OK = HttpStatusCode.OK,
+        NotFound = HttpStatusCode.NotFound,
+        PreconditionFailed = HttpStatusCode.PreconditionFailed,
+        Conflict = HttpStatusCode.Conflict,
+        NoContent = HttpStatusCode.NoContent,
+        Forbidden = HttpStatusCode.Forbidden,
     }
 }

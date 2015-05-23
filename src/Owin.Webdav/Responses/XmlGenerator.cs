@@ -38,7 +38,7 @@ namespace Soukoku.Owin.Webdav.Responses
 
                     XmlNode propStatus = xmlDoc.CreateElement(Consts.ElementName.Status, Consts.XmlNamespace);
                     // todo: use real status code
-                    propStatus.InnerText = Consts.StatusCode.OK.GenerateStatusMessage();
+                    propStatus.InnerText = StatusCode.OK.GenerateStatusMessage();
                     respProperty.AppendChild(propStatus);
 
 

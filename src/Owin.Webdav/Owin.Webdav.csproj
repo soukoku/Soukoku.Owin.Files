@@ -60,8 +60,11 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="AllowedActions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Handlers\PropFindHandler.cs" />
+    <Compile Include="Handlers\OptionsHandler.cs" />
+    <Compile Include="Handlers\GetHandler.cs" />
+    <Compile Include="Handlers\IMethodHandler.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="MimeTypeMap.cs" />
     <Compile Include="Models\BuiltIn\PropertyBase.cs" />

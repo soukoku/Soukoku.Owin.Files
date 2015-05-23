@@ -52,22 +52,22 @@ namespace Owin.Webdav
         }
 
         /// <summary>
-        /// Gets the sub resources.
+        /// Gets the resources under a collection resource.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <param name="resource">The resource.</param>
+        /// <param name="collectionResource">The collection resource.</param>
         /// <returns></returns>
-        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource resource)
+        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource collectionResource)
         {
-            if (resource.Type == ResourceType.Collection)
+            if (collectionResource.Type == ResourceType.Collection)
             {
-                var fullPath = MapPath(resource.LogicalPath);
+                var fullPath = MapPath(collectionResource.LogicalPath);
 
                 if (Directory.Exists(fullPath))
                 {
                     foreach (var item in Directory.GetFileSystemEntries(fullPath))
                     {
-                        yield return MakeIntoResource(context, Path.Combine(resource.LogicalPath, Path.GetFileName(item)), item);
+                        yield return MakeIntoResource(context, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(item)), item);
                     }
                 }
             }

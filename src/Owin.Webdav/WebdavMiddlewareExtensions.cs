@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Owin", Justification = "Easier to use by developers in this namespace.")]
+
 namespace Owin
 {
     /// <summary>
@@ -31,11 +33,11 @@ namespace Owin
             return app.Use<WebdavMiddleware>(options);
         }
 
-
         internal static CancellationToken GetCancellationToken(this IOwinContext context)
         {
             return (CancellationToken)context.Environment["owin.CallCancelled"];
         }
+
         internal static int GetDepth(this IOwinContext context)
         {
             int depth;
@@ -60,7 +62,7 @@ namespace Owin
             return tentative;
         }
 
-        internal static string GenerateStatusMessage(this Consts.StatusCode code, string message = null)
+        internal static string GenerateStatusMessage(this StatusCode code, string message = null)
         {
             return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }
@@ -128,7 +130,7 @@ namespace Owin
             return string.Format(CultureInfo.InvariantCulture, format, fileSize);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Not an actual problem.")]
         internal static byte[] Serialize(this XmlDocument xmlDoc)
         {
             using (var ms = new MemoryStream())

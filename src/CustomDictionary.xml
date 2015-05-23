@@ -6,6 +6,13 @@
       <Word>Owin</Word>
       <Word>Webdav</Word>
       <Word>Dav</Word>
+      <Word>Unprocessable</Word>
     </Recognized>
   </Words>
+  <Acronyms>
+    <CasingExceptions>
+      <Acronym>OK</Acronym>
+    </CasingExceptions>
+  </Acronyms>
+
 </Dictionary>

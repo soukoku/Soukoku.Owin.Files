@@ -19,6 +19,7 @@ namespace Soukoku.Owin.Webdav.Models
         /// <value>
         /// The namespace URI.
         /// </value>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string NamespaceUri { get; }
 
         /// <summary>
