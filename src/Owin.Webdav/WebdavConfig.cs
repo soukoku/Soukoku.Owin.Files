@@ -1,4 +1,5 @@
-﻿using Soukoku.Owin.Webdav.Models;
+﻿using Soukoku.Owin.Webdav.DefaultImp;
+using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Soukoku.Owin.Webdav
 
             DataStore = dataStore;
             _defaultLog = new NullLog();
+            _defaultDirGen = new BootstrapDirGenerator();
             DavClass = DavClasses.Class1;
         }
 
@@ -70,6 +72,20 @@ namespace Soukoku.Owin.Webdav
         {
             get { return _log ?? _defaultLog; }
             set { _log = value; }
+        }
+
+        BootstrapDirGenerator _defaultDirGen;
+        private IDirectoryListingGenerator _dirGen;
+        /// <summary>
+        /// Gets or sets the directory listing generator.
+        /// </summary>
+        /// <value>
+        /// The directory listing generator.
+        /// </value>
+        public IDirectoryListingGenerator DirectoryGenerator
+        {
+            get { return _dirGen ?? _defaultDirGen; }
+            set { _dirGen = value; }
         }
 
     }

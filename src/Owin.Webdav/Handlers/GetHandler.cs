@@ -42,27 +42,12 @@ namespace Soukoku.Owin.Webdav.Handlers
 
         async Task ShowDirectoryListingAsync(Context context, IResource resource)
         {
+            var subRes = _options.DataStore.GetSubResources(context.Request.PathBase, resource);
+
+            var content = await _options.DirectoryGenerator.GenerateAsync(context, resource, subRes);
+
             context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".html");
 
-            // there's a better way for templating but I don't know it yet.
-            var rows = new StringBuilder();
-            foreach (var item in _options.DataStore.GetSubResources(context.Request.PathBase, resource).OrderByDescending(r => r.ResourceType).ThenBy(r => r.DisplayName))
-            {
-                rows.Append("<tr>");
-                var url = context.GenerateUrl(item);
-                if (item.ResourceType == ResourceType.Collection)
-                {
-                    rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
-                }
-                else
-                {
-                    rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.Length.PrettySize(), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
-                }
-                rows.Append("</tr>");
-            }
-            
-            var title = WebUtility.HtmlEncode(context.Request.PathBase + context.Request.Path);
-            var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync(), title, rows);
             await context.Response.WriteAsync(content, context.CancellationToken);
         }
 
@@ -86,16 +71,5 @@ namespace Soukoku.Owin.Webdav.Handlers
                 }
             }
         }
-
-        static string _template;
-        static async Task<string> GetDirectoryListingTemplateAsync()
-        {
-            if (_template == null)
-            {
-                _template = await typeof(WebdavMiddleware).Assembly.GetManifestResourceStream("Soukoku.Owin.Webdav.Responses.DirectoryListing.html").ReadStringAsync();
-            }
-            return _template;
-        }
-
     }
 }

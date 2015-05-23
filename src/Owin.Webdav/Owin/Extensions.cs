@@ -31,10 +31,13 @@ namespace Soukoku.Owin
         /// <param name="key">The key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">environment</exception>
         public static T Get<T>(this IDictionary<string, object> environment, string key, T defaultValue)
         {
+            if (environment == null) { throw new ArgumentNullException("environment"); }
+
             object value;
-            if(environment.TryGetValue(key, out value))
+            if (environment.TryGetValue(key, out value))
             {
                 return (T)value;
             }

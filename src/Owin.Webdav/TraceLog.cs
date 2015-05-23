@@ -87,27 +87,4 @@ namespace Soukoku.Owin.Webdav
             Trace.WriteLine(logEntry);
         }
     }
-
-    class NullLog : ILog
-    {
-        public void LogDebug(string format, params object[] args)
-        {
-        }
-
-        public void LogError(string format, params object[] args)
-        {
-        }
-
-        public void LogFatal(string format, params object[] args)
-        {
-        }
-
-        public void LogInfo(string format, params object[] args)
-        {
-        }
-
-        public void LogWarning(string format, params object[] args)
-        {
-        }
-    }
 }

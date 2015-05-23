@@ -18,7 +18,7 @@ namespace Soukoku.Owin.Webdav
     /// <summary>
     /// Contains extension methods for webdav component.
     /// </summary>
-    static class WebdavMiddlewareExtensions
+    static class DavExtensions
     {
         ///// <summary>
         ///// Uses the webdav middleware.
@@ -30,6 +30,22 @@ namespace Soukoku.Owin.Webdav
         //{
         //    return app.Use<WebdavMiddleware>(options);
         //}
+
+        /// <summary>
+        /// Generates the full URL on the resource.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="resource">The resource.</param>
+        /// <returns></returns>
+        public static string GenerateUrl(this Context context, IResource resource)
+        {
+            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}{3}", context.Request.Scheme, context.Request.Host, context.Request.PathBase, resource.LogicalPath);//.TrimEnd('/');
+            if (resource.ResourceType == ResourceType.Collection)
+            {
+                tentative += "/";
+            }
+            return tentative;
+        }
 
         internal static int GetDepth(this Context context)
         {
@@ -43,16 +59,6 @@ namespace Soukoku.Owin.Webdav
                 }
             }
             return depth;
-        }
-
-        internal static string GenerateUrl(this Context context, IResource resource)
-        {
-            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}{3}", context.Request.Scheme, context.Request.Host, context.Request.PathBase, resource.LogicalPath);//.TrimEnd('/');
-            if (resource.ResourceType == ResourceType.Collection)
-            {
-                tentative += "/";
-            }
-            return tentative;
         }
 
         internal static string GenerateStatusMessage(this StatusCode code, string message = null)

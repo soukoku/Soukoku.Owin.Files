@@ -66,6 +66,7 @@ namespace Soukoku.Owin
 
         public Task WriteAsync(string content, CancellationToken cancellationToken)
         {
+            if (content == null) { return Task.FromResult(0); }
             var buff = Encoding.UTF8.GetBytes(content);
             return Body.WriteAsync(buff, 0, buff.Length, cancellationToken);
         }
