@@ -26,30 +26,36 @@ namespace Soukoku.Owin.Webdav.Handlers
                 // lie and say we can deal with it all for now
 
                 context.Response.Headers.Replace("MS-Author-Via", "DAV");
-                context.Response.Headers.Replace(DavConsts.Headers.Dav, _options.DavClass.ToString().Replace("Class", ""));
+                context.Response.Headers.Replace(DavConsts.Headers.Dav, _options.DavClass.ToString().Replace("Class", "").Replace(" ", ""));
                 context.Response.Headers.Replace("Allow",
+                    string.Join(",",
                     DavConsts.Methods.Options,
                     DavConsts.Methods.PropFind,
                     DavConsts.Methods.PropPatch,
                     DavConsts.Methods.MkCol,
+                    DavConsts.Methods.Get,
+                    DavConsts.Methods.Post,
+                    DavConsts.Methods.Delete,
+                    DavConsts.Methods.Put,
                     DavConsts.Methods.Copy,
                     DavConsts.Methods.Move,
-                    DavConsts.Methods.Delete,
                     DavConsts.Methods.Lock,
-                    DavConsts.Methods.Unlock,
-                    DavConsts.Methods.Get);
+                    DavConsts.Methods.Unlock));
 
                 context.Response.Headers.Replace("Public",
+                    string.Join(",",
                     DavConsts.Methods.Options,
                     DavConsts.Methods.PropFind,
                     DavConsts.Methods.PropPatch,
                     DavConsts.Methods.MkCol,
+                    DavConsts.Methods.Get,
+                    DavConsts.Methods.Post,
+                    DavConsts.Methods.Delete,
+                    DavConsts.Methods.Put,
                     DavConsts.Methods.Copy,
                     DavConsts.Methods.Move,
-                    DavConsts.Methods.Delete,
                     DavConsts.Methods.Lock,
-                    DavConsts.Methods.Unlock,
-                    DavConsts.Methods.Get);
+                    DavConsts.Methods.Unlock));
 
                 context.Response.Headers.ContentLength = 0;
                 return Task.FromResult(true);

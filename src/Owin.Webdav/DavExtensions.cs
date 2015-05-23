@@ -133,7 +133,7 @@ namespace Soukoku.Owin.Webdav
         internal static byte[] Serialize(this XmlDocument xmlDoc)
         {
             using (var ms = new MemoryStream())
-            using (var writer = new StreamWriter(ms, Encoding.UTF8))
+            using (var writer = new StreamWriter(ms))
             {
                 xmlDoc.Save(writer);
                 return ms.ToArray();
