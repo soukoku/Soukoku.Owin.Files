@@ -1,7 +1,9 @@
 ﻿using Microsoft.Owin;
+using Soukoku.Owin.Webdav.Models.BuiltIn;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -11,137 +13,95 @@ using System.Xml;
 
 namespace Soukoku.Owin.Webdav.Models
 {
+    /// <summary>
+    /// A base implementation of <see cref="IResource"/>.
+    /// </summary>
     public abstract class Resource : IResource
     {
-        public Resource(IOwinContext context, string logicalPath)
+        protected Resource(IOwinContext context, string logicalPath)
         {
             RequestContext = context;
-            LogicalPath = logicalPath.Replace("\\", "/");
-            _properties = new List<IProperty>();
+            LogicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.Replace("\\", "/");
 
             MakeBuiltInProperties();
         }
 
         private void MakeBuiltInProperties()
         {
-            _properties.Add(new DateProperty(Consts.PropertyName.CreationDate)
-            {
-                Formatter = (value) => XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc) // valid rfc 3339?
-            });
-
-            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.DisplayName)
-            {
-                DeriveRoutine = () =>
-                {
-                    // must be actual url part name even if logical root 
-                    var tentative = string.Format("{0}/{1}", RequestContext.Request.PathBase.Value, LogicalPath);
-
-                    return Path.GetFileName(tentative); 
-                },
-                SerializeRoutine = (prop, doc) =>
-                {
-                    var node = doc.CreateElement(prop.Name, prop.Namespace);
-                    var val = Uri.EscapeUriString(prop.Value);
-                    if (!string.IsNullOrEmpty(val))
-                    {
-                        node.InnerText = val;
-                    }
-                    return node;
-                }
-            });
-
-            _properties.Add(new StringProperty(Consts.PropertyName.GetContentLanguage));
-
-            _properties.Add(new NumberProperty(Consts.PropertyName.GetContentLength));
-
-            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.GetContentType)
-            {
-                DeriveRoutine = () =>
-                {
-                    return (Type == ResourceType.Resource) ? MimeTypes.MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName.Value)) : null;
-                }
-            });
-
-            _properties.Add(new ReadOnlyStringProperty(Consts.PropertyName.GetETag)
-            {
-                DeriveRoutine = () => OnGetETag()
-            });
-
-            _properties.Add(new DateProperty(Consts.PropertyName.GetLastModified)
-            {
-                FormatString = "r" // RFC1123 
-            });
+            _properties = new List<IDavProperty>();
+            _properties.Add(new CreationDateProperty(this));
+            _properties.Add(new DisplayNameProperty(this));
+            _properties.Add(new GetContentLanguageProperty(this));
+            _properties.Add(new GetContentLengthProperty(this));
+            _properties.Add(new GetContentTypeProperty(this));
+            _properties.Add(new GetETagProperty(this));
+            _properties.Add(new GetLastModifiedProperty(this));
+            _properties.Add(new ResourceTypeProperty(this));
         }
 
-        private List<IProperty> _properties;
-        public IEnumerable<IProperty> Properties
+        private List<IDavProperty> _properties;
+        public IEnumerable<IDavProperty> Properties
         {
             get { return _properties; }
         }
 
 
-        public T FindProperty<T>(string name) where T : class, IProperty
-        {
-            return FindProperty<T>(name, Consts.XmlNamespace);
-        }
-        public T FindProperty<T>(string name, string nameSpace) where T : class, IProperty
-        {
-            return _properties.FirstOrDefault(p => p.Name == name && p.Namespace == nameSpace) as T;
-        }
+        //public T FindProperty<T>(string name) where T : class, IDavProperty
+        //{
+        //    return FindProperty<T>(name, Consts.XmlNamespace);
+        //}
+        //public T FindProperty<T>(string name, string namespaceUri) where T : class, IDavProperty
+        //{
+        //    return _properties.FirstOrDefault(p => p.Name == name && p.NamespaceUri == namespaceUri) as T;
+        //}
 
-        public void AddProperties(IEnumerable<IProperty> properties)
-        {
-            if (properties != null)
-            {
-                foreach (var p in properties)
-                {
-                    AddProperty(p);
-                }
-            }
-        }
-        public void AddProperty(IProperty property)
-        {
-            if (property != null)
-            {
-                // TODO: check dupes?
-                _properties.Add(property);
-            }
-        }
+        //public void AddProperties(IEnumerable<IDavProperty> properties)
+        //{
+        //    if (properties != null)
+        //    {
+        //        foreach (var p in properties)
+        //        {
+        //            AddProperty(p);
+        //        }
+        //    }
+        //}
+        //public void AddProperty(IDavProperty davProperty)
+        //{
+        //    if (davProperty != null)
+        //    {
+        //        // TODO: check dupes?
+        //        _properties.Add(davProperty);
+        //    }
+        //}
 
         public IOwinContext RequestContext { get; private set; }
         public string LogicalPath { get; set; }
 
 
-        protected virtual string OnGetETag()
-        {
-            return null;
-        }
-        public ReadOnlyStringProperty DisplayName { get { return FindProperty<ReadOnlyStringProperty>(Consts.PropertyName.DisplayName); } }
-        public ReadOnlyStringProperty ContentType { get { return FindProperty<ReadOnlyStringProperty>(Consts.PropertyName.GetContentType); } }
-        public DateProperty CreateDate { get { return FindProperty<DateProperty>(Consts.PropertyName.CreationDate); } }
-        public DateProperty ModifyDate { get { return FindProperty<DateProperty>(Consts.PropertyName.GetLastModified); } }
-        public NumberProperty Length { get { return FindProperty<NumberProperty>(Consts.PropertyName.GetContentLength); } }
-
-        public abstract ResourceType Type { get; }
-        public virtual string Url
+        public virtual string DisplayName
         {
             get
             {
-                var tentative = string.Format("{0}://{1}{2}/{3}", RequestContext.Request.Uri.Scheme, RequestContext.Request.Uri.Authority, RequestContext.Request.PathBase.Value, LogicalPath);
-                if (Type == ResourceType.Collection && !tentative.EndsWith("/"))
-                {
-                    tentative += "/";
-                }
-                return tentative;
+                // must be actual url part name even if logical root 
+                var tentative = string.Format(CultureInfo.InvariantCulture, "{0}/{1}", RequestContext.Request.PathBase.Value, LogicalPath);
+                return Path.GetFileName(tentative);
             }
         }
+        public virtual string ContentType { get { return (Type == ResourceType.Resource) ? MimeTypeMap.GetMimeType(Path.GetExtension(DisplayName)) : null; } }
+        public virtual string ContentLanguage { get { return null; } }
+        public virtual DateTime CreationDateUtc { get { return DateTime.MinValue; } }
+        public virtual DateTime ModifiedDateUtc { get { return DateTime.MinValue; } }
+        public virtual long Length { get { return 0; } }
+        public virtual string ETag { get { return null; } }
+
+        public abstract ResourceType Type { get; }
 
         public override string ToString()
         {
             return LogicalPath;
         }
 
-        public virtual Stream GetReadStream()
+        public virtual Stream OpenReadStream()
         {
             throw new NotSupportedException();
         }

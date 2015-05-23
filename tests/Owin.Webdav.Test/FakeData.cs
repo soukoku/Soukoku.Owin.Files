@@ -10,22 +10,22 @@ namespace Owin.Webdav.Test
 {
     class FakeDataStore : IDataStore
     {
-        private Func<IEnumerable<Resource>> _getSubDelegate;
-        private Func<Resource> _getSingleDelegate;
+        private Func<IEnumerable<IResource>> _getSubDelegate;
+        private Func<IResource> _getSingleDelegate;
 
-        public FakeDataStore(Func<Resource> getResource = null, Func<IEnumerable<Resource>> getSubResources = null)
+        public FakeDataStore(Func<IResource> getResource = null, Func<IEnumerable<Resource>> getSubResources = null)
         {
             _getSingleDelegate = getResource;
             _getSubDelegate = getSubResources;
         }
 
 
-        public Resource GetResource(IOwinContext context, string logicalPath)
+        public IResource GetResource(IOwinContext context, string logicalPath)
         {
             return _getSingleDelegate();
         }
 
-        public IEnumerable<Resource> GetSubResources(IOwinContext context, Resource resource)
+        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource resource)
         {
             return _getSubDelegate();
         }

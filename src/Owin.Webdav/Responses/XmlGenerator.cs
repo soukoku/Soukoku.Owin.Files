@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Owin;
+using Microsoft.Owin;
 
 namespace Soukoku.Owin.Webdav.Responses
 {
-    class MultiStatusResponse
+    static class XmlGenerator
     {
-        public static XmlDocument Create(IEnumerable<IResource> resources = null)
+        public static XmlDocument CreateMultiStatus(IOwinContext context, IEnumerable<IResource> resources = null)
         {
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -29,7 +30,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(Consts.ElementName.Href, Consts.XmlNamespace);
-                    respHref.InnerText = Uri.EscapeUriString(resource.Url); // escape required to get some clients working
+                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource)); // escape required to get some clients working
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(Consts.ElementName.PropStat, Consts.XmlNamespace);
@@ -37,7 +38,7 @@ namespace Soukoku.Owin.Webdav.Responses
 
                     XmlNode propStatus = xmlDoc.CreateElement(Consts.ElementName.Status, Consts.XmlNamespace);
                     // todo: use real status code
-                    propStatus.InnerText = HttpStatusCode.OK.GenerateStatusMessage();
+                    propStatus.InnerText = Consts.StatusCode.OK.GenerateStatusMessage();
                     respProperty.AppendChild(propStatus);
 
 
@@ -48,22 +49,13 @@ namespace Soukoku.Owin.Webdav.Responses
 
                     foreach (var prop in resource.Properties)
                     {
-                        XmlNode propNode = prop.Serialize(xmlDoc);
-                        if (propNode != null)
-                        {
-                            propList.AppendChild(propNode);
-                        }
+                        var propNode = xmlDoc.CreateElement(prop.Name, prop.NamespaceUri);
+                        prop.SerializeValue(propNode.CreateNavigator());
+                        propList.AppendChild(propNode);
                     }
-                    
-                    XmlNode resTypeNode = xmlDoc.CreateElement(Consts.PropertyName.ResourceType, Consts.XmlNamespace);
-                    if (resource.Type == ResourceType.Collection)
-                    {
-                        resTypeNode.AppendChild(xmlDoc.CreateElement(Consts.ElementName.Collection, Consts.XmlNamespace));
-                    }
-                    propList.AppendChild(resTypeNode);
 
-                    XmlNode lockNode = xmlDoc.CreateElement(Consts.PropertyName.SupportedLock, Consts.XmlNamespace);
-                    propList.AppendChild(lockNode);
+                    //XmlNode lockNode = xmlDoc.CreateElement(Consts.PropertyName.SupportedLock, Consts.XmlNamespace);
+                    //propList.AppendChild(lockNode);
 
                     #endregion
                 }

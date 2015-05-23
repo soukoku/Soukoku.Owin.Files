@@ -58,7 +58,7 @@ namespace Soukoku.Owin.Webdav
         }
 
         /// <summary>
-        /// Extra http status codes used by webdav.
+        /// Http status codes used by webdav.
         /// </summary>
         public enum StatusCode
         {
@@ -69,6 +69,14 @@ namespace Soukoku.Owin.Webdav
             Locked = 423,
             FailedDependency = 424,
             InsufficientStorage = 507,
+
+            // standard codes
+            OK = HttpStatusCode.OK,
+            NotFound = HttpStatusCode.NotFound,
+            PreconditionFailed = HttpStatusCode.PreconditionFailed,
+            Conflict = HttpStatusCode.Conflict,
+            NoContent = HttpStatusCode.NoContent,
+            Forbidden = HttpStatusCode.Forbidden,
         }
 
         /// <summary>

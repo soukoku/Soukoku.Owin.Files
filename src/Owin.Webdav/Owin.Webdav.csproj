@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,13 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Sign.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MimeTypeMap, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MediaTypeMap.2.0.0.0\lib\net40\MimeTypeMap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -54,18 +57,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllowedActions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ILog.cs" />
+    <Compile Include="MimeTypeMap.cs" />
+    <Compile Include="Models\BuiltIn\BuiltInPropertyBase.cs" />
+    <Compile Include="Models\BuiltIn\DisplayNameProperty.cs" />
+    <Compile Include="Models\BuiltIn\ResourceTypeProperty.cs" />
+    <Compile Include="Models\BuiltIn\GetETagProperty.cs" />
+    <Compile Include="Models\BuiltIn\GetContentLanguageProperty.cs" />
+    <Compile Include="Models\BuiltIn\CreationDateProperty.cs" />
+    <Compile Include="Models\BuiltIn\GetLastModifiedProperty.cs" />
+    <Compile Include="Models\BuiltIn\GetContentTypeProperty.cs" />
+    <Compile Include="Models\BuiltIn\GetContentLengthProperty.cs" />
+    <Compile Include="Models\Lock.cs" />
     <Compile Include="TraceLog.cs" />
-    <Compile Include="Models\DecimalProperty.cs" />
-    <Compile Include="Models\DerivedProperty.cs" />
-    <Compile Include="Models\NumberProperty.cs" />
-    <Compile Include="Models\StringProperty.cs" />
-    <Compile Include="Models\DateProperty.cs" />
     <Compile Include="Models\IDataStore.cs" />
     <Compile Include="Models\IResource.cs" />
-    <Compile Include="Models\Property.cs" />
+    <Compile Include="Models\IDavProperty.cs" />
     <Compile Include="Models\Resource.cs" />
-    <Compile Include="Responses\MultiStatusResponse.cs" />
+    <Compile Include="Responses\XmlGenerator.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="WebdavMiddleware.cs" />
     <Compile Include="WebdavMiddlewareExtensions.cs" />
@@ -74,8 +84,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Sign.snk" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Responses\DirectoryListing.html" />
   </ItemGroup>

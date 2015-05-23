@@ -1,5 +1,4 @@
 ﻿using Microsoft.Owin;
-using MimeTypes;
 using Soukoku.Owin.Webdav.Models;
 using Soukoku.Owin.Webdav.Responses;
 using System;
@@ -13,18 +12,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Owin;
+using System.Globalization;
+
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
 namespace Soukoku.Owin.Webdav
 {
-    public class WebdavMiddleware
+    class WebdavMiddleware
     {
         readonly WebdavConfig _options;
-        readonly Func<IDictionary<string, object>, Task> _next;
-
-        public WebdavMiddleware(Func<IDictionary<string, object>, Task> next, WebdavConfig options)
+        readonly AppFunc _next;
+        
+        public WebdavMiddleware(AppFunc next, WebdavConfig options)
         {
-            if (next == null) { throw new ArgumentException("next"); }
-            if (options == null) { throw new ArgumentException("options"); }
+            if (next == null) { throw new ArgumentNullException("next"); }
+            if (options == null) { throw new ArgumentNullException("options"); }
 
             _next = next;
             _options = options;
@@ -35,36 +37,45 @@ namespace Soukoku.Owin.Webdav
         {
             var context = new OwinContext(environment);
 
-
-            var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
-            if (logicalPath.StartsWith("/")) { logicalPath = logicalPath.Substring(1); }
-
-
-            Resource resource = _options.DataStore.GetResource(context, logicalPath);
-            if (resource != null)
+            try
             {
-                var fullUrl = context.Request.Uri.ToString();
-                _options.Log.Debug("{0} for {1}@{2}", context.Request.Method, resource.Type, resource.LogicalPath);
-                if (resource.Type == ResourceType.Collection && !fullUrl.EndsWith("/"))
+                var logicalPath = Uri.UnescapeDataString(context.Request.Uri.AbsolutePath.Substring(context.Request.PathBase.Value.Length));
+                if (logicalPath.StartsWith("/", StringComparison.Ordinal)) { logicalPath = logicalPath.Substring(1); }
+
+
+                IResource resource = _options.DataStore.GetResource(context, logicalPath);
+                if (resource != null)
                 {
-                    context.Response.Headers.Append("Content-Location", fullUrl + "/");
+                    var fullUrl = context.Request.Uri.ToString();
+                    _options.Log.LogDebug("{0} for {1}@{2}", context.Request.Method, resource.Type, resource.LogicalPath);
+                    if (resource.Type == ResourceType.Collection && !fullUrl.EndsWith("/", StringComparison.Ordinal))
+                    {
+                        context.Response.Headers.Append("Content-Location", fullUrl + "/");
+                    }
+                    switch (context.Request.Method.ToUpperInvariant())
+                    {
+                        case Consts.Method.Options:
+                            return HandleOptions(context);
+                        case Consts.Method.PropFind:
+                            return HandlePropFindAsync(context, resource);
+                        case Consts.Method.Get:
+                            return HandleGetAsync(context, resource);
+                    }
                 }
-                switch (context.Request.Method.ToUpperInvariant())
-                {
-                    case Consts.Method.Options:
-                        return HandleOptions(context);
-                    case Consts.Method.PropFind:
-                        return HandlePropFindAsync(context, resource);
-                    case Consts.Method.Get:
-                        return HandleGetAsync(context, resource);
-                }
+                return _next.Invoke(environment);
             }
-            return _next.Invoke(environment);
+            catch (Exception ex)
+            {
+                _options.Log.LogError(ex.ToString());
+                //context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                //return context.Response.WriteAsync(ex.Message);
+                throw;
+            }
         }
 
         #region http method handling
 
-        private Task HandleOptions(IOwinContext context)
+        static Task HandleOptions(IOwinContext context)
         {
             // lie and say we can deal with it all for now
 
@@ -98,7 +109,7 @@ namespace Soukoku.Owin.Webdav
             return Task.FromResult(0);
         }
 
-        private async Task HandlePropFindAsync(IOwinContext context, Resource resource)
+        private async Task HandlePropFindAsync(IOwinContext context, IResource resource)
         {
             int maxDepth = context.GetDepth();
             if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
@@ -106,47 +117,48 @@ namespace Soukoku.Owin.Webdav
                 // TODO: return dav error
             }
 
-            _options.Log.Debug("Depth={0}", maxDepth);
+            _options.Log.LogDebug("Depth={0}", maxDepth);
 
             // TODO: support client request instead of always returning fixed property list
             var reqBody = await context.ReadRequestStringAsync();
             if (!string.IsNullOrEmpty(reqBody))
             {
-                _options.Log.Debug("Request:{0}{1}", Environment.NewLine, reqBody.PrettyXml());
+                _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqBody.PrettyXml());
 
                 XmlDocument reqXml = new XmlDocument();
                 reqXml.LoadXml(reqBody);
             }
 
-            List<Resource> list = new List<Resource>();
+            var list = new List<IResource>();
             var curDepth = 0;
             WalkResourceTree(context, maxDepth, curDepth, list, resource);
 
             await WriteMultiStatusReponse(context, list);
         }
 
-        private async Task HandleGetAsync(IOwinContext context, Resource resource)
+        private Task HandleGetAsync(IOwinContext context, IResource resource)
         {
             if (resource.Type == ResourceType.Collection)
             {
                 if (_options.AllowDirectoryBrowsing)
                 {
-                    await ShowDirectoryListingAsync(context, resource);
+                    return ShowDirectoryListingAsync(context, resource);
                 }
             }
             else if (resource.Type == ResourceType.Resource)
             {
-                await SendFileAsync(context, resource);
+                return SendFileAsync(context, resource);
             }
+            return Task.FromResult(0);
         }
 
         #endregion
 
         #region utilities
 
-        private Task WriteMultiStatusReponse(IOwinContext context, List<Resource> list)
+        private Task WriteMultiStatusReponse(IOwinContext context, List<IResource> list)
         {
-            XmlDocument xmlDoc = MultiStatusResponse.Create(list);
+            XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list);
 
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();
@@ -154,11 +166,11 @@ namespace Soukoku.Owin.Webdav
             context.Response.StatusCode = (int)Consts.StatusCode.MultiStatus;
             context.Response.ContentLength = content.Length;
 
-            _options.Log.Debug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
+            _options.Log.LogDebug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
             return context.Response.WriteAsync(content);
         }
 
-        private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<Resource> addToList, Resource resource)
+        private void WalkResourceTree(IOwinContext context, int maxDepth, int curDepth, List<IResource> addToList, IResource resource)
         {
             addToList.Add(resource);
             if (resource.Type == ResourceType.Collection && curDepth < maxDepth)
@@ -170,41 +182,42 @@ namespace Soukoku.Owin.Webdav
             }
         }
 
-        async Task ShowDirectoryListingAsync(IOwinContext context, Resource resource)
+        async Task ShowDirectoryListingAsync(IOwinContext context, IResource resource)
         {
             context.Response.ContentType = MimeTypeMap.GetMimeType(".html");
 
             // there's a better way for templating but I don't know it yet.
             var rows = new StringBuilder();
-            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderByDescending(r => r.Type).ThenBy(r => r.DisplayName.Value))
+            foreach (var item in _options.DataStore.GetSubResources(context, resource).OrderByDescending(r => r.Type).ThenBy(r => r.DisplayName))
             {
                 rows.Append("<tr>");
+                var url = context.GenerateUrl(item);
                 if (item.Type == ResourceType.Collection)
                 {
-                    rows.AppendFormat(string.Format("<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 else
                 {
-                    rows.AppendFormat(string.Format("<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(item.Url)), WebUtility.HtmlEncode(item.DisplayName.Value), item.Length.Value.PrettySize(), item.ModifyDate.Value.ToString("yyyy/MM/dd hh:mm tt")));
+                    rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.Length.PrettySize(), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
                 }
                 rows.Append("</tr>");
             }
 
             var title = WebUtility.HtmlEncode(context.Request.Uri.AbsolutePath);
-            var content = string.Format(await GetDirectoryListingTemplateAsync(), title, rows);
+            var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync(), title, rows);
             await context.Response.WriteAsync(content);
         }
 
-        static async Task SendFileAsync(IOwinContext context, Resource resource)
+        static async Task SendFileAsync(IOwinContext context, IResource resource)
         {
-            if (resource.Length.Value > 0)
+            if (resource.Length > 0)
             {
-                context.Response.ContentLength = resource.Length.Value;
+                context.Response.ContentLength = resource.Length;
             }
-            context.Response.ContentType = resource.ContentType.Value;
-            context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName.Value));
+            context.Response.ContentType = resource.ContentType;
+            context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));
 
-            using (Stream fs = resource.GetReadStream())
+            using (Stream fs = resource.OpenReadStream())
             {
                 byte[] buff = new byte[4096];
                 int read = 0;

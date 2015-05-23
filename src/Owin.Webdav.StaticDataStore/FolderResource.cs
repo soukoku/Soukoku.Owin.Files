@@ -12,12 +12,12 @@ namespace Owin.Webdav
         public FolderResource(IOwinContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new DirectoryInfo(physicalPath);
-            CreateDate.Value = _info.CreationTimeUtc;
-            ModifyDate.Value = _info.LastWriteTimeUtc;
         }
 
-        public string PhysicalPath { get { return _info.FullName; } }
+        //string PhysicalPath { get { return _info.FullName; } }
         public override ResourceType Type { get { return ResourceType.Collection; } }
+        public override DateTime CreationDateUtc { get { return _info.CreationTimeUtc; } }
+        public override DateTime ModifiedDateUtc { get { return _info.LastWriteTimeUtc; } }
 
     }
 }

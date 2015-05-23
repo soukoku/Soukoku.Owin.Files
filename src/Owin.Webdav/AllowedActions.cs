@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Soukoku.Owin.Webdav.Models;
 
 namespace Soukoku.Owin.Webdav
 {
+    /// <summary>
+    /// Indicates the allowed actions on a <see cref="IResource"/>.
+    /// </summary>
     [Flags]
     public enum AllowedActions
     {

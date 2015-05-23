@@ -1,5 +1,6 @@
 ﻿using Microsoft.Owin;
 using Soukoku.Owin.Webdav;
+using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,8 +15,17 @@ using System.Xml.Linq;
 
 namespace Owin
 {
+    /// <summary>
+    /// Contains extension methods for webdav component.
+    /// </summary>
     public static class WebdavMiddlewareExtensions
     {
+        /// <summary>
+        /// Uses the webdav middleware.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
         public static IAppBuilder UseWebdav(this IAppBuilder app, WebdavConfig options)
         {
             return app.Use<WebdavMiddleware>(options);
@@ -30,22 +40,29 @@ namespace Owin
         {
             int depth;
             var values = context.Request.Headers.GetValues(Consts.Header.Depth);
-            int.TryParse(values.FirstOrDefault(), out depth);
-            if (depth != 0 && depth != 1)
+            if (int.TryParse(values.FirstOrDefault(), out depth))
             {
-                depth = int.MaxValue;
+                if (depth != 0 && depth != 1)
+                {
+                    depth = int.MaxValue;
+                }
             }
             return depth;
         }
 
-        internal static string GenerateStatusMessage(this HttpStatusCode code, string message = null)
+        internal static string GenerateUrl(this IOwinContext context, IResource resource)
         {
-            return string.Format("HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
+            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}/{3}", context.Request.Uri.Scheme, context.Request.Uri.Authority, context.Request.PathBase.Value, resource.LogicalPath).TrimEnd('/');
+            if (resource.Type == ResourceType.Collection)
+            {
+                tentative += "/";
+            }
+            return tentative;
         }
 
         internal static string GenerateStatusMessage(this Consts.StatusCode code, string message = null)
         {
-            return string.Format("HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
+            return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }
 
         internal static async Task<string> ReadRequestStringAsync(this IOwinContext context)
@@ -111,11 +128,11 @@ namespace Owin
             return string.Format(CultureInfo.InvariantCulture, format, fileSize);
         }
 
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         internal static byte[] Serialize(this XmlDocument xmlDoc)
         {
             using (var ms = new MemoryStream())
-            using (var writer = new StreamWriter(ms))
+            using (var writer = new StreamWriter(ms, Encoding.UTF8))
             {
                 xmlDoc.Save(writer);
                 return ms.ToArray();

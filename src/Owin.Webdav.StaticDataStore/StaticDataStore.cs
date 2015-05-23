@@ -25,13 +25,13 @@ namespace Owin.Webdav
 
         public string RootPath { get; private set; }
 
-        public Resource GetResource(IOwinContext context, string logicalPath)
+        public IResource GetResource(IOwinContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
             return MakeIntoResource(context, logicalPath, fullPath);
         }
 
-        public IEnumerable<Resource> GetSubResources(IOwinContext context, Resource resource)
+        public IEnumerable<IResource> GetSubResources(IOwinContext context, IResource resource)
         {
             if (resource.Type == ResourceType.Collection)
             {
@@ -51,7 +51,7 @@ namespace Owin.Webdav
 
         private string MapPath(string path, bool throwIfOutsideRoot = true)
         {
-            if (path.StartsWith("/"))
+            if (path.StartsWith("/", StringComparison.Ordinal))
             {
                 path = path.Substring(1);
             }
