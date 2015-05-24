@@ -36,8 +36,11 @@ namespace Soukoku.Owin.Webdav
             _next = next;
             _options = options;
             _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
+
+            var getHandler = new GetHandler(_options);
+            _handlers.Add(DavConsts.Methods.Get, getHandler);
+            _handlers.Add(DavConsts.Methods.Head, getHandler);
             _handlers.Add(DavConsts.Methods.Options, new OptionsHandler());
-            _handlers.Add(DavConsts.Methods.Get, new GetHandler(_options));
             _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler(_options));
             _handlers.Add(DavConsts.Methods.MkCol, new MkColHandler(_options));
         }

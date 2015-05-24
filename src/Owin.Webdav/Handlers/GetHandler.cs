@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Soukoku.Owin.Webdav.DavConsts;
 
 namespace Soukoku.Owin.Webdav.Handlers
 {
@@ -23,35 +24,37 @@ namespace Soukoku.Owin.Webdav.Handlers
         {
             if (resource != null)
             {
+                var headOnly = string.Equals(context.Request.Method, Methods.Head, StringComparison.OrdinalIgnoreCase);
+
                 if (resource.ResourceType == ResourceType.Collection)
                 {
                     if (_options.AllowDirectoryBrowsing)
                     {
-                        await ShowDirectoryListingAsync(context, resource);
+                        await ShowDirectoryListingAsync(context, resource, headOnly);
                     }
                 }
                 else if (resource.ResourceType == ResourceType.Resource)
                 {
-                    await SendFileAsync(context, resource);
+                    await SendFileAsync(context, resource, headOnly);
                 }
                 return StatusCode.OK;
             }
-            return StatusCode.NotHandled;
+            return StatusCode.NotFound;
         }
 
 
-        async Task ShowDirectoryListingAsync(Context context, IResource resource)
+        async Task ShowDirectoryListingAsync(Context context, IResource resource, bool headOnly)
         {
-            var subRes = _options.DataStore.GetSubResources(context.Request.PathBase, resource);
-
-            var content = await _options.DirectoryGenerator.GenerateAsync(context, resource, subRes);
-
             context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".html");
-
-            await context.Response.WriteAsync(content, context.CancellationToken);
+            if (!headOnly)
+            {
+                var subRes = _options.DataStore.GetSubResources(context.Request.PathBase, resource);
+                var content = await _options.DirectoryGenerator.GenerateAsync(context, resource, subRes);
+                await context.Response.WriteAsync(content, context.CancellationToken);
+            }
         }
 
-        static async Task SendFileAsync(Context context, IResource resource)
+        static async Task SendFileAsync(Context context, IResource resource, bool headOnly)
         {
             if (resource.Length > 0)
             {
@@ -60,14 +63,17 @@ namespace Soukoku.Owin.Webdav.Handlers
             context.Response.Headers.ContentType = resource.ContentType;
             context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));
 
-            using (Stream fs = resource.OpenReadStream())
+            if (!headOnly)
             {
-                byte[] buff = new byte[4096];
-                int read = 0;
-
-                while ((read = await fs.ReadAsync(buff, 0, buff.Length)) > 0)
+                using (Stream fs = resource.OpenReadStream())
                 {
-                    await context.Response.Body.WriteAsync(buff, 0, read, context.CancellationToken);
+                    byte[] buff = new byte[4096];
+                    int read = 0;
+
+                    while ((read = await fs.ReadAsync(buff, 0, buff.Length)) > 0)
+                    {
+                        await context.Response.Body.WriteAsync(buff, 0, read, context.CancellationToken);
+                    }
                 }
             }
         }
