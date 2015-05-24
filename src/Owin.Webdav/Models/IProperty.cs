@@ -30,6 +30,14 @@ namespace Soukoku.Owin.Webdav.Models
         string Name { get; }
 
         /// <summary>
+        /// Gets a value indicating whether this is a live property or dead property.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if live; otherwise, <c>false</c>.
+        /// </value>
+        bool IsLive { get; }
+
+        /// <summary>
         /// Serializes the value into the xml element.
         /// </summary>
         /// <param name="element">The element.</param>

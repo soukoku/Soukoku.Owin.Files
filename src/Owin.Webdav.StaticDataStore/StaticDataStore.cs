@@ -39,6 +39,14 @@ namespace Owin.Webdav
         /// </value>
         public string RootPath { get; private set; }
 
+        public ResourceStatus CreateCollection(IResource parent, string name)
+        {
+            var newPath = Path.Combine(MapPath(parent.LogicalPath), name);
+            Directory.CreateDirectory(newPath);
+            return new ResourceStatus { Code = StatusCode.Created };
+        }
+
+
         /// <summary>
         /// Gets the resource.
         /// </summary>

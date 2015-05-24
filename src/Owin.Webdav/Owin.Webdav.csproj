@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="DefaultImp\BootstrapDirGenerator.cs" />
     <Compile Include="DefaultImp\NullLog.cs" />
+    <Compile Include="Handlers\MkColHandler.cs" />
     <Compile Include="IDirectoryListingGenerator.cs" />
     <Compile Include="Models\BuiltIn\SupportedLockProperty.cs" />
     <Compile Include="Models\Enums.cs" />

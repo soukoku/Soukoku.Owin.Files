@@ -24,65 +24,69 @@ namespace Soukoku.Owin.Webdav.Handlers
 
         public async Task<StatusCode> HandleAsync(Context context, IResource resource)
         {
-            if (resource != null)
+            int maxDepth = context.GetDepth();
+            _options.Log.LogDebug("Depth={0}", maxDepth);
+            if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
             {
-                bool allProperties = true;
-                bool nameOnly = false;
-                List<Tuple<string, string>> filter = new List<Tuple<string, string>>();
+                // TODO: correct?
+                return StatusCode.BadRequest;
+            }
 
-                // TODO: support client request instead of always returning fixed property list
-                var reqXml = context.Request.ReadRequestAsXml();
-                if (reqXml != null)
+            if (resource == null)
+            {
+                return StatusCode.NotFound;
+            }
+
+            bool allProperties = true;
+            bool nameOnly = false;
+            var filter = new List<Tuple<string, string>>(); // item1 = name, item2 = namespace
+            
+            var reqXml = context.Request.ReadRequestAsXml();
+            if (reqXml != null)
+            {
+                _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
+
+                if (reqXml.DocumentElement.Name == ElementNames.PropFind &&
+                    reqXml.DocumentElement.NamespaceURI == XmlNamespace)
                 {
-                    _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
-                    
-                    if (reqXml.DocumentElement.Name == ElementNames.PropFind &&
-                        reqXml.DocumentElement.NamespaceURI == XmlNamespace)
+                    foreach (XmlNode node in reqXml.DocumentElement.ChildNodes)
                     {
-                        foreach (XmlNode node in reqXml.DocumentElement.ChildNodes)
+                        if (node.NamespaceURI == XmlNamespace)
                         {
-                            if (node.NamespaceURI == XmlNamespace)
+                            switch (node.Name)
                             {
-                                switch (node.Name)
-                                {
-                                    case ElementNames.PropName:
-                                        nameOnly = true;
-                                        break;
-                                    case ElementNames.AllProp:
-                                        allProperties = true;
-                                        break;
-                                }
+                                case ElementNames.PropName:
+                                    nameOnly = true;
+                                    break;
+                                case ElementNames.AllProp:
+                                    allProperties = true;
+                                    break;
+                                case ElementNames.Prop:
+                                    allProperties = false;
+                                    foreach (XmlNode propNode in node.ChildNodes)
+                                    {
+                                        filter.Add(new Tuple<string, string>(propNode.Name, propNode.NamespaceURI));
+                                    }
+                                    break;
                             }
                         }
                     }
-                    else
-                    {
-                        return StatusCode.BadRequest;
-                    }
                 }
-
-
-
-                int maxDepth = context.GetDepth();
-                _options.Log.LogDebug("Depth={0}", maxDepth);
-                if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
+                else
                 {
-                    // TODO: correct?
                     return StatusCode.BadRequest;
                 }
-
-
-                var list = new List<IResource>();
-                WalkResourceTree(context, maxDepth, 0, list, resource);
-
-                await WriteMultiStatusReponse(context, list, allProperties, nameOnly, filter);
-                return StatusCode.MultiStatus;
             }
-            return StatusCode.NotFound;
+
+
+            var list = new List<IResource>();
+            WalkResourceTree(context, maxDepth, 0, list, resource);
+
+            return await WriteMultiStatusReponse(context, list, allProperties, nameOnly, filter);
         }
 
 
-        private Task WriteMultiStatusReponse(Context context, List<IResource> list, bool allProperties, bool nameOnly, List<Tuple<string, string>> filter)
+        private async Task<StatusCode> WriteMultiStatusReponse(Context context, List<IResource> list, bool allProperties, bool nameOnly, List<Tuple<string, string>> filter)
         {
             XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list, allProperties, nameOnly, filter);
 
@@ -92,7 +96,8 @@ namespace Soukoku.Owin.Webdav.Handlers
             context.Response.Headers.ContentLength = content.Length;
 
             _options.Log.LogDebug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
-            return context.Response.Body.WriteAsync(content, 0, content.Length, context.CancellationToken);
+            await context.Response.Body.WriteAsync(content, 0, content.Length, context.CancellationToken);
+            return StatusCode.MultiStatus;
         }
 
         private void WalkResourceTree(Context context, int maxDepth, int curDepth, List<IResource> addToList, IResource resource)

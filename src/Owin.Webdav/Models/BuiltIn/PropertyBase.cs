@@ -22,6 +22,8 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
 
         public string XmlNamespace { get { return DavConsts.XmlNamespace; } }
 
+        public virtual bool IsLive { get { return true; } }
+
         public abstract void SerializeValue(XmlElement element, NewElementFunc newElementMethod);
         public virtual void DeserializeValue(XmlElement element) { }
     }

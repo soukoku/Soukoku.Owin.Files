@@ -39,6 +39,7 @@ namespace Soukoku.Owin.Webdav
             _handlers.Add(DavConsts.Methods.Options, new OptionsHandler());
             _handlers.Add(DavConsts.Methods.Get, new GetHandler(_options));
             _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler(_options));
+            _handlers.Add(DavConsts.Methods.MkCol, new MkColHandler(_options));
         }
 
 
@@ -53,7 +54,7 @@ namespace Soukoku.Owin.Webdav
 
             try
             {
-                _options.Log.LogDebug("{0} for {1}", context.Request.Method, context.Request.Path);
+                _options.Log.LogDebug("{0} for {1}{2}", context.Request.Method, context.Request.PathBase, context.Request.Path);
 
                 IResource resource = _options.DataStore.GetResource(context.Request.PathBase, context.Request.Path);
 

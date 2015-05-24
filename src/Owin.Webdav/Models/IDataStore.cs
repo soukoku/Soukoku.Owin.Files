@@ -26,5 +26,13 @@ namespace Soukoku.Owin.Webdav.Models
         /// <param name="collectionResource">The collection resource.</param>
         /// <returns></returns>
         IEnumerable<IResource> GetSubResources(string pathBase, IResource collectionResource);
+        ResourceStatus CreateCollection(IResource parent, string name);
+    }
+
+    public class ResourceStatus
+    {
+        public StatusCode Code { get; set; }
+
+        public IResource Resource { get; set; }
     }
 }

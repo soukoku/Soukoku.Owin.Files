@@ -90,6 +90,7 @@ namespace Soukoku.Owin.Webdav.Models
         Conflict = HttpStatusCode.Conflict,
         UnsupportedMediaType = HttpStatusCode.UnsupportedMediaType,
         Forbidden = HttpStatusCode.Forbidden,
+        MethodNotAllowed = HttpStatusCode.MethodNotAllowed
     }
 
     /// <summary>

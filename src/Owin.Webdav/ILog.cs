@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="format">The message format.</param>
         /// <param name="args">The arguments.</param>
-        void LogDebug(string format, params object[] args);
+        void LogDebug( string format, params object[] args);
 
         /// <summary>
         /// Logs the error message.
@@ -39,5 +39,6 @@
         /// <param name="format">The message format.</param>
         /// <param name="args">The arguments.</param>
         void LogWarning(string format, params object[] args);
+
     }
 }
