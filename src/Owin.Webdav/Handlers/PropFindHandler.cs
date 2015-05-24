@@ -21,8 +21,17 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public async Task<bool> HandleAsync(Context context, IResource resource)
+        public async Task<StatusCode> HandleAsync(Context context, IResource resource)
         {
+
+            // TODO: support client request instead of always returning fixed property list
+            var reqBody = context.Request.ReadRequestAsXml();
+            if (reqBody != null)
+            {
+                _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqBody.OuterXml.PrettyXml());
+
+            }
+
             if (resource != null)
             {
                 int maxDepth = context.GetDepth();
@@ -33,24 +42,14 @@ namespace Soukoku.Owin.Webdav.Handlers
 
                 _options.Log.LogDebug("Depth={0}", maxDepth);
 
-                // TODO: support client request instead of always returning fixed property list
-                var reqBody = await context.ReadRequestStringAsync();
-                if (!string.IsNullOrEmpty(reqBody))
-                {
-                    _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqBody.PrettyXml());
-
-                    var reqXml = new XmlDocument();
-                    reqXml.LoadXml(reqBody);
-                }
-
                 var list = new List<IResource>();
                 var curDepth = 0;
                 WalkResourceTree(context, maxDepth, curDepth, list, resource);
 
                 await WriteMultiStatusReponse(context, list);
-                return true;
+                return StatusCode.MultiStatus;
             }
-            return false;
+            return StatusCode.NotHandled;
         }
 
 
@@ -60,7 +59,6 @@ namespace Soukoku.Owin.Webdav.Handlers
 
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();
-            context.Response.StatusCode = (int)StatusCode.MultiStatus;
             context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".xml");
             context.Response.Headers.ContentLength = content.Length;
 

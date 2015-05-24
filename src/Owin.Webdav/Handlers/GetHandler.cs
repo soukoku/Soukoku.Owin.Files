@@ -19,7 +19,7 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public async Task<bool> HandleAsync(Context context, IResource resource)
+        public async Task<StatusCode> HandleAsync(Context context, IResource resource)
         {
             if (resource != null)
             {
@@ -34,9 +34,9 @@ namespace Soukoku.Owin.Webdav.Handlers
                 {
                     await SendFileAsync(context, resource);
                 }
-                return true;
+                return StatusCode.OK;
             }
-            return false;
+            return StatusCode.NotHandled;
         }
 
 

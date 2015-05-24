@@ -36,15 +36,27 @@ namespace Soukoku.Owin.Webdav
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="resource">The resource.</param>
+        /// <param name="pathAbsolute">if set to <c>true</c> then only generate path absolute urls (/path/to/resource), otherwise generate the full url.</param>
         /// <returns></returns>
-        public static string GenerateUrl(this Context context, IResource resource)
+        public static string GenerateUrl(this Context context, IResource resource, bool pathAbsolute)
         {
-            var tentative = string.Format(CultureInfo.InvariantCulture, "{0}://{1}{2}{3}", context.Request.Scheme, context.Request.Host, context.Request.PathBase, resource.LogicalPath);//.TrimEnd('/');
-            if (resource.ResourceType == ResourceType.Collection)
+            var url = context.Request.PathBase + resource.LogicalPath;
+
+            if (pathAbsolute)
             {
-                tentative += "/";
+                if (!url.StartsWith("/", StringComparison.Ordinal)) { url = "/" + url; }
             }
-            return tentative;
+            else
+            {
+                url = context.Request.Scheme + Uri.SchemeDelimiter + context.Request.Host + url;
+            }
+
+            if (resource.ResourceType == ResourceType.Collection &&
+                !url.EndsWith("/", StringComparison.Ordinal))
+            {
+                url += "/";
+            }
+            return url;
         }
 
         internal static int GetDepth(this Context context)
@@ -66,25 +78,37 @@ namespace Soukoku.Owin.Webdav
             return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
         }
 
-        internal static async Task<string> ReadRequestStringAsync(this Context context)
+        internal static XmlDocument ReadRequestAsXml(this Request request)
+        {
+            XmlDocument doc = null;
+
+            if (request.Headers.ContentType == "application/xml" ||
+                request.Headers.ContentType == "text/xml")
+            {
+                // todo: should somehow make it async?
+                doc = new XmlDocument();
+                doc.Load(request.Body);
+            }
+            return doc;
+        }
+
+        internal static async Task<string> ReadRequestStringAsync(this Request request)
         {
             string body = null;
-            if (context.Request.Body != null)
+
+            //if (!context.Request.Body.CanSeek)
+            //{
+            //    // keep the body around for other components?
+            //    MemoryStream ms = new MemoryStream();
+            //    await context.Request.Body.CopyToAsync(ms);
+            //    context.Request.Body = ms;
+            //    ms.Position = 0;
+            //}
+            using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, false, 4096, true))
             {
-                //if (!context.Request.Body.CanSeek)
-                //{
-                //    // keep the body around for other components?
-                //    MemoryStream ms = new MemoryStream();
-                //    await context.Request.Body.CopyToAsync(ms);
-                //    context.Request.Body = ms;
-                //    ms.Position = 0;
-                //}
-                using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8, false, 4096, true))
-                {
-                    body = await reader.ReadToEndAsync();
-                }
-                //context.Request.Body.Position = 0;
+                body = await reader.ReadToEndAsync();
             }
+            //context.Request.Body.Position = 0;
             return body;
         }
 

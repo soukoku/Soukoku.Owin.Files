@@ -19,14 +19,14 @@ namespace Soukoku.Owin.Webdav.Handlers
             _options = options;
         }
 
-        public Task<bool> HandleAsync(Context context, IResource resource)
+        public Task<StatusCode> HandleAsync(Context context, IResource resource)
         {
             if (resource != null)
             {
                 // lie and say we can deal with it all for now
 
                 context.Response.Headers.Replace("MS-Author-Via", "DAV");
-                context.Response.Headers.Replace(DavConsts.Headers.Dav, _options.DavClass.ToString().Replace("Class", "").Replace(" ", ""));
+                context.Response.Headers.Replace(DavConsts.Headers.Dav, resource.DavClass.ToString().Replace("Class", "").Replace(" ", ""));
                 context.Response.Headers.Replace("Allow",
                     string.Join(",",
                     DavConsts.Methods.Options,
@@ -58,9 +58,9 @@ namespace Soukoku.Owin.Webdav.Handlers
                     DavConsts.Methods.Unlock));
 
                 context.Response.Headers.ContentLength = 0;
-                return Task.FromResult(true);
+                return Task.FromResult(StatusCode.OK);
             }
-            return Task.FromResult(false);
+            return Task.FromResult(StatusCode.NotHandled);
         }
 
     }

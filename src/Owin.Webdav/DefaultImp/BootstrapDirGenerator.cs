@@ -19,7 +19,7 @@ namespace Soukoku.Owin.Webdav.DefaultImp
                 foreach (var item in childResources.OrderByDescending(r => r.ResourceType).ThenBy(r => r.DisplayName))
                 {
                     rows.Append("<tr>");
-                    var url = context.GenerateUrl(item);
+                    var url = context.GenerateUrl(item, true);
                     if (item.ResourceType == ResourceType.Collection)
                     {
                         rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{2}</td><td></td><td><span class=\"text-warning glyphicon glyphicon-folder-close\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));

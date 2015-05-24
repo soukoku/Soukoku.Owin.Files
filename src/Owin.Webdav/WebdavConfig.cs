@@ -25,7 +25,6 @@ namespace Soukoku.Owin.Webdav
             DataStore = dataStore;
             _defaultLog = new NullLog();
             _defaultDirGen = new BootstrapDirGenerator();
-            DavClass = DavClasses.Class1;
         }
 
         /// <summary>
@@ -51,14 +50,6 @@ namespace Soukoku.Owin.Webdav
         /// The data store.
         /// </value>
         public IDataStore DataStore { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the supported webdav class number when queried by client.
-        /// </summary>
-        /// <value>
-        /// The dav class.
-        /// </value>
-        public DavClasses DavClass { get; set; }
 
         NullLog _defaultLog;
         private ILog _log;
@@ -90,18 +81,4 @@ namespace Soukoku.Owin.Webdav
 
     }
 
-
-    /// <summary>
-    /// Indicates the function level of a webdav implementation.
-    /// </summary>
-    [Flags]
-    public enum DavClasses
-    {
-        /// <summary>
-        /// Basic webdav.
-        /// </summary>
-        Class1 = 1,
-        Class2 = 2,
-        Class3 = 4
-    }
 }

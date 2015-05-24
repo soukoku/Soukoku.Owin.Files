@@ -13,7 +13,7 @@ namespace Soukoku.Owin.Webdav.Handlers
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="resource">The resource.</param>
-        /// <returns>Returns <code>true</code> if handled by the method, <code>false</code> if not.</returns>
-        Task<bool> HandleAsync(Context context, IResource resource);
+        /// <returns></returns>
+        Task<StatusCode> HandleAsync(Context context, IResource resource);
     }
 }

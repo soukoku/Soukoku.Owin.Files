@@ -28,7 +28,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(DavConsts.ElementNames.Href, DavConsts.XmlNamespace);
-                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource)); // escape required to get some clients working
+                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource, false)); // escape required to get some clients working
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(DavConsts.ElementNames.PropStat, DavConsts.XmlNamespace);

@@ -27,6 +27,14 @@ namespace Soukoku.Owin.Webdav.Models
         /// The logical path.
         /// </value>
         string LogicalPath { get; }
+        
+        /// <summary>
+        /// Gets the supported webdav class number when queried by client.
+        /// </summary>
+        /// <value>
+        /// The dav class.
+        /// </value>
+        DavClasses DavClass { get; }
 
         IEnumerable<IProperty> Properties { get; }
 

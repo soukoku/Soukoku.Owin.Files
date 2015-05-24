@@ -96,6 +96,14 @@ namespace Soukoku.Owin.Webdav.Models
 
 
         /// <summary>
+        /// Gets the supported webdav class number when queried by client.
+        /// </summary>
+        /// <value>
+        /// The dav class.
+        /// </value>
+        public virtual DavClasses DavClass { get { return DavClasses.Class1; } }
+
+        /// <summary>
         /// Gets the display name.
         /// </summary>
         /// <value>

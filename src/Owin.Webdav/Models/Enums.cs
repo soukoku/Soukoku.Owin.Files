@@ -62,9 +62,15 @@ namespace Soukoku.Owin.Webdav.Models
     /// <summary>
     /// Http status codes used by webdav.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Not for http codes it ain't.")]
+    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Not for http codes it ain't.")]
     public enum StatusCode
     {
+        /// <summary>
+        /// Special indicator (not a real http code) for request not handled by webdav.
+        /// </summary>
+        NotHandled = 0,
+
+
         // spec section 11
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi", Justification = "Useless word block from ancient times.")]
@@ -76,11 +82,34 @@ namespace Soukoku.Owin.Webdav.Models
 
         // standard codes
         OK = HttpStatusCode.OK,
+        Created = HttpStatusCode.Created,
+        NoContent = HttpStatusCode.NoContent,
+        BadRequest = HttpStatusCode.BadRequest,
         NotFound = HttpStatusCode.NotFound,
         PreconditionFailed = HttpStatusCode.PreconditionFailed,
         Conflict = HttpStatusCode.Conflict,
-        NoContent = HttpStatusCode.NoContent,
+        UnsupportedMediaType = HttpStatusCode.UnsupportedMediaType,
         Forbidden = HttpStatusCode.Forbidden,
+    }
+
+    /// <summary>
+    /// Indicates the function level of a webdav implementation.
+    /// </summary>
+    [Flags]
+    public enum DavClasses
+    {
+        /// <summary>
+        /// Supports basic webdav behaviors.
+        /// </summary>
+        Class1 = 1,
+        /// <summary>
+        /// Supports locking behaviors.
+        /// </summary>
+        Class2 = 2,
+        /// <summary>
+        /// Supoorts all revisions to rfc2518 in rfc4918.
+        /// </summary>
+        Class3 = 4
     }
 
     public enum LockType

@@ -64,16 +64,20 @@ namespace Soukoku.Owin.Webdav
                     context.Response.Headers.Replace("Content-Location", fullUrl + "/");
                 }
 
-                var handled = false;
+                var code = StatusCode.NotHandled;
                 IMethodHandler handler;
                 if (_handlers.TryGetValue(context.Request.Method, out handler))
                 {
-                    handled = await handler.HandleAsync(context, resource);
+                    code = await handler.HandleAsync(context, resource);
                 }
 
-                if (!handled)
+                if (code == StatusCode.NotHandled)
                 {
                     await _next.Invoke(environment);
+                }
+                else
+                {
+                    context.Response.StatusCode = (int)code;
                 }
             }
             catch (Exception ex)
