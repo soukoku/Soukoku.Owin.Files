@@ -20,6 +20,14 @@ namespace Soukoku.Owin.Webdav.Models
         public string Token { get; set; }
 
         /// <summary>
+        /// Gets or sets the scope.
+        /// </summary>
+        /// <value>
+        /// The scope.
+        /// </value>
+        public LockScopes Scope { get; set; }
+
+        /// <summary>
         /// Gets or sets the type of the lock.
         /// </summary>
         /// <value>

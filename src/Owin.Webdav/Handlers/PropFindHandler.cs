@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Soukoku.Owin.Webdav.Responses;
+using static Soukoku.Owin.Webdav.DavConsts;
 
 namespace Soukoku.Owin.Webdav.Handlers
 {
@@ -23,39 +24,67 @@ namespace Soukoku.Owin.Webdav.Handlers
 
         public async Task<StatusCode> HandleAsync(Context context, IResource resource)
         {
-
-            // TODO: support client request instead of always returning fixed property list
-            var reqBody = context.Request.ReadRequestAsXml();
-            if (reqBody != null)
-            {
-                _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqBody.OuterXml.PrettyXml());
-
-            }
-
             if (resource != null)
             {
-                int maxDepth = context.GetDepth();
-                if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
+                bool allProperties = true;
+                bool nameOnly = false;
+                List<Tuple<string, string>> filter = new List<Tuple<string, string>>();
+
+                // TODO: support client request instead of always returning fixed property list
+                var reqXml = context.Request.ReadRequestAsXml();
+                if (reqXml != null)
                 {
-                    // TODO: return dav error
+                    _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
+                    
+                    if (reqXml.DocumentElement.Name == ElementNames.PropFind &&
+                        reqXml.DocumentElement.NamespaceURI == XmlNamespace)
+                    {
+                        foreach (XmlNode node in reqXml.DocumentElement.ChildNodes)
+                        {
+                            if (node.NamespaceURI == XmlNamespace)
+                            {
+                                switch (node.Name)
+                                {
+                                    case ElementNames.PropName:
+                                        nameOnly = true;
+                                        break;
+                                    case ElementNames.AllProp:
+                                        allProperties = true;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return StatusCode.BadRequest;
+                    }
                 }
 
+
+
+                int maxDepth = context.GetDepth();
                 _options.Log.LogDebug("Depth={0}", maxDepth);
+                if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
+                {
+                    // TODO: correct?
+                    return StatusCode.BadRequest;
+                }
+
 
                 var list = new List<IResource>();
-                var curDepth = 0;
-                WalkResourceTree(context, maxDepth, curDepth, list, resource);
+                WalkResourceTree(context, maxDepth, 0, list, resource);
 
-                await WriteMultiStatusReponse(context, list);
+                await WriteMultiStatusReponse(context, list, allProperties, nameOnly, filter);
                 return StatusCode.MultiStatus;
             }
-            return StatusCode.NotHandled;
+            return StatusCode.NotFound;
         }
 
 
-        private Task WriteMultiStatusReponse(Context context, List<IResource> list)
+        private Task WriteMultiStatusReponse(Context context, List<IResource> list, bool allProperties, bool nameOnly, List<Tuple<string, string>> filter)
         {
-            XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list);
+            XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list, allProperties, nameOnly, filter);
 
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();

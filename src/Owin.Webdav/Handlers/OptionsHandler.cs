@@ -12,11 +12,11 @@ namespace Soukoku.Owin.Webdav.Handlers
 {
     sealed class OptionsHandler : IMethodHandler
     {
-        private WebdavConfig _options;
+        //private WebdavConfig _options;
 
-        public OptionsHandler(WebdavConfig options)
+        public OptionsHandler()//WebdavConfig options)
         {
-            _options = options;
+            //_options = options;
         }
 
         public Task<StatusCode> HandleAsync(Context context, IResource resource)

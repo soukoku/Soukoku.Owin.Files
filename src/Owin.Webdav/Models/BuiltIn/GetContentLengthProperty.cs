@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
@@ -19,10 +20,10 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             }
         }
 
-        public override void SerializeValue(XPathNavigator element)
+        public override void SerializeValue(XmlElement element, NewElementFunc newElementMethod)
         {
             if (element == null) { throw new ArgumentNullException("element"); }
-            element.SetValue(Resource.Length.ToString(CultureInfo.InvariantCulture));
+            element.InnerText = Resource.Length.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

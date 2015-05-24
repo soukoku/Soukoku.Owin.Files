@@ -112,10 +112,16 @@ namespace Soukoku.Owin.Webdav.Models
         Class3 = 4
     }
 
-    public enum LockType
+    [Flags]
+    public enum LockScopes
     {
         None = 0,
-        Exclusive,
-        Shared
+        Exclusive = 1,
+        Shared = 2
+    }
+
+    public enum LockType
+    {
+        Write
     }
 }

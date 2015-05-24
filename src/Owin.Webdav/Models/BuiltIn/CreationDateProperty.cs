@@ -20,13 +20,13 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             }
         }
 
-        public override void SerializeValue(XPathNavigator element)
+        public override void SerializeValue(XmlElement element, NewElementFunc newElementMethod)
         {
             if (element == null) { throw new ArgumentNullException("element"); }
             var value = Resource.CreationDateUtc;
             if (value > DateTime.MinValue)
             {
-                element.SetValue(XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc)); // valid rfc 3339?
+                element.InnerText = XmlConvert.ToString(value, XmlDateTimeSerializationMode.Utc); // valid rfc 3339?
             }
         }
     }

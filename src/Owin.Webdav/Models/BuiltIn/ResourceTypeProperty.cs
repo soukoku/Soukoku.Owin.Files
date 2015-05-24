@@ -20,13 +20,14 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             }
         }
 
-        public override void SerializeValue(XPathNavigator element)
+        public override void SerializeValue(XmlElement element, NewElementFunc newElementMethod)
         {
             if (element == null) { throw new ArgumentNullException("element"); }
+            if (newElementMethod == null) { throw new ArgumentNullException("newElementMethod"); }
             if (Resource.ResourceType == ResourceType.Collection)
             {
-                var pfx = element.LookupPrefix(DavConsts.XmlNamespace);
-                element.AppendChildElement(pfx, DavConsts.ElementNames.Collection, DavConsts.XmlNamespace, null);
+                var subEl = newElementMethod(DavConsts.ElementNames.Collection, DavConsts.XmlNamespace);
+                element.AppendChild(subEl);
             }
         }
     }

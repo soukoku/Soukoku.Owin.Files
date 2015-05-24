@@ -69,6 +69,9 @@ namespace Soukoku.Owin.Webdav
                 {
                     depth = int.MaxValue;
                 }
+            }else
+            {
+                depth = int.MaxValue;
             }
             return depth;
         }
@@ -92,25 +95,25 @@ namespace Soukoku.Owin.Webdav
             return doc;
         }
 
-        internal static async Task<string> ReadRequestStringAsync(this Request request)
-        {
-            string body = null;
+        //internal static async Task<string> ReadRequestStringAsync(this Request request)
+        //{
+        //    string body = null;
 
-            //if (!context.Request.Body.CanSeek)
-            //{
-            //    // keep the body around for other components?
-            //    MemoryStream ms = new MemoryStream();
-            //    await context.Request.Body.CopyToAsync(ms);
-            //    context.Request.Body = ms;
-            //    ms.Position = 0;
-            //}
-            using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, false, 4096, true))
-            {
-                body = await reader.ReadToEndAsync();
-            }
-            //context.Request.Body.Position = 0;
-            return body;
-        }
+        //    //if (!context.Request.Body.CanSeek)
+        //    //{
+        //    //    // keep the body around for other components?
+        //    //    MemoryStream ms = new MemoryStream();
+        //    //    await context.Request.Body.CopyToAsync(ms);
+        //    //    context.Request.Body = ms;
+        //    //    ms.Position = 0;
+        //    //}
+        //    using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8, false, 4096, true))
+        //    {
+        //        body = await reader.ReadToEndAsync();
+        //    }
+        //    //context.Request.Body.Position = 0;
+        //    return body;
+        //}
 
         internal static Task<string> ReadStringAsync(this Stream stream)
         {

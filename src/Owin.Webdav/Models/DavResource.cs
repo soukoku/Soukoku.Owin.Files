@@ -41,6 +41,7 @@ namespace Soukoku.Owin.Webdav.Models
             _properties.Add(new GetETagProperty(this));
             _properties.Add(new GetLastModifiedProperty(this));
             _properties.Add(new ResourceTypeProperty(this));
+            _properties.Add(new SupportedLockProperty(this));
         }
 
         private List<IProperty> _properties;
@@ -161,6 +162,12 @@ namespace Soukoku.Owin.Webdav.Models
         public virtual string ETag { get { return null; } }
 
         public abstract ResourceType ResourceType { get; }
+        
+        public virtual LockScopes SupportedLock
+        {
+            get { return LockScopes.Exclusive | LockScopes.Shared; }
+        }
+
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

@@ -20,13 +20,13 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             }
         }
 
-        public override void SerializeValue(XPathNavigator element)
+        public override void SerializeValue(XmlElement element, NewElementFunc newElementMethod)
         {
             if (element == null) { throw new ArgumentNullException("element"); }
             var value = Resource.ETag;
             if (!string.IsNullOrEmpty(value))
             {
-                element.SetValue(value);
+                element.InnerText = value;
             }
         }
     }

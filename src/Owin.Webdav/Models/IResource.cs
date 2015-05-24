@@ -27,7 +27,7 @@ namespace Soukoku.Owin.Webdav.Models
         /// The logical path.
         /// </value>
         string LogicalPath { get; }
-        
+
         /// <summary>
         /// Gets the supported webdav class number when queried by client.
         /// </summary>
@@ -101,6 +101,12 @@ namespace Soukoku.Owin.Webdav.Models
 
         ResourceType ResourceType { get; }
         string ETag { get; }
+
+        #endregion
+
+        #region locks
+
+        LockScopes SupportedLock { get; }
 
         #endregion
     }

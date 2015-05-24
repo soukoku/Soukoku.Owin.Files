@@ -55,6 +55,7 @@
     <Compile Include="DefaultImp\BootstrapDirGenerator.cs" />
     <Compile Include="DefaultImp\NullLog.cs" />
     <Compile Include="IDirectoryListingGenerator.cs" />
+    <Compile Include="Models\BuiltIn\SupportedLockProperty.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Handlers\PropFindHandler.cs" />
     <Compile Include="Handlers\OptionsHandler.cs" />

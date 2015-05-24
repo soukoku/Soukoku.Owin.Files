@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace Soukoku.Owin.Webdav.Models.BuiltIn
@@ -19,9 +20,9 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
 
         public abstract string Name { get; }
 
-        public string NamespaceUri { get { return DavConsts.XmlNamespace; } }
+        public string XmlNamespace { get { return DavConsts.XmlNamespace; } }
 
-        public abstract void SerializeValue(XPathNavigator element);
-        public virtual void DeserializeValue(XPathNavigator element) { }
+        public abstract void SerializeValue(XmlElement element, NewElementFunc newElementMethod);
+        public virtual void DeserializeValue(XmlElement element) { }
     }
 }

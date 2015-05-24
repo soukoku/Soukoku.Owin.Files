@@ -36,7 +36,7 @@ namespace Soukoku.Owin.Webdav
             _next = next;
             _options = options;
             _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
-            _handlers.Add(DavConsts.Methods.Options, new OptionsHandler(_options));
+            _handlers.Add(DavConsts.Methods.Options, new OptionsHandler());
             _handlers.Add(DavConsts.Methods.Get, new GetHandler(_options));
             _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler(_options));
         }
