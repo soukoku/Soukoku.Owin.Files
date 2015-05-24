@@ -19,6 +19,6 @@ namespace Soukoku.Owin.Webdav
         /// <param name="parentResource">The parent resource.</param>
         /// <param name="childResources">The child resources.</param>
         /// <returns></returns>
-        Task<string> GenerateAsync(Context context, IResource parentResource, IEnumerable<IResource> childResources);
+        Task<string> GenerateAsync(DavContext context, IResource parentResource, IEnumerable<IResource> childResources);
     }
 }

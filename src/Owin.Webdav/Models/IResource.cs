@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soukoku.Owin.Webdav.Responses;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,48 +9,25 @@ using System.Threading.Tasks;
 namespace Soukoku.Owin.Webdav.Models
 {
     /// <summary>
-    /// Represents a webdav resource.
+    /// Represents a webdav resource mapped by a url.
     /// </summary>
     public interface IResource
     {
         /// <summary>
-        /// Gets the path base before the dav root.
+        /// Gets the current webdav context.
         /// </summary>
         /// <value>
-        /// The path base.
+        /// The context.
         /// </value>
-        string PathBase { get; }
+        DavContext Context { get; }
 
         /// <summary>
-        /// Gets the logical path from dav root.
+        /// Gets the logical path from dav root, with leading root slash '/' but not trailing slash.
         /// </summary>
         /// <value>
         /// The logical path.
         /// </value>
         string LogicalPath { get; }
-
-        /// <summary>
-        /// Gets the supported webdav class number when queried by client.
-        /// </summary>
-        /// <value>
-        /// The dav class.
-        /// </value>
-        DavClasses DavClass { get; }
-
-        IEnumerable<IProperty> Properties { get; }
-
-        //T FindProperty<T>(string name, string namespaceUri) where T : class, IDavProperty;
-
-        //void AddProperties(IEnumerable<IDavProperty> properties);
-        //void AddProperty(IDavProperty davProperty);
-
-        /// <summary>
-        /// Opens the the resource stream for reading.
-        /// </summary>
-        /// <returns></returns>
-        Stream OpenReadStream();
-
-        #region built-in webdav properties
 
         /// <summary>
         /// Gets the display name.
@@ -100,15 +78,32 @@ namespace Soukoku.Owin.Webdav.Models
         DateTime ModifiedDateUtc { get; }
 
         ResourceType ResourceType { get; }
+
         string ETag { get; }
 
-        #endregion
+        LockScopes SupportedLocks { get; }
 
-        #region locks
+        /// <summary>
+        /// Gets the custom properties associated with the resource.
+        /// </summary>
+        /// <param name="nameOnly">if set to <c>true</c> then don't retrieve the property value if possible.</param>
+        /// <param name="filter">The optional filter. If empty then all properties should be returned.</param>
+        /// <returns></returns>
+        IEnumerable<IProperty> GetProperties(bool nameOnly, IEnumerable<PropertyFilter> filter);
 
-        LockScopes SupportedLock { get; }
-
-        #endregion
+        /// <summary>
+        /// Sets the properties associated with the resource.
+        /// </summary>
+        /// <param name="setValues">The property values to write.</param>
+        /// <param name="deleteValues">The property values to delete.</param>
+        /// <returns></returns>
+        IEnumerable<PropertyResponse> SetProperties(IEnumerable<IProperty> setValues, IEnumerable<IProperty> deleteValues);
+    }
+    
+    public class PropertyFilter 
+    {
+        public string XmlNamespace { get; set; }
+        public string Name { get; set; }
     }
 
     /// <summary>

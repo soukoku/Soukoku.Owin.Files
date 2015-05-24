@@ -25,7 +25,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
             if (element == null) { throw new ArgumentNullException("element"); }
             if (newElementMethod == null) { throw new ArgumentNullException("newElementMethod"); }
 
-            if (Resource.SupportedLock.HasFlag(LockScopes.Exclusive))
+            if (Resource.SupportedLocks.HasFlag(LockScopes.Exclusive))
             {
                 var entry = newElementMethod(DavConsts.ElementNames.LockEntry, DavConsts.XmlNamespace);
                 element.AppendChild(entry);
@@ -39,7 +39,7 @@ namespace Soukoku.Owin.Webdav.Models.BuiltIn
                 entry.AppendChild(type);
             }
 
-            if (Resource.SupportedLock.HasFlag(LockScopes.Shared))
+            if (Resource.SupportedLocks.HasFlag(LockScopes.Shared))
             {
                 var entry = newElementMethod(DavConsts.ElementNames.LockEntry, DavConsts.XmlNamespace);
                 element.AppendChild(entry);

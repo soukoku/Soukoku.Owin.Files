@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Soukoku.Owin.Webdav
 {
+    using Soukoku.Owin.Webdav.Responses;
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
     /// <summary>
@@ -37,12 +38,12 @@ namespace Soukoku.Owin.Webdav
             _options = options;
             _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
 
-            var getHandler = new GetHandler(_options);
+            var getHandler = new GetHandler();
             _handlers.Add(DavConsts.Methods.Get, getHandler);
             _handlers.Add(DavConsts.Methods.Head, getHandler);
             _handlers.Add(DavConsts.Methods.Options, new OptionsHandler());
-            _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler(_options));
-            _handlers.Add(DavConsts.Methods.MkCol, new MkColHandler(_options));
+            _handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler());
+            _handlers.Add(DavConsts.Methods.MkCol, new MkColHandler());
         }
 
 
@@ -53,20 +54,20 @@ namespace Soukoku.Owin.Webdav
         /// <returns></returns>
         public async Task Invoke(IDictionary<string, object> environment)
         {
-            var context = new Context(environment);
+            var context = new DavContext(_options, environment);
 
             try
             {
                 _options.Log.LogDebug("{0} for {1}{2}", context.Request.Method, context.Request.PathBase, context.Request.Path);
 
-                IResource resource = _options.DataStore.GetResource(context.Request.PathBase, context.Request.Path);
+                ResourceResponse resource = _options.DataStore.GetResource(context, context.Request.Path);
 
                 // TODO: handle query string part?
-                var fullUrl = context.Request.Uri.ToString();
-                if (resource != null && resource.ResourceType == ResourceType.Collection && !fullUrl.EndsWith("/", StringComparison.Ordinal))
-                {
-                    context.Response.Headers.Replace("Content-Location", fullUrl + "/");
-                }
+                //var fullUrl = context.Request.Uri.ToString();
+                //if (resource.Resource != null && resource.Resource.ResourceType == ResourceType.Collection && !fullUrl.EndsWith("/", StringComparison.Ordinal))
+                //{
+                //    context.Response.Headers.Replace("Content-Location", fullUrl + "/");
+                //}
 
                 var code = StatusCode.NotHandled;
                 IMethodHandler handler;

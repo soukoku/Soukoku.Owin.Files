@@ -12,10 +12,11 @@ namespace Soukoku.Owin.Webdav.Responses
 {
     static class XmlGenerator
     {
-        public static XmlDocument CreateMultiStatus(Context context, IEnumerable<IResource> resources, bool allProperties, bool nameOnly, List<Tuple<string, string>> filter)
+        public static XmlDocument CreateMultiStatus(Context context, IEnumerable<ResourceResponse> resources,
+            bool allProperties = true, bool nameOnly = false, List<PropertyFilter> filter = null)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            
+
             XmlNode rootNode = xmlDoc.CreateElement(DavConsts.ElementNames.MultiStatus, DavConsts.XmlNamespace);
             xmlDoc.AppendChild(rootNode);
 
@@ -27,15 +28,14 @@ namespace Soukoku.Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(DavConsts.ElementNames.Href, DavConsts.XmlNamespace);
-                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource, false)); // escape required to get some clients working
+                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource.Resource, false)); // escape required to get some clients working
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(DavConsts.ElementNames.PropStat, DavConsts.XmlNamespace);
                     response.AppendChild(respProperty);
 
                     XmlNode propStatus = xmlDoc.CreateElement(DavConsts.ElementNames.Status, DavConsts.XmlNamespace);
-                    // todo: use real status code somehow
-                    propStatus.InnerText = StatusCode.OK.GenerateStatusMessage();
+                    propStatus.InnerText = resource.Code.GenerateStatusMessage();
                     respProperty.AppendChild(propStatus);
 
 
@@ -44,17 +44,14 @@ namespace Soukoku.Owin.Webdav.Responses
 
                     #region dav-properties
 
-                    foreach (var prop in resource.Properties)
+                    foreach (var prop in resource.Resource.GetProperties(nameOnly, allProperties ? Enumerable.Empty<PropertyFilter>() : filter))
                     {
-                        if (allProperties || filter.Any(f => f.Item1 == prop.Name && f.Item2 == prop.XmlNamespace))
+                        var propNode = xmlDoc.CreateElement(prop.Name, prop.XmlNamespace);
+                        if (!nameOnly)
                         {
-                            var propNode = xmlDoc.CreateElement(prop.Name, prop.XmlNamespace);
-                            if (!nameOnly)
-                            {
-                                prop.SerializeValue(propNode, xmlDoc.CreateElement);
-                            }
-                            propList.AppendChild(propNode);
+                            prop.SerializeValue(propNode, xmlDoc.CreateElement);
                         }
+                        propList.AppendChild(propNode);
                     }
 
                     #endregion

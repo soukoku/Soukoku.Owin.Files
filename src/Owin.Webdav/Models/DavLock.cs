@@ -27,14 +27,6 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         public LockScopes Scope { get; set; }
 
-        /// <summary>
-        /// Gets or sets the type of the lock.
-        /// </summary>
-        /// <value>
-        /// The type of the lock.
-        /// </value>
-        public LockType LockType { get; set; }
-
         public string Owner { get; set; }
 
         public int Timeout { get; set; }

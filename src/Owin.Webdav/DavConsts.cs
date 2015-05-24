@@ -11,7 +11,7 @@ namespace Soukoku.Owin.Webdav
     /// <summary>
     /// Contains constant values used by webdav.
     /// </summary>
-    static class DavConsts
+    public static class DavConsts
     {
         /// <summary>
         /// The namespace for all built-in webdav xml names.
@@ -21,7 +21,7 @@ namespace Soukoku.Owin.Webdav
         /// <summary>
         /// Contains the http methods used by webdav.
         /// </summary>
-        public static class Methods
+        internal static class Methods
         {
             // spec section 9
 
@@ -44,10 +44,10 @@ namespace Soukoku.Owin.Webdav
         /// <summary>
         /// Contains the http header names used by webdav.
         /// </summary>
-        public static class Headers
+        internal static class Headers
         {
             // spec section 10
-            
+
             public const string Dav = "DAV";
             public const string Depth = "Depth";
             public const string Destination = "Destination";
@@ -61,7 +61,7 @@ namespace Soukoku.Owin.Webdav
         /// Contains the xml element names used by webdav
         /// </summary>
         /// public class
-        public static class ElementNames
+        internal static class ElementNames
         {
             // spec section 14
 
@@ -97,7 +97,7 @@ namespace Soukoku.Owin.Webdav
             public const string Write = "write";
 
         }
-        
+
         /// <summary>
         /// Contains property names defined by webdav.
         /// </summary>

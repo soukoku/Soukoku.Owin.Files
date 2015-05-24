@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Soukoku.Owin.Webdav.Responses;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,32 +9,59 @@ using System.Threading.Tasks;
 namespace Soukoku.Owin.Webdav.Models
 {
     /// <summary>
-    /// Interface for <see cref="IResource"/> data storage.
+    /// Interface for managing <see cref="IResource"/>.
     /// </summary>
     public interface IDataStore
     {
         /// <summary>
         /// Gets the resource at the specified logical path.
         /// </summary>
-        /// <param name="pathBase">The path base.</param>
+        /// <param name="context">The context.</param>
         /// <param name="logicalPath">The logical path.</param>
         /// <returns></returns>
-        IResource GetResource(string pathBase, string logicalPath);
+        ResourceResponse GetResource(DavContext context, string logicalPath);
 
         /// <summary>
         /// Gets the resources under a collection resource.
         /// </summary>
-        /// <param name="pathBase">The path base.</param>
+        /// <param name="context">The context.</param>
         /// <param name="collectionResource">The collection resource.</param>
         /// <returns></returns>
-        IEnumerable<IResource> GetSubResources(string pathBase, IResource collectionResource);
-        ResourceStatus CreateCollection(IResource parent, string name);
-    }
+        IEnumerable<ResourceResponse> GetSubResources(DavContext context, IResource collectionResource);
+        
+        /// <summary>
+        /// Creates a sub collection if applicable.
+        /// </summary>
+        /// <param name="parent">The parent.</param>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        StatusCode CreateCollection(IResource parent, string name);
 
-    public class ResourceStatus
-    {
-        public StatusCode Code { get; set; }
+        
+        IEnumerable<ResourceResponse> CopyTo(IResource resource, string targetPath);
+        IEnumerable<ResourceResponse> MoveTo(IResource resource, string targetPath);
+        ResourceResponse Delete(IResource resource);
+        
+        /// <summary>
+        /// Opens the the resource stream for reading if applicable.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <returns></returns>
+        Stream Read(IResource resource);
 
-        public IResource Resource { get; set; }
+        /// <summary>
+        /// Write the source stream content into the resource if applicable.
+        /// </summary>
+        /// <param name="resource">The resource.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="offset">The starting offset to write.</param>
+        /// <returns></returns>
+        StatusCode Write(IResource resource, Stream source, int offset);
+
+
+        IEnumerable<DavLock> GetLocks(IResource resource);
+        DavLock Lock(IResource resource, DavLock proposed);
+        DavLock RefreshLock(IResource resource, DavLock proposed);
+        StatusCode Unlock(IResource resource, DavLock currentLock);
     }
 }

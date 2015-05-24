@@ -15,36 +15,29 @@ namespace Soukoku.Owin.Webdav.Handlers
 {
     sealed class PropFindHandler : IMethodHandler
     {
-        private WebdavConfig _options;
-
-        public PropFindHandler(WebdavConfig options)
-        {
-            _options = options;
-        }
-
-        public async Task<StatusCode> HandleAsync(Context context, IResource resource)
+        public async Task<StatusCode> HandleAsync(DavContext context, ResourceResponse resource)
         {
             int maxDepth = context.GetDepth();
-            _options.Log.LogDebug("Depth={0}", maxDepth);
-            if (maxDepth == int.MaxValue && !_options.AllowInfiniteDepth)
+            context.Config.Log.LogDebug("Depth={0}", maxDepth);
+            if (maxDepth == int.MaxValue && !context.Config.AllowInfiniteDepth)
             {
                 // TODO: correct?
                 return StatusCode.BadRequest;
             }
 
-            if (resource == null)
+            if (resource.Resource == null)
             {
                 return StatusCode.NotFound;
             }
 
             bool allProperties = true;
             bool nameOnly = false;
-            var filter = new List<Tuple<string, string>>(); // item1 = name, item2 = namespace
+            var filter = new List<PropertyFilter>();
             
             var reqXml = context.Request.ReadRequestAsXml();
             if (reqXml != null)
             {
-                _options.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
+                context.Config.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
 
                 if (reqXml.DocumentElement.Name == ElementNames.PropFind &&
                     reqXml.DocumentElement.NamespaceURI == XmlNamespace)
@@ -65,7 +58,7 @@ namespace Soukoku.Owin.Webdav.Handlers
                                     allProperties = false;
                                     foreach (XmlNode propNode in node.ChildNodes)
                                     {
-                                        filter.Add(new Tuple<string, string>(propNode.Name, propNode.NamespaceURI));
+                                        filter.Add(new PropertyFilter { Name = propNode.Name, XmlNamespace = propNode.NamespaceURI });
                                     }
                                     break;
                             }
@@ -79,14 +72,14 @@ namespace Soukoku.Owin.Webdav.Handlers
             }
 
 
-            var list = new List<IResource>();
+            var list = new List<ResourceResponse>();
             WalkResourceTree(context, maxDepth, 0, list, resource);
 
             return await WriteMultiStatusReponse(context, list, allProperties, nameOnly, filter);
         }
 
 
-        private async Task<StatusCode> WriteMultiStatusReponse(Context context, List<IResource> list, bool allProperties, bool nameOnly, List<Tuple<string, string>> filter)
+        private async Task<StatusCode> WriteMultiStatusReponse(DavContext context, List<ResourceResponse> list, bool allProperties, bool nameOnly, List<PropertyFilter> filter)
         {
             XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list, allProperties, nameOnly, filter);
 
@@ -95,17 +88,17 @@ namespace Soukoku.Owin.Webdav.Handlers
             context.Response.Headers.ContentType = MimeTypeMap.GetMimeType(".xml");
             context.Response.Headers.ContentLength = content.Length;
 
-            _options.Log.LogDebug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
+            context.Config.Log.LogDebug("Response:{0}{1}", Environment.NewLine, Encoding.UTF8.GetString(content));
             await context.Response.Body.WriteAsync(content, 0, content.Length, context.CancellationToken);
             return StatusCode.MultiStatus;
         }
 
-        private void WalkResourceTree(Context context, int maxDepth, int curDepth, List<IResource> addToList, IResource resource)
+        private void WalkResourceTree(DavContext context, int maxDepth, int curDepth, List<ResourceResponse> addToList, ResourceResponse resource)
         {
             addToList.Add(resource);
-            if (resource.ResourceType == ResourceType.Collection && curDepth < maxDepth)
+            if (resource.Resource.ResourceType == ResourceType.Collection && curDepth < maxDepth)
             {
-                foreach (var subR in _options.DataStore.GetSubResources(context.Request.PathBase, resource))
+                foreach (var subR in context.Config.DataStore.GetSubResources(context, resource.Resource))
                 {
                     WalkResourceTree(context, maxDepth, curDepth + 1, addToList, subR);
                 }

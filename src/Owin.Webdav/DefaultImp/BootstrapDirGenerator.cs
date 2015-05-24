@@ -11,7 +11,7 @@ namespace Soukoku.Owin.Webdav.DefaultImp
 {
     class BootstrapDirGenerator : IDirectoryListingGenerator
     {
-        public async Task<string> GenerateAsync(Context context, IResource parentResource, IEnumerable<IResource> childResources)
+        public async Task<string> GenerateAsync(DavContext context, IResource parentResource, IEnumerable<IResource> childResources)
         {
             var rows = new StringBuilder();
             if (childResources != null)
@@ -32,7 +32,7 @@ namespace Soukoku.Owin.Webdav.DefaultImp
                 }
             }
 
-            var title = WebUtility.HtmlEncode(parentResource.PathBase + parentResource.LogicalPath);
+            var title = WebUtility.HtmlEncode(context.Request.PathBase + parentResource.LogicalPath);
             var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync(), title, rows);
             return content;
         }

@@ -47,12 +47,31 @@ namespace Soukoku.Owin
             }
         }
 
+
         /// <summary>
         /// Sets the specified header values. Existing values will be replaced.
         /// </summary>
         /// <param name="header">The header.</param>
+        /// <param name="value">The value.</param>
+        public void Replace(string header, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                _store.Remove(header);
+            }
+            else
+            {
+                _store[header] = new[] { value };
+            }
+        }
+
+        /// <summary>
+        /// Sets the specified header values. Existing values will be replaced.
+        /// </summary>
+        /// <param name="header">The header.</param>
+        /// <param name="collapse">if set to <c>true</c> then collapse values into a csv right away.</param>
         /// <param name="values">The values.</param>
-        public void Replace(string header, params string[] values)
+        public void Replace(string header, bool collapse, params string[] values)
         {
             if (values == null || values.Length == 0)
             {
@@ -60,7 +79,14 @@ namespace Soukoku.Owin
             }
             else
             {
-                _store[header] = values;
+                if (collapse)
+                {
+                    _store[header] = new[] { string.Join(",", values) };
+                }
+                else
+                {
+                    _store[header] = values;
+                }
             }
         }
 

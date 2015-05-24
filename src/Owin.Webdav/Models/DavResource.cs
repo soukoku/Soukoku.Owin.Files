@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Soukoku.Owin.Webdav.Responses;
 
 namespace Soukoku.Owin.Webdav.Models
 {
@@ -20,14 +21,25 @@ namespace Soukoku.Owin.Webdav.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="DavResource" /> class.
         /// </summary>
-        /// <param name="pathBase">The path base.</param>
+        /// <param name="context">The context.</param>
         /// <param name="logicalPath">The logical path.</param>
-        protected DavResource(string pathBase, string logicalPath)
+        protected DavResource(DavContext context, string logicalPath)
         {
-            PathBase = pathBase ?? string.Empty;
-            LogicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.Replace("\\", "/");
+            Context = context;
+
+            LogicalPath = ReformatLogicalPath(logicalPath);
 
             MakeBuiltInProperties();
+        }
+
+        private string ReformatLogicalPath(string logicalPath)
+        {
+            logicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.TrimEnd('/');
+            if (!logicalPath.StartsWith("/", StringComparison.Ordinal))
+            {
+                logicalPath = "/" + logicalPath;
+            }
+            return logicalPath;
         }
 
         private void MakeBuiltInProperties()
@@ -50,42 +62,13 @@ namespace Soukoku.Owin.Webdav.Models
             get { return _properties; }
         }
 
-
-        //public T FindProperty<T>(string name) where T : class, IDavProperty
-        //{
-        //    return FindProperty<T>(name, Consts.XmlNamespace);
-        //}
-        //public T FindProperty<T>(string name, string namespaceUri) where T : class, IDavProperty
-        //{
-        //    return _properties.FirstOrDefault(p => p.Name == name && p.NamespaceUri == namespaceUri) as T;
-        //}
-
-        //public void AddProperties(IEnumerable<IDavProperty> properties)
-        //{
-        //    if (properties != null)
-        //    {
-        //        foreach (var p in properties)
-        //        {
-        //            AddProperty(p);
-        //        }
-        //    }
-        //}
-        //public void AddProperty(IDavProperty davProperty)
-        //{
-        //    if (davProperty != null)
-        //    {
-        //        // TODO: check dupes?
-        //        _properties.Add(davProperty);
-        //    }
-        //}
-
         /// <summary>
-        /// Gets the path base before the dav root.
+        /// Gets the current webdav context.
         /// </summary>
         /// <value>
-        /// The path base.
+        /// The context.
         /// </value>
-        public string PathBase { get; private set; }
+        public DavContext Context { get; private set; }
 
         /// <summary>
         /// Gets the logical path.
@@ -95,14 +78,6 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         public string LogicalPath { get; set; }
 
-
-        /// <summary>
-        /// Gets the supported webdav class number when queried by client.
-        /// </summary>
-        /// <value>
-        /// The dav class.
-        /// </value>
-        public virtual DavClasses DavClass { get { return DavClasses.Class1; } }
 
         /// <summary>
         /// Gets the display name.
@@ -115,10 +90,19 @@ namespace Soukoku.Owin.Webdav.Models
             get
             {
                 // must include path base part in case logical root is not absolute root
-                var tentative = PathBase + LogicalPath;
+                var tentative = Context.Request.PathBase + LogicalPath;
                 return Path.GetFileName(tentative);
             }
         }
+
+        /// <summary>
+        /// Gets the byte size.
+        /// </summary>
+        /// <value>
+        /// The byte size.
+        /// </value>
+        public virtual long Length { get { return 0; } }
+
         /// <summary>
         /// Gets the resource mime type.
         /// </summary>
@@ -151,23 +135,30 @@ namespace Soukoku.Owin.Webdav.Models
         /// </value>
         public virtual DateTime ModifiedDateUtc { get { return DateTime.MinValue; } }
 
-        /// <summary>
-        /// Gets the byte size.
-        /// </summary>
-        /// <value>
-        /// The byte size.
-        /// </value>
-        public virtual long Length { get { return 0; } }
+
+        public abstract ResourceType ResourceType { get; }
 
         public virtual string ETag { get { return null; } }
 
-        public abstract ResourceType ResourceType { get; }
-        
-        public virtual LockScopes SupportedLock
+        public virtual LockScopes SupportedLocks
         {
             get { return LockScopes.Exclusive | LockScopes.Shared; }
         }
 
+
+        public IEnumerable<IProperty> GetProperties(bool nameOnly, IEnumerable<PropertyFilter> filter)
+        {
+            if (filter.Count() == 0)
+            {
+                return _properties;
+            }
+            return _properties.Where(p => filter.Any(f => f.Name == p.Name && f.XmlNamespace == p.XmlNamespace));
+        }
+
+        public IEnumerable<PropertyResponse> SetProperties(IEnumerable<IProperty> setValues, IEnumerable<IProperty> deleteValues)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -178,16 +169,6 @@ namespace Soukoku.Owin.Webdav.Models
         public override string ToString()
         {
             return LogicalPath;
-        }
-
-        /// <summary>
-        /// Opens the the resource stream for reading.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.NotSupportedException"></exception>
-        public virtual Stream OpenReadStream()
-        {
-            throw new NotSupportedException();
         }
     }
 }

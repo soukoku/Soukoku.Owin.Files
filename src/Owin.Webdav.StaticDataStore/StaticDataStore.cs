@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Soukoku.Owin.Webdav.Models;
 using System.Reflection;
 using Soukoku.Owin;
+using Soukoku.Owin.Webdav;
+using Soukoku.Owin.Webdav.Responses;
 
 namespace Owin.Webdav
 {
@@ -39,33 +41,28 @@ namespace Owin.Webdav
         /// </value>
         public string RootPath { get; private set; }
 
-        public ResourceStatus CreateCollection(IResource parent, string name)
+        public IEnumerable<ResourceResponse> CopyTo(IResource resource, string targetPath)
         {
-            var newPath = Path.Combine(MapPath(parent.LogicalPath), name);
-            Directory.CreateDirectory(newPath);
-            return new ResourceStatus { Code = StatusCode.Created };
+            throw new NotImplementedException();
         }
 
+        public ResourceResponse Delete(IResource resource)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Gets the resource.
-        /// </summary>
-        /// <param name="pathBase">The path base.</param>
-        /// <param name="logicalPath">The logical path.</param>
-        /// <returns></returns>
-        public IResource GetResource(string pathBase, string logicalPath)
+        public IEnumerable<DavLock> GetLocks(IResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ResourceResponse GetResource(DavContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
-            return OnCreateResource(pathBase, logicalPath, fullPath);
+            return new ResourceResponse { Resource = OnCreateResource(context, logicalPath, fullPath) };
         }
 
-        /// <summary>
-        /// Gets the resources under a collection resource.
-        /// </summary>
-        /// <param name="pathBase">The path base.</param>
-        /// <param name="collectionResource">The collection resource.</param>
-        /// <returns></returns>
-        public IEnumerable<IResource> GetSubResources(string pathBase, IResource collectionResource)
+        public IEnumerable<ResourceResponse> GetSubResources(DavContext context, IResource collectionResource)
         {
             if (collectionResource.ResourceType == ResourceType.Collection)
             {
@@ -75,10 +72,49 @@ namespace Owin.Webdav
                 {
                     foreach (var itemPath in Directory.GetFileSystemEntries(fullPath))
                     {
-                        yield return OnCreateResource(pathBase, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(itemPath)), itemPath);
+                        yield return new ResourceResponse
+                        {
+                            Resource = OnCreateResource(context, Path.Combine(collectionResource.LogicalPath, Path.GetFileName(itemPath)), itemPath)
+                        };
                     }
                 }
             }
+        }
+
+        public DavLock Lock(IResource resource, DavLock proposed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ResourceResponse> MoveTo(IResource resource, string targetPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream Read(IResource resource)
+        {
+            FileResource fr = resource as FileResource;
+            if(fr != null)
+            {
+                return new FileStream(fr.PhysicalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            }
+
+            return null;
+        }
+
+        public DavLock RefreshLock(IResource resource, DavLock proposed)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusCode Unlock(IResource resource, DavLock currentLock)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusCode Write(IResource resource, Stream source, int offset)
+        {
+            throw new NotImplementedException();
         }
 
         #region utilities
@@ -123,18 +159,25 @@ namespace Owin.Webdav
             return fullPath;
         }
 
-        protected virtual IResource OnCreateResource(string pathBase, string logicalPath, string fullPath)
+        protected virtual IResource OnCreateResource(DavContext context, string logicalPath, string fullPath)
         {
             if (Directory.Exists(fullPath))
             {
-                return new FolderResource(pathBase, logicalPath, fullPath);
+                return new FolderResource(context, logicalPath, fullPath);
             }
             else if (File.Exists(fullPath))
             {
-                return new FileResource(pathBase, logicalPath, fullPath);
+                return new FileResource(context, logicalPath, fullPath);
             }
             // TODO: allow temp lock resources?
             return null;
+        }
+
+        StatusCode IDataStore.CreateCollection(IResource parent, string name)
+        {
+            var newPath = Path.Combine(MapPath(parent.LogicalPath), name);
+            Directory.CreateDirectory(newPath);
+            return StatusCode.Created;
         }
 
         #endregion

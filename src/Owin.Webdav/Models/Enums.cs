@@ -59,39 +59,6 @@ namespace Soukoku.Owin.Webdav.Models
         //Write = 0x800,
     }
 
-    /// <summary>
-    /// Http status codes used by webdav.
-    /// </summary>
-    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "Not for http codes it ain't.")]
-    public enum StatusCode
-    {
-        /// <summary>
-        /// Special indicator (not a real http code) for request not handled by webdav.
-        /// </summary>
-        NotHandled = 0,
-
-
-        // spec section 11
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Multi", Justification = "Useless word block from ancient times.")]
-        MultiStatus = 207,
-        UnprocessableEntity = 422,
-        Locked = 423,
-        FailedDependency = 424,
-        InsufficientStorage = 507,
-
-        // standard codes
-        OK = HttpStatusCode.OK,
-        Created = HttpStatusCode.Created,
-        NoContent = HttpStatusCode.NoContent,
-        BadRequest = HttpStatusCode.BadRequest,
-        NotFound = HttpStatusCode.NotFound,
-        PreconditionFailed = HttpStatusCode.PreconditionFailed,
-        Conflict = HttpStatusCode.Conflict,
-        UnsupportedMediaType = HttpStatusCode.UnsupportedMediaType,
-        Forbidden = HttpStatusCode.Forbidden,
-        MethodNotAllowed = HttpStatusCode.MethodNotAllowed
-    }
 
     /// <summary>
     /// Indicates the function level of a webdav implementation.
@@ -119,10 +86,5 @@ namespace Soukoku.Owin.Webdav.Models
         None = 0,
         Exclusive = 1,
         Shared = 2
-    }
-
-    public enum LockType
-    {
-        Write
     }
 }

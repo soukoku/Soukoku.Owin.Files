@@ -8,28 +8,28 @@ using System.Threading.Tasks;
 
 namespace Owin.Webdav.Test
 {
-    class FakeDataStore : IDataStore
-    {
-        private Func<IEnumerable<IResource>> _getSubDelegate;
-        private Func<IResource> _getSingleDelegate;
+    //class FakeDataStore : IDataStore
+    //{
+    //    private Func<IEnumerable<IResource>> _getSubDelegate;
+    //    private Func<IResource> _getSingleDelegate;
 
-        public FakeDataStore(Func<IResource> getResource = null, Func<IEnumerable<DavResource>> getSubResources = null)
-        {
-            _getSingleDelegate = getResource;
-            _getSubDelegate = getSubResources;
-        }
+    //    public FakeDataStore(Func<IResource> getResource = null, Func<IEnumerable<DavResource>> getSubResources = null)
+    //    {
+    //        _getSingleDelegate = getResource;
+    //        _getSubDelegate = getSubResources;
+    //    }
 
 
-        public IResource GetResource(string pathBase, string logicalPath)
-        {
-            return _getSingleDelegate();
-        }
+    //    public IResource GetResource(string pathBase, string logicalPath)
+    //    {
+    //        return _getSingleDelegate();
+    //    }
 
-        public IEnumerable<IResource> GetSubResources(string pathBase, IResource resource)
-        {
-            return _getSubDelegate();
-        }
-    }
+    //    public IEnumerable<IResource> GetSubResources(string pathBase, IResource resource)
+    //    {
+    //        return _getSubDelegate();
+    //    }
+    //}
 
     class FakeFolderResource : DavResource
     {

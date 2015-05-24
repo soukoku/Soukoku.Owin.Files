@@ -2,6 +2,7 @@
 using Soukoku.Owin.Webdav.Models;
 using System.IO;
 using Soukoku.Owin;
+using Soukoku.Owin.Webdav;
 
 namespace Owin.Webdav
 {
@@ -12,7 +13,7 @@ namespace Owin.Webdav
     {
         private DirectoryInfo _info;
 
-        public FolderResource(string pathBase, string logicalPath, string physicalPath) : base(pathBase, logicalPath)
+        public FolderResource(DavContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new DirectoryInfo(physicalPath);
         }

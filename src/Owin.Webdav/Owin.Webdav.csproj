@@ -52,6 +52,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="DavContext.cs" />
     <Compile Include="DefaultImp\BootstrapDirGenerator.cs" />
     <Compile Include="DefaultImp\NullLog.cs" />
     <Compile Include="Handlers\MkColHandler.cs" />
@@ -80,6 +81,9 @@
     <Compile Include="Owin\Context.cs" />
     <Compile Include="Owin\Response.cs" />
     <Compile Include="Owin\Request.cs" />
+    <Compile Include="Responses\PropertyResponse.cs" />
+    <Compile Include="Responses\ResourceResponse.cs" />
+    <Compile Include="Responses\StatusCode.cs" />
     <Compile Include="TraceLog.cs" />
     <Compile Include="Models\IDataStore.cs" />
     <Compile Include="Models\IResource.cs" />

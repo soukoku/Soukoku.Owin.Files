@@ -2,6 +2,7 @@
 using System.IO;
 using System;
 using Soukoku.Owin;
+using Soukoku.Owin.Webdav;
 
 namespace Owin.Webdav
 {
@@ -15,15 +16,15 @@ namespace Owin.Webdav
         /// <summary>
         /// Initializes a new instance of the <see cref="FileResource" /> class.
         /// </summary>
-        /// <param name="pathBase">The path base.</param>
+        /// <param name="context">The context.</param>
         /// <param name="logicalPath">The logical path.</param>
         /// <param name="physicalPath">The physical path.</param>
-        public FileResource(string pathBase, string logicalPath, string physicalPath) : base(pathBase, logicalPath)
+        public FileResource(DavContext context, string logicalPath, string physicalPath) : base(context, logicalPath)
         {
             _info = new FileInfo(physicalPath);
         }
 
-        string PhysicalPath { get { return _info.FullName; } }
+        public string PhysicalPath { get { return _info.FullName; } }
 
         public override ResourceType ResourceType { get { return ResourceType.Resource; } }
 
@@ -33,9 +34,5 @@ namespace Owin.Webdav
 
         public override DateTime ModifiedDateUtc { get { return _info.LastWriteTimeUtc; } }
 
-        public override Stream OpenReadStream()
-        {
-            return new FileStream(PhysicalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Soukoku.Owin.Webdav.Models;
+using Soukoku.Owin.Webdav.Responses;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,24 +13,17 @@ namespace Soukoku.Owin.Webdav.Handlers
 {
     sealed class MkColHandler : IMethodHandler
     {
-        private WebdavConfig _options;
-
-        public MkColHandler(WebdavConfig options)
+        public async Task<StatusCode> HandleAsync(DavContext context, ResourceResponse resource)
         {
-            _options = options;
-        }
-
-        public async Task<StatusCode> HandleAsync(Context context, IResource resource)
-        {
-            if (resource != null)
+            if (resource.Resource != null)
             {
                 return StatusCode.MethodNotAllowed;
             }
 
             var newPath = context.Request.Path.Trim('/');
             var parentPath = Path.GetDirectoryName(newPath).Replace(Path.DirectorySeparatorChar, '/');
-            IResource parent = _options.DataStore.GetResource(context.Request.PathBase, parentPath);
-            if (string.IsNullOrEmpty(newPath) || parent == null)
+            ResourceResponse parent = context.Config.DataStore.GetResource(context, parentPath);
+            if (string.IsNullOrEmpty(newPath) || parent.Resource == null)
             {
                 return StatusCode.Conflict;
             }
@@ -41,8 +35,8 @@ namespace Soukoku.Owin.Webdav.Handlers
             }
 
 
-            ResourceStatus result = _options.DataStore.CreateCollection(parent, Path.GetFileName(newPath));
-            return result.Code;
+            var code = context.Config.DataStore.CreateCollection(parent.Resource, Path.GetFileName(newPath));
+            return code;
         }
 
     }
