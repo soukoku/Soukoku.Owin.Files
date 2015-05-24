@@ -1,4 +1,5 @@
 ﻿using Soukoku.Owin;
+using Soukoku.Owin.Webdav;
 using Soukoku.Owin.Webdav.Models;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace Owin.Webdav.Test
 
     class FakeFolderResource : DavResource
     {
-        public FakeFolderResource(string pathBase, string logicalPath) : base(pathBase, logicalPath)
+        public FakeFolderResource(DavContext context, string logicalPath) : base(context, logicalPath)
         {
 
         }
@@ -48,7 +49,7 @@ namespace Owin.Webdav.Test
 
     class FakeFileResource : DavResource
     {
-        public FakeFileResource(string pathBase, string logicalPath) : base(pathBase, logicalPath)
+        public FakeFileResource(DavContext context, string logicalPath) : base(context, logicalPath)
         {
 
         }

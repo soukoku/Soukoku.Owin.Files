@@ -57,7 +57,7 @@ namespace Soukoku.Owin.Webdav.Models
         }
 
         private List<IProperty> _properties;
-        public IEnumerable<IProperty> Properties
+        protected IEnumerable<IProperty> BuiltInProperties
         {
             get { return _properties; }
         }
@@ -146,19 +146,46 @@ namespace Soukoku.Owin.Webdav.Models
         }
 
 
-        public IEnumerable<IProperty> GetProperties(bool nameOnly, IEnumerable<PropertyFilter> filter)
+        public virtual IEnumerable<IProperty> GetProperties(bool nameOnly, IEnumerable<PropertyFilter> filter)
         {
             if (filter.Count() == 0)
             {
-                return _properties;
+                return BuiltInProperties;
             }
-            return _properties.Where(p => filter.Any(f => f.Name == p.Name && f.XmlNamespace == p.XmlNamespace));
+            return BuiltInProperties.Where(p => filter.Any(f => f.Name == p.Name && f.XmlNamespace == p.XmlNamespace));
         }
 
-        public IEnumerable<PropertyResponse> SetProperties(IEnumerable<IProperty> setValues, IEnumerable<IProperty> deleteValues)
+        public virtual IEnumerable<PropertyResponse> SetProperties(IEnumerable<IProperty> setValues, IEnumerable<IProperty> deleteValues)
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Generates the full URL on the resource.
+        /// </summary>
+        /// <param name="pathAbsolute">if set to <c>true</c> then only generate path absolute urls (/path/to/resource), otherwise generate the full url.</param>
+        /// <returns></returns>
+        public virtual string GenerateUrl(bool pathAbsolute)
+        {
+            var url = Context.Request.PathBase + LogicalPath;
+
+            if (pathAbsolute)
+            {
+                if (!url.StartsWith("/", StringComparison.Ordinal)) { url = "/" + url; }
+            }
+            else
+            {
+                url = Context.Request.Scheme + Uri.SchemeDelimiter + Context.Request.Host + url;
+            }
+
+            if (ResourceType == ResourceType.Collection &&
+                !url.EndsWith("/", StringComparison.Ordinal))
+            {
+                url += "/";
+            }
+            return url;
+        }
+
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.

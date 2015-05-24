@@ -17,7 +17,7 @@ namespace Soukoku.Owin.Webdav.Handlers
     {
         public async Task<StatusCode> HandleAsync(DavContext context, ResourceResponse resource)
         {
-            int maxDepth = context.GetDepth();
+            int maxDepth = context.Depth;
             context.Config.Log.LogDebug("Depth={0}", maxDepth);
             if (maxDepth == int.MaxValue && !context.Config.AllowInfiniteDepth)
             {
@@ -29,12 +29,11 @@ namespace Soukoku.Owin.Webdav.Handlers
             {
                 return StatusCode.NotFound;
             }
-
-            bool allProperties = true;
+            
             bool nameOnly = false;
             var filter = new List<PropertyFilter>();
             
-            var reqXml = context.Request.ReadRequestAsXml();
+            var reqXml = context.ReadRequestAsXml();
             if (reqXml != null)
             {
                 context.Config.Log.LogDebug("Request:{0}{1}", Environment.NewLine, reqXml.OuterXml.PrettyXml());
@@ -51,11 +50,7 @@ namespace Soukoku.Owin.Webdav.Handlers
                                 case ElementNames.PropName:
                                     nameOnly = true;
                                     break;
-                                case ElementNames.AllProp:
-                                    allProperties = true;
-                                    break;
                                 case ElementNames.Prop:
-                                    allProperties = false;
                                     foreach (XmlNode propNode in node.ChildNodes)
                                     {
                                         filter.Add(new PropertyFilter { Name = propNode.Name, XmlNamespace = propNode.NamespaceURI });
@@ -75,13 +70,13 @@ namespace Soukoku.Owin.Webdav.Handlers
             var list = new List<ResourceResponse>();
             WalkResourceTree(context, maxDepth, 0, list, resource);
 
-            return await WriteMultiStatusReponse(context, list, allProperties, nameOnly, filter);
+            return await WriteMultiStatusReponse(context, list, nameOnly, filter);
         }
 
 
-        private async Task<StatusCode> WriteMultiStatusReponse(DavContext context, List<ResourceResponse> list, bool allProperties, bool nameOnly, List<PropertyFilter> filter)
+        private async Task<StatusCode> WriteMultiStatusReponse(DavContext context, List<ResourceResponse> list, bool nameOnly, List<PropertyFilter> filter)
         {
-            XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list, allProperties, nameOnly, filter);
+            XmlDocument xmlDoc = XmlGenerator.CreateMultiStatus(context, list, nameOnly, filter);
 
             ////context.Response.Headers.Append("Cache-Control", "private");
             var content = xmlDoc.Serialize();

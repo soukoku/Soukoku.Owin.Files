@@ -13,7 +13,7 @@ namespace Soukoku.Owin.Webdav.Responses
     static class XmlGenerator
     {
         public static XmlDocument CreateMultiStatus(Context context, IEnumerable<ResourceResponse> resources,
-            bool allProperties = true, bool nameOnly = false, List<PropertyFilter> filter = null)
+            bool nameOnly = false, IEnumerable<PropertyFilter> filter = null)
         {
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -28,7 +28,7 @@ namespace Soukoku.Owin.Webdav.Responses
                     rootNode.AppendChild(response);
 
                     XmlNode respHref = xmlDoc.CreateElement(DavConsts.ElementNames.Href, DavConsts.XmlNamespace);
-                    respHref.InnerText = Uri.EscapeUriString(context.GenerateUrl(resource.Resource, false)); // escape required to get some clients working
+                    respHref.InnerText = Uri.EscapeUriString(resource.Resource.GenerateUrl(false)); // escape required to get some clients working
                     response.AppendChild(respHref);
 
                     XmlNode respProperty = xmlDoc.CreateElement(DavConsts.ElementNames.PropStat, DavConsts.XmlNamespace);
@@ -44,7 +44,7 @@ namespace Soukoku.Owin.Webdav.Responses
 
                     #region dav-properties
 
-                    foreach (var prop in resource.Resource.GetProperties(nameOnly, allProperties ? Enumerable.Empty<PropertyFilter>() : filter))
+                    foreach (var prop in resource.Resource.GetProperties(nameOnly, filter ?? Enumerable.Empty<PropertyFilter>()))
                     {
                         var propNode = xmlDoc.CreateElement(prop.Name, prop.XmlNamespace);
                         if (!nameOnly)

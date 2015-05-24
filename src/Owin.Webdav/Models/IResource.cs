@@ -98,6 +98,13 @@ namespace Soukoku.Owin.Webdav.Models
         /// <param name="deleteValues">The property values to delete.</param>
         /// <returns></returns>
         IEnumerable<PropertyResponse> SetProperties(IEnumerable<IProperty> setValues, IEnumerable<IProperty> deleteValues);
+
+        /// <summary>
+        /// Generates the full URL on the resource.
+        /// </summary>
+        /// <param name="pathAbsolute">if set to <c>true</c> then only generate path absolute urls (/path/to/resource), otherwise generate the full url.</param>
+        /// <returns></returns>
+        string GenerateUrl(bool pathAbsolute);
     }
     
     public class PropertyFilter 
