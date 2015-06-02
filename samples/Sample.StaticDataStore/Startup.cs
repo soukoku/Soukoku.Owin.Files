@@ -21,10 +21,11 @@ namespace Sample.StaticDataStore
                 Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
             };
 
-            app.Map("/davroot", map =>
-            {
-                map.Use<WebdavMiddleware>(davCfg);
-            });
+            //app.Map("/davroot", map =>
+            //{
+            //    map.Use<WebdavMiddleware>(davCfg);
+            //});
+            app.Use<WebdavMiddleware>(davCfg);
         }
     }
 }
