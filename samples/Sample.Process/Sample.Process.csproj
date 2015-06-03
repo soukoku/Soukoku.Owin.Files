@@ -7,8 +7,8 @@
     <ProjectGuid>{69E05B58-E6B1-47B5-AB8A-70785C1F2E6D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sample.StaticDataStore</RootNamespace>
-    <AssemblyName>Sample.StaticDataStore</AssemblyName>
+    <RootNamespace>Sample.Process</RootNamespace>
+    <AssemblyName>Sample.Process</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

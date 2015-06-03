@@ -8,7 +8,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sample.StaticDataStore
+namespace Sample.Process
 {
     class Program
     {

@@ -34,7 +34,7 @@ namespace Soukoku.Owin.Webdav.Models
 
         private string ReformatLogicalPath(string logicalPath)
         {
-            logicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.TrimEnd('/');
+            logicalPath = string.IsNullOrEmpty(logicalPath) ? "/" : logicalPath.Replace(Path.DirectorySeparatorChar, '/').TrimEnd('/');
             if (!logicalPath.StartsWith("/", StringComparison.Ordinal))
             {
                 logicalPath = "/" + logicalPath;

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sample.StaticDataStore
+namespace Sample.Process
 {
     class DriveMapper
     {
@@ -58,7 +58,7 @@ namespace Sample.StaticDataStore
                     net.MapNetworkDrive(_letterPath, url, ref updateProfile);
                     _mapped = true;
                     // use windows explorer to test it!
-                    using (Process.Start(_letterPath)) { }
+                    using (System.Diagnostics.Process.Start(_letterPath)) { }
                 }
                 catch (Exception ex)
                 {
