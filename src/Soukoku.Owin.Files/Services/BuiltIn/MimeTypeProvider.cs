@@ -609,13 +609,6 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
 
         };
 
-        static MimeTypeProvider()
-        {
-            // my additions
-
-        }
-
-
         const string UnknownType = "application/octet-stream";
 
         /// <summary>

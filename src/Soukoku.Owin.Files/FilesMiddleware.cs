@@ -38,7 +38,7 @@ namespace Soukoku.Owin.Files
             Handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
 
             var getHandler = new GetHandler();
-            Handlers.Add(HttpConsts.Methods.Get, getHandler);
+            Handlers.Add(HttpMethods.Get, getHandler);
             //_handlers.Add(DavConsts.Methods.Head, getHandler);
         }
 

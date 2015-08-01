@@ -17,7 +17,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             {
                 var config = resource.Context.GetFilesConfig();
 
-                var headOnly = string.Equals(resource.Context.Request.Method, HttpConsts.Methods.Head, StringComparison.OrdinalIgnoreCase);
+                var headOnly = string.Equals(resource.Context.Request.Method, HttpMethods.Head, StringComparison.OrdinalIgnoreCase);
 
                 if (resource.IsFolder)
                 {
