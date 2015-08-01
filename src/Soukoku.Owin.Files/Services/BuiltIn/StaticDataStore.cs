@@ -117,11 +117,28 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         {
             if (Directory.Exists(fullPath))
             {
-                return new ResourceResult { Resource = new Resource(context, logicalPath, true) };
+                var info = new DirectoryInfo(fullPath);
+                return new ResourceResult
+                {
+                    Resource = new Resource(context, logicalPath, true)
+                    {
+                        CreationDateUtc = info.CreationTimeUtc,
+                        ModifiedDateUtc = info.LastWriteTimeUtc
+                    }
+                };
             }
             else if (File.Exists(fullPath))
             {
-                return new ResourceResult { Resource = new Resource(context, logicalPath, false) };
+                var info = new FileInfo(fullPath);
+                return new ResourceResult
+                {
+                    Resource = new Resource(context, logicalPath, false)
+                    {
+                        CreationDateUtc = info.CreationTimeUtc,
+                        ModifiedDateUtc = info.LastWriteTimeUtc,
+                        Length = info.Length,
+                    }
+                };
             }
             return new ResourceResult { StatusCode = System.Net.HttpStatusCode.NotFound };
         }

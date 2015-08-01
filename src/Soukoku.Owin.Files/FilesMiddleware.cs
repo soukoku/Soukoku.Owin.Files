@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 namespace Soukoku.Owin.Files
 {
     using Services;
+    using Services.BuiltIn;
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
     /// <summary>
@@ -14,7 +15,7 @@ namespace Soukoku.Owin.Files
     {
         readonly FilesConfig _options;
         readonly AppFunc _next;
-        readonly Dictionary<string, IMethodHandler> _handlers;
+        protected Dictionary<string, IMethodHandler> Handlers { get; private set; }
 
         /// <summary>
         /// Instantiates the middleware with a pointer to the next component.
@@ -34,14 +35,11 @@ namespace Soukoku.Owin.Files
 
             _next = next;
             _options = options;
-            _handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
+            Handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
 
-            //var getHandler = new GetHandler();
-            //_handlers.Add(DavConsts.Methods.Get, getHandler);
+            var getHandler = new GetHandler();
+            Handlers.Add(HttpConsts.Methods.Get, getHandler);
             //_handlers.Add(DavConsts.Methods.Head, getHandler);
-            //_handlers.Add(DavConsts.Methods.Options, new OptionsHandler());
-            //_handlers.Add(DavConsts.Methods.PropFind, new PropFindHandler());
-            //_handlers.Add(DavConsts.Methods.MkCol, new MkColHandler());
         }
 
 
@@ -50,7 +48,7 @@ namespace Soukoku.Owin.Files
         /// </summary>
         /// <param name="environment">The environment.</param>
         /// <returns></returns>
-        public async Task Invoke(IDictionary<string, object> environment)
+        public virtual async Task Invoke(IDictionary<string, object> environment)
         {
             var context = new Context(environment);
 
@@ -73,7 +71,7 @@ namespace Soukoku.Owin.Files
 
                     var code = 0;
                     IMethodHandler handler;
-                    if (_handlers.TryGetValue(context.Request.Method, out handler))
+                    if (Handlers.TryGetValue(context.Request.Method, out handler))
                     {
                         code = await handler.HandleAsync(test.Resource);
                     }
@@ -94,7 +92,7 @@ namespace Soukoku.Owin.Files
             }
             catch (Exception ex)
             {
-                _options.Log.LogError(ex.ToString());
+                _options.Log.LogError("FilesMiddleware.Invoke: " + ex.ToString());
                 //context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 //return context.Response.WriteAsync(ex.Message);
                 throw;
