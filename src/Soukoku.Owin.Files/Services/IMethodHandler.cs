@@ -10,9 +10,8 @@ namespace Soukoku.Owin.Files.Services
         /// <summary>
         /// Handles the request.
         /// </summary>
-        /// <param name="context">The context.</param>
         /// <param name="resource">The resource.</param>
         /// <returns></returns>
-        Task<int> HandleAsync(Context context);
+        Task<int> HandleAsync(Resource resource);
     }
 }

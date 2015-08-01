@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Soukoku.Owin.Files.Services
 {
     /// <summary>
-    /// Interface for getting <see cref="IResource"/>s.
+    /// Interface for getting <see cref="Resource"/>s.
     /// </summary>
     public interface IReadOnlyDataStore
     {
@@ -27,14 +27,14 @@ namespace Soukoku.Owin.Files.Services
         /// <param name="context">The context.</param>
         /// <param name="parentFolder">The parent folder.</param>
         /// <returns></returns>
-        IEnumerable<ResourceResult> GetSubResources(Context context, IResource parentFolder);
+        IEnumerable<ResourceResult> GetSubResources(Context context, Resource parentFolder);
 
         /// <summary>
         /// Opens the the resource stream for reading if applicable.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <returns></returns>
-        Stream Open(IResource resource);
+        Stream Open(Resource resource);
 
     }
 
@@ -43,11 +43,11 @@ namespace Soukoku.Owin.Files.Services
     {
         public ResourceResult()
         {
-            Code = HttpStatusCode.OK;
+            StatusCode = HttpStatusCode.OK;
         }
 
-        public HttpStatusCode Code { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
 
-        public IResource Resource { get; set; }
+        public Resource Resource { get; set; }
     }
 }

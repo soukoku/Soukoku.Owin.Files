@@ -13,7 +13,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
     /// </summary>
     public class BootstrapDirectoryListingGenerator : IDirectoryListingGenerator
     {
-        public async Task<string> GenerateAsync(Context context, IResource parentResource, IEnumerable<IResource> childResources)
+        public async Task<string> GenerateAsync(Context context, Resource parentResource, IEnumerable<Resource> childResources)
         {
             var rows = new StringBuilder();
             if (childResources != null)
@@ -28,7 +28,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
                     }
                     else
                     {
-                        rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.Length.PrettySize(), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
+                        rows.AppendFormat(string.Format(CultureInfo.InvariantCulture, "<td>{3}</td><td class=\"text-right\">{2}</td><td><span class=\"text-info glyphicon glyphicon-file\"></span>&nbsp;<a href=\"{0}\">{1}</a></td>", WebUtility.HtmlEncode(Uri.EscapeUriString(url)), WebUtility.HtmlEncode(item.DisplayName), item.Length.Humanize(), item.ModifiedDateUtc.ToString("yyyy/MM/dd hh:mm tt")));
                     }
                     rows.Append("</tr>");
                 }

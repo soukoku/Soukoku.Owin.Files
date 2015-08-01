@@ -16,6 +16,6 @@ namespace Soukoku.Owin.Files.Services
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <returns></returns>
-        string Generate(IResource resource);
+        string Generate(Resource resource);
     }
 }

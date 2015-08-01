@@ -15,52 +15,48 @@ using System.Xml.Linq;
 namespace Soukoku.Owin.Files
 {
     /// <summary>
-    /// Contains extension methods for webdav component.
+    /// Contains extension methods for this component.
     /// </summary>
-    static class OwinExtensions
+    public static class ComponentExtensions
     {
-
-        //internal static string GenerateStatusMessage(this HttpStatusCode code, string message = null)
-        //{
-        //    return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
-        //}
-        internal static Task<string> ReadStringAsync(this Stream stream)
+        /// <summary>
+        /// Generates http 1.1 status message from a status code.
+        /// </summary>
+        /// <param name="code">The code.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
+        public static string GenerateStatusMessage(this HttpStatusCode code, string message)
         {
+            return string.Format(CultureInfo.InvariantCulture, "HTTP/1.1 {0} {1}", (int)code, message ?? code.ToString());
+        }
+
+        /// <summary>
+        /// Reads the stream into a string.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
+        /// <returns></returns>
+        public static Task<string> ReadStringAsync(this Stream stream)
+        {
+            if (stream == null) { return null; }
+
             using (StreamReader reader = new StreamReader(stream))
             {
                 return reader.ReadToEndAsync();
             }
         }
 
-
         /// <summary>
-        /// Generates the full URL on the resource.
+        /// Gets the <see cref="FilesConfig"/> object.
         /// </summary>
-        /// <param name="resource">The resource.</param>
-        /// <param name="absolutePath">if set to <c>true</c> then only generate absolute path urls (/path/to/resource), otherwise generate the full url.</param>
+        /// <param name="owinContext">The owin context.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">resource</exception>
-        public static string GenerateUrl(this IResource resource, bool absolutePath)
+        public static FilesConfig GetFilesConfig(this Context owinContext)
         {
-            if (resource == null) { throw new ArgumentNullException("resource"); }
+            if (owinContext == null) { return null; }
 
-            var url = resource.Context.Request.PathBase + resource.LogicalPath;
-
-            if (absolutePath)
-            {
-                if (!url.StartsWith("/", StringComparison.Ordinal)) { url = "/" + url; }
-            }
-            else
-            {
-                url = resource.Context.Request.Scheme + Uri.SchemeDelimiter + resource.Context.Request.Host + url;
-            }
-
-            if (resource.IsFolder &&
-                !url.EndsWith("/", StringComparison.Ordinal))
-            {
-                url += "/";
-            }
-            return url;
+            object config;
+            owinContext.Environment.TryGetValue(FilesConfig.OwinKey, out config);
+            return config as FilesConfig;
         }
 
         //internal static async Task<string> ReadRequestStringAsync(this Request request)
@@ -90,28 +86,36 @@ namespace Soukoku.Owin.Files
         //    return formattedXml;
         //}
 
-        internal static string PrettySize(this long fileSize)
+        /// <summary>
+        /// Formats the byte file size into strings like N KB.
+        /// </summary>
+        /// <param name="fileSize">Size of the file.</param>
+        /// <returns></returns>
+        public static string Humanize(this long fileSize)
         {
             var format = "{0:0.##} B";
             if (fileSize > 1024)
             {
                 fileSize /= 1024;
                 format = "{0:0.##} KB";
-            }
-            if (fileSize > 1024)
-            {
-                fileSize /= 1024;
-                format = "{0:0.##} MB";
-            }
-            if (fileSize > 1024)
-            {
-                fileSize /= 1024;
-                format = "{0:0.##} GB";
-            }
-            if (fileSize > 1024)
-            {
-                fileSize /= 1024;
-                format = "{0:0.##} TB";
+
+                if (fileSize > 1024)
+                {
+                    fileSize /= 1024;
+                    format = "{0:0.##} MB";
+
+                    if (fileSize > 1024)
+                    {
+                        fileSize /= 1024;
+                        format = "{0:0.##} GB";
+
+                        if (fileSize > 1024)
+                        {
+                            fileSize /= 1024;
+                            format = "{0:0.##} TB";
+                        }
+                    }
+                }
             }
 
             return string.Format(CultureInfo.InvariantCulture, format, fileSize);
