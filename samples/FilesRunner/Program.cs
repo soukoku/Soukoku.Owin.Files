@@ -2,6 +2,7 @@
 using Owin;
 using Soukoku.Owin.Files;
 using Soukoku.Owin.Files.Services.BuiltIn;
+using Soukoku.Owin.Files.Zipped;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,9 +24,10 @@ namespace FilesRunner
             var urlRoot = "http://localhost:12345";
             using (WebApp.Start<Startup>(urlRoot))
             {
-                using (Process.Start(urlRoot + looseRoot)) { }
-
                 Console.WriteLine("Press enter to exit...");
+
+                using (Process.Start(urlRoot + looseRoot)) { }
+                using (Process.Start(urlRoot + zippedRoot)) { }
                 Console.ReadLine();
             }
         }
@@ -39,12 +41,27 @@ namespace FilesRunner
                 app.Map(looseRoot, mapped =>
                 {
                     var path = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot");
-                    var cfg = new FilesConfig(new StaticDataStore(path))
+                    var cfg = new FilesConfig(new LooseFilesDataStore(path))
                     {
                         AllowDirectoryBrowsing = true,
                         Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
                     };
                     mapped.Use<FilesMiddleware>(cfg);
+                });
+
+                app.Map(zippedRoot, mapped =>
+                {
+                    var zipPath = Path.Combine(Environment.CurrentDirectory, @"wwwroot.zip");
+                    if (File.Exists(zipPath))
+                    {
+                        var ms = new MemoryStream(File.ReadAllBytes(zipPath));
+                        var cfg = new FilesConfig(new ZippedFileDataStore(ms))
+                        {
+                            AllowDirectoryBrowsing = true,
+                            Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                        };
+                        mapped.Use<FilesMiddleware>(cfg);
+                    }
                 });
             }
         }

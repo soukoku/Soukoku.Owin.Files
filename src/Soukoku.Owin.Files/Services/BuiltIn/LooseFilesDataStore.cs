@@ -10,16 +10,16 @@ using Soukoku.Owin;
 namespace Soukoku.Owin.Files.Services.BuiltIn
 {
     /// <summary>
-    /// Implements <see cref="IDataStore"/> over static files.
+    /// Implements <see cref="IDataStore"/> over loose static files.
     /// </summary>
-    public class StaticDataStore : IReadOnlyDataStore
+    public class LooseFilesDataStore : IReadOnlyDataStore
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StaticDataStore"/> class.
+        /// Initializes a new instance of the <see cref="LooseFilesDataStore"/> class.
         /// </summary>
         /// <param name="rootPath">The root path.</param>
         /// <exception cref="System.ArgumentException">Invalid root path.;rootPath</exception>
-        public StaticDataStore(string rootPath)
+        public LooseFilesDataStore(string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath)) { throw new ArgumentException("Invalid root path.", "rootPath"); }
             rootPath = Path.GetFullPath(rootPath);

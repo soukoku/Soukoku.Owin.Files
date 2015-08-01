@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EC323A50-D307-41B7-8141-508631FBB5F1}</ProjectGuid>
+    <ProjectGuid>{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Soukoku.Owin.Files</RootNamespace>
-    <AssemblyName>Soukoku.Owin.Files</AssemblyName>
+    <RootNamespace>Soukoku.Owin.Files.Zipped</RootNamespace>
+    <AssemblyName>Soukoku.Owin.Files.Zipped</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Soukoku.Owin.Files.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Soukoku.Owin.Files.Zipped.XML</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
@@ -39,6 +39,10 @@
     <AssemblyOriginatorKeyFile>..\Sign.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DotNetZip.Reduced.1.9.1.8\lib\net20\Ionic.Zip.Reduced.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,37 +56,8 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Owin\HttpConsts.cs" />
-    <Compile Include="Services\BuiltIn\GetHandler.cs" />
-    <Compile Include="Services\BuiltIn\MimeTypeProvider.cs" />
-    <Compile Include="ComponentExtensions.cs" />
-    <Compile Include="Owin\Context.cs" />
-    <Compile Include="Owin\Extensions.cs" />
-    <Compile Include="Owin\Headers.cs" />
-    <Compile Include="Owin\OwinConsts.cs" />
-    <Compile Include="Owin\Request.cs" />
-    <Compile Include="Owin\Response.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\BuiltIn\BootstrapDirectoryListingGenerator.cs" />
-    <Compile Include="Services\BuiltIn\ModifiedDateETagGenerator.cs" />
-    <Compile Include="Services\BuiltIn\NullLog.cs" />
-    <Compile Include="Services\BuiltIn\LooseFilesDataStore.cs" />
-    <Compile Include="Services\BuiltIn\TraceLog.cs" />
-    <Compile Include="Services\IReadOnlyDataStore.cs" />
-    <Compile Include="Services\IDirectoryListingGenerator.cs" />
-    <Compile Include="Services\IETagGenerator.cs" />
-    <Compile Include="Services\ILog.cs" />
-    <Compile Include="Services\IMethodHandler.cs" />
-    <Compile Include="Services\IMimeTypeProvider.cs" />
-    <Compile Include="Services\Resource.cs" />
-    <Compile Include="FilesConfig.cs" />
-    <Compile Include="FilesMiddleware.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Sign.snk">
-      <Link>Sign.snk</Link>
-    </None>
-    <None Include="Soukoku.Owin.Files.nuspec" />
+    <Compile Include="ZippedFileDataStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
@@ -90,7 +65,17 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Services\BuiltIn\BootstrapDirectoryListing.html" />
+    <None Include="..\Sign.snk">
+      <Link>Sign.snk</Link>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Soukoku.Owin.Files.Zipped.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Soukoku.Owin.Files\Soukoku.Owin.Files.csproj">
+      <Project>{ec323a50-d307-41b7-8141-508631fbb5f1}</Project>
+      <Name>Soukoku.Owin.Files</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

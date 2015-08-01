@@ -68,8 +68,18 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="pdfjs-1.1.114-dist.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.csproj">
+      <Project>{fa3bdb1b-4b8c-448c-b4f7-681d81b11548}</Project>
+      <Name>Soukoku.Owin.Files.Zipped</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Soukoku.Owin.Files\Soukoku.Owin.Files.csproj">
       <Project>{ec323a50-d307-41b7-8141-508631fbb5f1}</Project>
       <Name>Soukoku.Owin.Files</Name>
