@@ -8,7 +8,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
     /// </summary>
     public class MimeTypeProvider : IMimeTypeProvider
     {
-        // modified 2015/5/22 from https://github.com/samuelneff/MimeTypeMap cuz the nuget pkg is not strong named :(
+        // modified 2015/8/1 from https://github.com/samuelneff/MimeTypeMap cuz the nuget pkg is not strong named :(
 
         private static readonly IDictionary<string, string> __mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
 
@@ -591,6 +591,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         {".xwd", "image/x-xwindowdump"},
         {".z", "application/x-compress"},
         {".zip", "application/x-zip-compressed"},
+        {".webp", "image/webp"} /* https://en.wikipedia.org/wiki/WebP */
             #endregion
 
         };

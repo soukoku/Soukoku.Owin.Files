@@ -7,7 +7,7 @@
     <ProjectGuid>{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Soukoku.Owin.Files.Zipped</RootNamespace>
+    <RootNamespace>Soukoku.Owin.Files</RootNamespace>
     <AssemblyName>Soukoku.Owin.Files.Zipped</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -56,6 +56,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="AttachedDisposableStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZippedFileDataStore.cs" />
   </ItemGroup>

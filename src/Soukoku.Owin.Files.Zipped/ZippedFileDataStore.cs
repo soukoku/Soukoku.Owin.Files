@@ -9,78 +9,73 @@ using Soukoku.Owin;
 using Ionic.Zip;
 using Soukoku.Owin.Files.Services;
 
-namespace Soukoku.Owin.Files.Zipped
+namespace Soukoku.Owin.Files
 {
     /// <summary>
     /// Implements <see cref="IDataStore"/> using files in a zipped file.
     /// </summary>
-    public class ZippedFileDataStore : IReadOnlyDataStore, IDisposable
+    public sealed class ZippedFileDataStore : IReadOnlyDataStore
     {
-        ZipFile _archive;
+        byte[] _zipData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LooseFilesDataStore" /> class.
         /// </summary>
-        /// <param name="zipStream">The zip stream.</param>
-        public ZippedFileDataStore(Stream zipStream)
+        /// <param name="zipData">The zip data.</param>
+        public ZippedFileDataStore(byte[] zipData)
         {
-            _archive = ZipFile.Read(zipStream);
-        }
-
-        public void Dispose()
-        {
-            if (_archive != null)
-            {
-                _archive.Dispose();
-                _archive = null;
-            }
+            // use array to create a new stream object each time for multithread support hack.
+            _zipData = zipData;
         }
 
         public ResourceResult GetResource(Context context, string logicalPath)
         {
-            var zipPath = logicalPath.Trim('/');
-
-            var hit = _archive.FirstOrDefault(entry =>
+            var zipPath = logicalPath == null ? string.Empty : logicalPath.Trim('/');
+            if (string.IsNullOrEmpty(zipPath))
             {
-                return string.Equals(entry.FileName.Trim('/'), zipPath);
-            });
-
-            if (hit == null)
-            {
-                if (zipPath == string.Empty)
-                {
-                    // root
-                    return new ResourceResult
-                    {
-                        Resource = new Resource(context, logicalPath, true)
-                    };
-                }
-                return new ResourceResult { StatusCode = System.Net.HttpStatusCode.NotFound };
-            }
-            else if (hit.IsDirectory)
-            {
+                // root
                 return new ResourceResult
                 {
                     Resource = new Resource(context, logicalPath, true)
-                    {
-                        CreationDateUtc = hit.CreationTime.ToUniversalTime(),
-                        ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
-                    }
-                };
-            }
-            else
-            {
-                return new ResourceResult
-                {
-                    Resource = new Resource(context, logicalPath, false)
-                    {
-                        CreationDateUtc = hit.CreationTime.ToUniversalTime(),
-                        ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
-                        Length = hit.UncompressedSize,
-                    }
                 };
             }
 
+            using (var ms = new MemoryStream(_zipData))
+            using (var zipFile = ZipFile.Read(ms))
+            {
+                var hit = zipFile.FirstOrDefault(entry =>
+                {
+                    return string.Equals(entry.FileName.Trim('/'), zipPath, StringComparison.OrdinalIgnoreCase);
+                });
+
+                if (hit == null)
+                {
+                    return new ResourceResult { StatusCode = System.Net.HttpStatusCode.NotFound };
+                }
+                else if (hit.IsDirectory)
+                {
+                    return new ResourceResult
+                    {
+                        Resource = new Resource(context, logicalPath, true)
+                        {
+                            CreationDateUtc = hit.CreationTime.ToUniversalTime(),
+                            ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
+                        }
+                    };
+                }
+                else
+                {
+                    return new ResourceResult
+                    {
+                        Resource = new Resource(context, logicalPath, false)
+                        {
+                            CreationDateUtc = hit.CreationTime.ToUniversalTime(),
+                            ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
+                            Length = hit.UncompressedSize,
+                        }
+                    };
+                }
+            }
         }
 
         public IEnumerable<ResourceResult> GetSubResources(Context context, Resource parentFolder)
@@ -90,34 +85,39 @@ namespace Soukoku.Owin.Files.Zipped
             if (parentFolder.IsFolder)
             {
                 var zipPath = parentFolder.LogicalPath.Trim('/');
-                var hits = _archive.Where(entry =>
+
+                using (var ms = new MemoryStream(_zipData))
+                using (var zipFile = ZipFile.Read(ms))
                 {
-                    return string.Equals(GetZipDirectoryName(entry.FileName), zipPath);
-                }).Select(entry =>
-                {
-                    if (entry.IsDirectory)
+                    var hits = zipFile.Where(entry =>
                     {
+                        return string.Equals(GetZipDirectoryName(entry.FileName), zipPath, StringComparison.OrdinalIgnoreCase);
+                    }).Select(entry =>
+                    {
+                        if (entry.IsDirectory)
+                        {
+                            return new ResourceResult
+                            {
+                                Resource = new Resource(context, entry.FileName, true)
+                                {
+                                    CreationDateUtc = entry.CreationTime.ToUniversalTime(),
+                                    ModifiedDateUtc = entry.LastModified.ToUniversalTime(),
+                                }
+                            };
+                        }
                         return new ResourceResult
                         {
-                            Resource = new Resource(context, entry.FileName, true)
+                            Resource = new Resource(context, entry.FileName, false)
                             {
                                 CreationDateUtc = entry.CreationTime.ToUniversalTime(),
                                 ModifiedDateUtc = entry.LastModified.ToUniversalTime(),
+                                Length = entry.UncompressedSize,
                             }
                         };
-                    }
-                    return new ResourceResult
-                    {
-                        Resource = new Resource(context, entry.FileName, false)
-                        {
-                            CreationDateUtc = entry.CreationTime.ToUniversalTime(),
-                            ModifiedDateUtc = entry.LastModified.ToUniversalTime(),
-                            Length = entry.UncompressedSize,
-                        }
-                    };
-                });
+                    });
 
-                return hits;
+                    return hits;
+                }
             }
             return Enumerable.Empty<ResourceResult>();
         }
@@ -128,16 +128,37 @@ namespace Soukoku.Owin.Files.Zipped
             if (resource.IsFolder) { throw new InvalidOperationException("Cannot open stream for a folder."); }
 
             var zipPath = resource.LogicalPath.Trim('/');
-            var hit = _archive.FirstOrDefault(entry =>
-            {
-                return string.Equals(entry.FileName, zipPath);
-            });
 
-            if (hit != null && !hit.IsDirectory)
+            Stream zipStream = null;
+            ZipFile zipFile = null;
+            Stream fileStream = null;
+            bool attached = false;
+            try
             {
-                return hit.OpenReader();
+                zipStream = new MemoryStream(_zipData);
+                zipFile = ZipFile.Read(zipStream);
+
+                var hit = zipFile.FirstOrDefault(entry =>
+                {
+                    return string.Equals(entry.FileName, zipPath, StringComparison.OrdinalIgnoreCase);
+                });
+
+                if (hit != null && !hit.IsDirectory)
+                {
+                    fileStream = hit.OpenReader();
+                    attached = true;
+                    return new AttachedDisposableStream(fileStream, zipFile, zipStream);
+                }
             }
-
+            finally
+            {
+                if (!attached)
+                {
+                    if (fileStream != null) { fileStream.Dispose(); }
+                    if (zipFile != null) { zipFile.Dispose(); }
+                    if (zipStream != null) { zipStream.Dispose(); }
+                }
+            }
             return null;
         }
 

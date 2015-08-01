@@ -2,7 +2,6 @@
 using Owin;
 using Soukoku.Owin.Files;
 using Soukoku.Owin.Files.Services.BuiltIn;
-using Soukoku.Owin.Files.Zipped;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +16,7 @@ namespace FilesRunner
     {
         const string looseRoot = "/loose";
         const string zippedRoot = "/zipped";
+        const string pdfjsRoot = "/pdfjs";
         const string webdavRoot = "/webdav";
 
         static void Main(string[] args)
@@ -26,42 +26,65 @@ namespace FilesRunner
             {
                 Console.WriteLine("Press enter to exit...");
 
-                using (Process.Start(urlRoot + looseRoot)) { }
-                using (Process.Start(urlRoot + zippedRoot)) { }
+                //using (Process.Start(urlRoot + looseRoot)) { }
+                //using (Process.Start(urlRoot + zippedRoot)) { }
+                using (Process.Start(urlRoot + pdfjsRoot)) { }
                 Console.ReadLine();
             }
         }
-        public class Startup
+
+        class Startup
         {
             public void Configuration(IAppBuilder app)
             {
-#if DEBUG
-                app.UseErrorPage();
-#endif
-                app.Map(looseRoot, mapped =>
-                {
-                    var path = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot");
-                    var cfg = new FilesConfig(new LooseFilesDataStore(path))
-                    {
-                        AllowDirectoryBrowsing = true,
-                        Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
-                    };
-                    mapped.Use<FilesMiddleware>(cfg);
-                });
+                //app.UseErrorPage();
 
-                app.Map(zippedRoot, mapped =>
+                //app.Map(looseRoot, mapped =>
+                //{
+                //    var path = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot");
+                //    var cfg = new FilesConfig(new LooseFilesDataStore(path))
+                //    {
+                //        AllowDirectoryBrowsing = true,
+                //        Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                //    };
+                //    mapped.Use<FilesMiddleware>(cfg);
+                //});
+
+                //app.Map(zippedRoot, mapped =>
+                //{
+                //    var zipPath = Path.Combine(Environment.CurrentDirectory, @"wwwroot.zip");
+                //    if (File.Exists(zipPath))
+                //    {
+                //        var ms = new MemoryStream(File.ReadAllBytes(zipPath));
+                //        var cfg = new FilesConfig(new ZippedFileDataStore(ms))
+                //        {
+                //            AllowDirectoryBrowsing = true,
+                //            Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                //        };
+                //        mapped.Use<FilesMiddleware>(cfg);
+                //    }
+                //});
+
+                app.Map(pdfjsRoot, mapped =>
                 {
-                    var zipPath = Path.Combine(Environment.CurrentDirectory, @"wwwroot.zip");
+                    var zipPath = Path.Combine(Environment.CurrentDirectory, @"pdfjs-1.1.114-dist.zip");
                     if (File.Exists(zipPath))
                     {
-                        var ms = new MemoryStream(File.ReadAllBytes(zipPath));
-                        var cfg = new FilesConfig(new ZippedFileDataStore(ms))
+                        var cfg = new FilesConfig(new ZippedFileDataStore(File.ReadAllBytes(zipPath)))
                         {
                             AllowDirectoryBrowsing = true,
                             Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
                         };
                         mapped.Use<FilesMiddleware>(cfg);
                     }
+
+                    //var path = Path.Combine(Environment.CurrentDirectory, @"pdfjs-1.1.114-dist");
+                    //var cfg = new FilesConfig(new LooseFilesDataStore(path))
+                    //{
+                    //    AllowDirectoryBrowsing = true,
+                    //    Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                    //};
+                    //mapped.Use<FilesMiddleware>(cfg);
                 });
             }
         }
