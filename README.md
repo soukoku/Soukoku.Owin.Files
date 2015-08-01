@@ -1,2 +1,2 @@
 # Owin.Webdav
-Learning to write owin middleware for webdav
+Learning to write owin middleware for serving files.
