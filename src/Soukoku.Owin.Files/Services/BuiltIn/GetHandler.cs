@@ -54,7 +54,12 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
                 resource.Context.Response.Headers.ContentLength = resource.Length;
             }
             resource.Context.Response.Headers.ContentType = resource.ContentType;
-            //resource.Context.Response.Headers.Append("Content-Disposition", "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));
+            if (resource.ModifiedDateUtc > DateTime.MinValue)
+            {
+                resource.Context.Response.Headers.Append(HttpHeaders.LastModified, resource.ModifiedDateUtc.ToString("R"));
+            }
+
+            //resource.Context.Response.Headers.Append(HttpHeaders.ContentDisposition, "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));
 
             if (!headOnly)
             {

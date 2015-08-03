@@ -124,8 +124,8 @@ namespace Soukoku.Owin
         /// </value>
         public string ContentType
         {
-            get { return this["Content-Type"]; }
-            set { this.Replace("Content-Type", value); }
+            get { return this[HttpHeaders.ContentType]; }
+            set { this.Replace(HttpHeaders.ContentType, value); }
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Soukoku.Owin
         {
             get
             {
-                var test = this["Content-Length"];
+                var test = this[HttpHeaders.ContentLength];
                 long val;
                 if (long.TryParse(test, out val))
                 {
@@ -146,7 +146,7 @@ namespace Soukoku.Owin
                 }
                 return null;
             }
-            set { this.Replace("Content-Length", value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : null); }
+            set { this.Replace(HttpHeaders.ContentLength, value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : null); }
         }
 
         #endregion

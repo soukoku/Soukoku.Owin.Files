@@ -29,4 +29,16 @@ namespace Soukoku.Owin
 
         public const string Options = "OPTIONS";
     }
+
+    /// <summary>
+    /// Contains common http headers.
+    /// </summary>
+    public static class HttpHeaders
+    {
+        public const string LastModified = "Last-Modified";
+        public const string ContentDisposition = "Content-Disposition";
+        public const string ContentLength = "Content-Length";
+        public const string ContentType = "Content-Type";
+
+    }
 }

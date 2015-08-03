@@ -39,7 +39,7 @@ namespace Soukoku.Owin.Files
 
             var getHandler = new GetHandler();
             Handlers.Add(HttpMethods.Get, getHandler);
-            //_handlers.Add(DavConsts.Methods.Head, getHandler);
+            Handlers.Add(HttpMethods.Head, getHandler);
         }
 
 
