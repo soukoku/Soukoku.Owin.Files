@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilesRunner", "samples\File
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Zipped", "src\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.csproj", "{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Webdav", "src\Soukoku.Owin.Files.Webdav\Soukoku.Owin.Files.Webdav.csproj", "{50CBC52E-3167-4DBC-9187-48887BE90171}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50CBC52E-3167-4DBC-9187-48887BE90171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50CBC52E-3167-4DBC-9187-48887BE90171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50CBC52E-3167-4DBC-9187-48887BE90171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50CBC52E-3167-4DBC-9187-48887BE90171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,5 +82,6 @@ Global
 		{EC323A50-D307-41B7-8141-508631FBB5F1} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
 		{32E77631-7A7C-40DB-BF96-7EE266B1D073} = {BC0F5CBE-3217-4DCE-B73D-3F8A2802D35D}
 		{FA3BDB1B-4B8C-448C-B4F7-681D81B11548} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
+		{50CBC52E-3167-4DBC-9187-48887BE90171} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
 	EndGlobalSection
 EndGlobal

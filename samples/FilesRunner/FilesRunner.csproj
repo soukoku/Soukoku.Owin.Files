@@ -76,6 +76,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Soukoku.Owin.Files.Webdav\Soukoku.Owin.Files.Webdav.csproj">
+      <Project>{50cbc52e-3167-4dbc-9187-48887be90171}</Project>
+      <Name>Soukoku.Owin.Files.Webdav</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.csproj">
       <Project>{fa3bdb1b-4b8c-448c-b4f7-681d81b11548}</Project>
       <Name>Soukoku.Owin.Files.Zipped</Name>

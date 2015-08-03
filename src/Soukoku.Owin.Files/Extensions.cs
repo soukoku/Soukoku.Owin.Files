@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soukoku.Owin
+namespace Soukoku.Owin.Files
 {
     /// <summary>
     /// Contains extension methods for Owin.

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soukoku.Owin.Files.Services
+namespace Soukoku.Owin.Files
 {
     /// <summary>
     /// Represents a resource mapped by a url.

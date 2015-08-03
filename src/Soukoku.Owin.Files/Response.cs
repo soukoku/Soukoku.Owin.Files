@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Soukoku.Owin
+namespace Soukoku.Owin.Files
 {
     /// <summary>
     /// Represents an http response in Owin.
