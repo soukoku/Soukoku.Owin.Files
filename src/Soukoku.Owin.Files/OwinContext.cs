@@ -10,14 +10,14 @@ namespace Soukoku.Owin.Files
     /// <summary>
     /// Represents an http context in Owin.
     /// </summary>
-    public class Context
+    public class OwinContext
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Context"/> class.
+        /// Initializes a new instance of the <see cref="OwinContext"/> class.
         /// </summary>
         /// <param name="environment">The environment.</param>
         /// <exception cref="System.ArgumentNullException">environment</exception>
-        public Context(IDictionary<string, object> environment)
+        public OwinContext(IDictionary<string, object> environment)
         {
             if (environment == null) { throw new ArgumentNullException("environment"); }
 
@@ -33,26 +33,26 @@ namespace Soukoku.Owin.Files
         /// </value>
         public IDictionary<string, object> Environment { get; private set; }
 
-        Request _request;
+        OwinRequest _request;
         /// <summary>
         /// Gets the request.
         /// </summary>
         /// <value>
         /// The request.
         /// </value>
-        public Request Request
+        public OwinRequest Request
         {
             get { return _request ?? (_request = OnCreateRequest()); }
         }
 
-        Response _response;
+        OwinResponse _response;
         /// <summary>
         /// Gets the response.
         /// </summary>
         /// <value>
         /// The response.
         /// </value>
-        public Response Response
+        public OwinResponse Response
         {
             get { return _response ?? (_response = OnCreateResponse()); }
         }
@@ -81,18 +81,18 @@ namespace Soukoku.Owin.Files
         /// Called when the <see cref="Request"/> property is first called.
         /// </summary>
         /// <returns></returns>
-        protected virtual Request OnCreateRequest()
+        protected virtual OwinRequest OnCreateRequest()
         {
-            return new Request(Environment);
+            return new OwinRequest(Environment);
         }
 
         /// <summary>
         /// Called when the <see cref="Response"/> property is first called.
         /// </summary>
         /// <returns></returns>
-        protected virtual Response OnCreateResponse()
+        protected virtual OwinResponse OnCreateResponse()
         {
-            return new Response(Environment);
+            return new OwinResponse(Environment);
         }
 
 

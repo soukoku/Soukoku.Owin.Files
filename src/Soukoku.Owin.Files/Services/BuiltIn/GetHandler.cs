@@ -17,7 +17,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             {
                 var config = resource.Context.GetFilesConfig();
 
-                var headOnly = string.Equals(resource.Context.Request.Method, HttpMethods.Head, StringComparison.OrdinalIgnoreCase);
+                var headOnly = string.Equals(resource.Context.Request.Method, HttpMethodNames.Head, StringComparison.OrdinalIgnoreCase);
 
                 if (resource.IsFolder)
                 {
@@ -56,7 +56,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             resource.Context.Response.Headers.ContentType = resource.ContentType;
             if (resource.ModifiedDateUtc > DateTime.MinValue)
             {
-                resource.Context.Response.Headers.Append(HttpHeaders.LastModified, resource.ModifiedDateUtc.ToString("R"));
+                resource.Context.Response.Headers.Append(HttpHeaderNames.LastModified, resource.ModifiedDateUtc.ToString("R"));
             }
 
             //resource.Context.Response.Headers.Append(HttpHeaders.ContentDisposition, "inline; filename=" + Uri.EscapeUriString(resource.DisplayName));

@@ -38,8 +38,8 @@ namespace Soukoku.Owin.Files
             Handlers = new Dictionary<string, IMethodHandler>(StringComparer.OrdinalIgnoreCase);
 
             var getHandler = new GetHandler();
-            Handlers.Add(HttpMethods.Get, getHandler);
-            Handlers.Add(HttpMethods.Head, getHandler);
+            Handlers.Add(HttpMethodNames.Get, getHandler);
+            Handlers.Add(HttpMethodNames.Head, getHandler);
         }
 
 
@@ -50,7 +50,7 @@ namespace Soukoku.Owin.Files
         /// <returns></returns>
         public virtual async Task Invoke(IDictionary<string, object> environment)
         {
-            var context = new Context(environment);
+            var context = new OwinContext(environment);
 
             try
             {

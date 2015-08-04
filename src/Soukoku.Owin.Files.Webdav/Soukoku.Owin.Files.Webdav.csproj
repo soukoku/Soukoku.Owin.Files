@@ -64,6 +64,10 @@
     <Compile Include="DavModels\BuiltIn\ResourceTypeProperty.cs" />
     <Compile Include="DavModels\BuiltIn\SupportedLockProperty.cs" />
     <Compile Include="DavModels\IProperty.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Services\MkColHandler.cs" />
+    <Compile Include="Services\OptionsHandler.cs" />
+    <Compile Include="Services\PropFindHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

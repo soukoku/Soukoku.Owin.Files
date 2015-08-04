@@ -19,7 +19,7 @@ namespace Soukoku.Owin.Files.Services
         /// <param name="context">The context.</param>
         /// <param name="logicalPath">The logical path.</param>
         /// <returns></returns>
-        ResourceResult GetResource(Context context, string logicalPath);
+        ResourceResult GetResource(OwinContext context, string logicalPath);
 
         /// <summary>
         /// Gets the resources under a collection resource.
@@ -27,7 +27,7 @@ namespace Soukoku.Owin.Files.Services
         /// <param name="context">The context.</param>
         /// <param name="parentFolder">The parent folder.</param>
         /// <returns></returns>
-        IEnumerable<ResourceResult> GetSubResources(Context context, Resource parentFolder);
+        IEnumerable<ResourceResult> GetSubResources(OwinContext context, Resource parentFolder);
 
         /// <summary>
         /// Opens the the resource stream for reading if applicable.

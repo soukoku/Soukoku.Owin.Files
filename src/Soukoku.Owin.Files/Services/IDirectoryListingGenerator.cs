@@ -19,6 +19,6 @@ namespace Soukoku.Owin.Files.Services
         /// <param name="parentResource">The parent resource.</param>
         /// <param name="childResources">The child resources.</param>
         /// <returns></returns>
-        Task<string> GenerateAsync(Context context, Resource parentResource, IEnumerable<Resource> childResources);
+        Task<string> GenerateAsync(OwinContext context, Resource parentResource, IEnumerable<Resource> childResources);
     }
 }

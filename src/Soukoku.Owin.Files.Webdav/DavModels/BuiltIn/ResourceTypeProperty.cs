@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Soukoku.Owin.Files.Webdav.DavModels.BuiltIn
+namespace Soukoku.Owin.Files.DavModels.BuiltIn
 {
     sealed class ResourceTypeProperty : PropertyBase
     {

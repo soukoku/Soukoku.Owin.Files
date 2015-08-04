@@ -38,13 +38,13 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         /// </value>
         public string RootPath { get; private set; }
 
-        public ResourceResult GetResource(Context context, string logicalPath)
+        public ResourceResult GetResource(OwinContext context, string logicalPath)
         {
             var fullPath = MapPath(logicalPath);
             return OnCreateResource(context, logicalPath, fullPath);
         }
 
-        public IEnumerable<ResourceResult> GetSubResources(Context context, Resource parentFolder)
+        public IEnumerable<ResourceResult> GetSubResources(OwinContext context, Resource parentFolder)
         {
             if (parentFolder == null) { throw new ArgumentNullException("parentFolder"); }
 
@@ -113,7 +113,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             return fullPath;
         }
 
-        protected virtual ResourceResult OnCreateResource(Context context, string logicalPath, string fullPath)
+        protected virtual ResourceResult OnCreateResource(OwinContext context, string logicalPath, string fullPath)
         {
             if (Directory.Exists(fullPath))
             {

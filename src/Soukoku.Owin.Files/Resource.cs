@@ -12,7 +12,7 @@ namespace Soukoku.Owin.Files
     /// </summary>
     public class Resource
     {
-        public Resource(Context context, string logicalPath, bool isFolder)
+        public Resource(OwinContext context, string logicalPath, bool isFolder)
         {
             if (context == null) { throw new ArgumentNullException("context"); }
 
@@ -63,7 +63,7 @@ namespace Soukoku.Owin.Files
         /// <value>
         /// The context.
         /// </value>
-        public Context Context { get; private set; }
+        public OwinContext Context { get; private set; }
 
         /// <summary>
         /// Gets the logical path from root, with leading root slash '/' but not trailing slash.

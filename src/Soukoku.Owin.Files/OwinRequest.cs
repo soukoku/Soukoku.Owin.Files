@@ -10,21 +10,21 @@ namespace Soukoku.Owin.Files
     /// <summary>
     /// Represents an http request in Owin.
     /// </summary>
-    public class Request
+    public class OwinRequest
     {
         private IDictionary<string, object> _environment;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Request"/> class.
+        /// Initializes a new instance of the <see cref="OwinRequest"/> class.
         /// </summary>
         /// <param name="environment">The environment.</param>
         /// <exception cref="System.ArgumentNullException">environment</exception>
-        public Request(IDictionary<string, object> environment)
+        public OwinRequest(IDictionary<string, object> environment)
         {
             if (environment == null) { throw new ArgumentNullException("environment"); }
 
             _environment = environment;
-            Headers = new Headers(environment.Get<IDictionary<string, string[]>>(OwinConsts.RequestHeaders));
+            Headers = new OwinHeaders(environment.Get<IDictionary<string, string[]>>(OwinConsts.RequestHeaders));
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Soukoku.Owin.Files
         /// <value>
         /// The headers.
         /// </value>
-        public Headers Headers { get; private set; }
+        public OwinHeaders Headers { get; private set; }
 
         public string Method { get { return _environment.Get<string>(OwinConsts.RequestMethod); } }
 

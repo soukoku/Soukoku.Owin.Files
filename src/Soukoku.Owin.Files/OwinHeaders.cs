@@ -10,16 +10,16 @@ namespace Soukoku.Owin.Files
     /// <summary>
     /// Provides very basic methods to work with http headers.
     /// </summary>
-    public class Headers
+    public class OwinHeaders
     {
         IDictionary<string, string[]> _store;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Headers"/> class.
+        /// Initializes a new instance of the <see cref="OwinHeaders"/> class.
         /// </summary>
         /// <param name="store">The store.</param>
         /// <exception cref="System.ArgumentNullException">store</exception>
-        public Headers(IDictionary<string, string[]> store)
+        public OwinHeaders(IDictionary<string, string[]> store)
         {
             if (store == null) { throw new ArgumentNullException("store"); }
 
@@ -124,8 +124,8 @@ namespace Soukoku.Owin.Files
         /// </value>
         public string ContentType
         {
-            get { return this[HttpHeaders.ContentType]; }
-            set { this.Replace(HttpHeaders.ContentType, value); }
+            get { return this[HttpHeaderNames.ContentType]; }
+            set { this.Replace(HttpHeaderNames.ContentType, value); }
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Soukoku.Owin.Files
         {
             get
             {
-                var test = this[HttpHeaders.ContentLength];
+                var test = this[HttpHeaderNames.ContentLength];
                 long val;
                 if (long.TryParse(test, out val))
                 {
@@ -146,7 +146,7 @@ namespace Soukoku.Owin.Files
                 }
                 return null;
             }
-            set { this.Replace(HttpHeaders.ContentLength, value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : null); }
+            set { this.Replace(HttpHeaderNames.ContentLength, value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : null); }
         }
 
         #endregion

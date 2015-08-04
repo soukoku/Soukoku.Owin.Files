@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Soukoku.Owin.Files.Webdav.DavModels
+namespace Soukoku.Owin.Files.DavModels
 {
     /// <summary>
     /// Represents a property of a webdav resource.

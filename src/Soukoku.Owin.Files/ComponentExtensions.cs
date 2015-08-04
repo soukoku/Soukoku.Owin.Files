@@ -50,7 +50,7 @@ namespace Soukoku.Owin.Files
         /// </summary>
         /// <param name="owinContext">The owin context.</param>
         /// <returns></returns>
-        public static FilesConfig GetFilesConfig(this Context owinContext)
+        public static FilesConfig GetFilesConfig(this OwinContext owinContext)
         {
             if (owinContext == null) { return null; }
 

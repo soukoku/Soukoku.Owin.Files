@@ -13,7 +13,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
     /// </summary>
     public class BootstrapDirectoryListingGenerator : IDirectoryListingGenerator
     {
-        public async Task<string> GenerateAsync(Context context, Resource parentResource, IEnumerable<Resource> childResources)
+        public async Task<string> GenerateAsync(OwinContext context, Resource parentResource, IEnumerable<Resource> childResources)
         {
             var rows = new StringBuilder();
             if (childResources != null)

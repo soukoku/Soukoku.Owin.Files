@@ -28,7 +28,7 @@ namespace Soukoku.Owin.Files
             _zipData = zipData;
         }
 
-        public ResourceResult GetResource(Context context, string logicalPath)
+        public ResourceResult GetResource(OwinContext context, string logicalPath)
         {
             var zipPath = logicalPath == null ? string.Empty : logicalPath.Trim('/');
             if (string.IsNullOrEmpty(zipPath))
@@ -78,7 +78,7 @@ namespace Soukoku.Owin.Files
             }
         }
 
-        public IEnumerable<ResourceResult> GetSubResources(Context context, Resource parentFolder)
+        public IEnumerable<ResourceResult> GetSubResources(OwinContext context, Resource parentFolder)
         {
             if (parentFolder == null) { throw new ArgumentNullException("parentFolder"); }
 

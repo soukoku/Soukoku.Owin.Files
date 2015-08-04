@@ -10,7 +10,7 @@ namespace Soukoku.Owin.Files
     /// <summary>
     /// Contains the known http method strings.
     /// </summary>
-    public static class HttpMethods
+    public static class HttpMethodNames
     {
         // spec section 9
 
@@ -31,9 +31,9 @@ namespace Soukoku.Owin.Files
     }
 
     /// <summary>
-    /// Contains common http headers.
+    /// Contains common http headers names.
     /// </summary>
-    public static class HttpHeaders
+    public static class HttpHeaderNames
     {
         public const string LastModified = "Last-Modified";
         public const string ContentDisposition = "Content-Disposition";
