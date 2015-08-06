@@ -52,12 +52,13 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="FilesExtensions.cs" />
     <Compile Include="HttpConsts.cs" />
     <Compile Include="Services\BuiltIn\GetHandler.cs" />
     <Compile Include="Services\BuiltIn\MimeTypeProvider.cs" />
     <Compile Include="ComponentExtensions.cs" />
     <Compile Include="OwinContext.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="OwinExtensions.cs" />
     <Compile Include="OwinHeaders.cs" />
     <Compile Include="OwinConsts.cs" />
     <Compile Include="OwinRequest.cs" />

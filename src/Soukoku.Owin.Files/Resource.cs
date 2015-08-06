@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Soukoku.Owin.Files
 {
     /// <summary>
-    /// Represents a resource mapped by a url.
+    /// Represents a physical resource mapped by a url.
     /// </summary>
     public class Resource
     {
