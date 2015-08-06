@@ -26,7 +26,7 @@ namespace Soukoku.Owin.Files
         }
 
         /// <summary>
-        /// Gets the environment.
+        /// Gets the raw owin environment.
         /// </summary>
         /// <value>
         /// The environment.
@@ -57,20 +57,16 @@ namespace Soukoku.Owin.Files
             get { return _response ?? (_response = OnCreateResponse()); }
         }
 
-        /// <summary>
-        /// Gets the cancellation token.
-        /// </summary>
-        /// <value>
-        /// The cancellation token.
-        /// </value>
-        public CancellationToken CancellationToken { get; private set; }
 
         /// <summary>
-        /// Gets the Owin version.
+        /// A CancellationToken indicating if the request has been canceled/aborted.
         /// </summary>
-        /// <value>
-        /// The version.
-        /// </value>
+        public CancellationToken CancellationToken { get; private set; }
+
+
+        /// <summary>
+        /// A string indicating the OWIN version.
+        /// </summary>
         public string Version
         {
             get { return Environment.Get<string>(OwinConsts.Version); }

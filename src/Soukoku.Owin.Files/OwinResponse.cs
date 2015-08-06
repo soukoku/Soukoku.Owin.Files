@@ -29,11 +29,8 @@ namespace Soukoku.Owin.Files
         }
 
         /// <summary>
-        /// Gets or sets the body.
+        /// A Stream used to write out the response body, if any.
         /// </summary>
-        /// <value>
-        /// The body.
-        /// </value>
         public Stream Body
         {
             get { return _environment.Get<Stream>(OwinConsts.ResponseBody, Stream.Null); }
@@ -41,29 +38,49 @@ namespace Soukoku.Owin.Files
         }
 
         /// <summary>
-        /// Gets the headers.
+        /// The response headers.
         /// </summary>
         /// <value>
         /// The headers.
         /// </value>
         public OwinHeaders Headers { get; private set; }
 
+        /// <summary>
+        /// An optional int containing the HTTP response status code as defined in 
+        /// RFC 2616 section 6.1.1. The default is 200.
+        /// </summary>
         public int StatusCode
         {
             get { return _environment.Get<int>(OwinConsts.ResponseStatusCode, 200); }
             set { _environment[OwinConsts.ResponseStatusCode] = value; }
         }
+        /// <summary>
+        /// An optional string containing the reason phrase associated the given status code. 
+        /// If none is provided then the server SHOULD provide a default as described in 
+        /// RFC 2616 section 6.1.1
+        /// </summary>
         public string ReasonPhrase
         {
             get { return _environment.Get<string>(OwinConsts.ResponseReasonPhrase); }
             set { _environment[OwinConsts.ResponseReasonPhrase] = value; }
         }
+        /// <summary>
+        /// An optional string containing the protocol name and version 
+        /// (e.g. "HTTP/1.0" or "HTTP/1.1"). If none is provided then the 
+        /// "owin.RequestProtocol" key's value is the default.
+        /// </summary>
         public string Protocol
         {
             get { return _environment.Get<string>(OwinConsts.ResponseProtocol); }
             set { _environment[OwinConsts.ResponseProtocol] = value; }
         }
 
+        /// <summary>
+        /// Writes the string to the response body.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         public Task WriteAsync(string content, CancellationToken cancellationToken)
         {
             if (content == null) { return Task.FromResult(0); }
