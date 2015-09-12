@@ -55,6 +55,7 @@
     <Compile Include="FilesExtensions.cs" />
     <Compile Include="HttpConsts.cs" />
     <Compile Include="Services\BuiltIn\GetHandler.cs" />
+    <Compile Include="Services\BuiltIn\SingleFilesDataStore.cs" />
     <Compile Include="Services\BuiltIn\MimeTypeProvider.cs" />
     <Compile Include="ComponentExtensions.cs" />
     <Compile Include="OwinContext.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Services\BuiltIn\NullLog.cs" />
     <Compile Include="Services\BuiltIn\LooseFilesDataStore.cs" />
     <Compile Include="Services\BuiltIn\TraceLog.cs" />
+    <Compile Include="Services\BuiltIn\AssemblyResourceDataStore.cs" />
     <Compile Include="Services\IReadOnlyDataStore.cs" />
     <Compile Include="Services\IDirectoryListingGenerator.cs" />
     <Compile Include="Services\IETagGenerator.cs" />

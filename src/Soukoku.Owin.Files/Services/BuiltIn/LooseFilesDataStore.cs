@@ -10,7 +10,7 @@ using Soukoku.Owin;
 namespace Soukoku.Owin.Files.Services.BuiltIn
 {
     /// <summary>
-    /// Implements <see cref="IDataStore"/> over loose static files.
+    /// Implements <see cref="IReadOnlyDataStore"/> over loose static files in a directory.
     /// </summary>
     public class LooseFilesDataStore : IReadOnlyDataStore
     {

@@ -12,7 +12,7 @@ using Soukoku.Owin.Files.Services;
 namespace Soukoku.Owin.Files
 {
     /// <summary>
-    /// Implements <see cref="IDataStore"/> using files in a zipped file.
+    /// Implements <see cref="IReadOnlyDataStore"/> using files in a zipped file.
     /// </summary>
     public sealed class ZippedFileDataStore : IReadOnlyDataStore
     {
