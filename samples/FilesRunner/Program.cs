@@ -65,6 +65,18 @@ namespace FilesRunner
                 //    }
                 //});
 
+                app.Map("/single", mapped =>
+                {
+                    var filePath = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot\dummy.txt");
+                    if (File.Exists(filePath))
+                    {
+                        mapped.Use<FilesMiddleware>(new FilesConfig(new SingleFilesDataStore(filePath))
+                        {
+                            AllowDirectoryBrowsing = true
+                        });
+                    }
+                });
+
                 app.Map(pdfjsRoot, mapped =>
                 {
                     var zipPath = Path.Combine(Environment.CurrentDirectory, @"pdfjs-1.1.114-dist.zip");
