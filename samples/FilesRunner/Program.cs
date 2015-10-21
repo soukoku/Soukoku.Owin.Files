@@ -70,7 +70,9 @@ namespace FilesRunner
                     var filePath = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot\dummy.txt");
                     if (File.Exists(filePath))
                     {
-                        mapped.Use<FilesMiddleware>(new FilesConfig(new SingleFilesDataStore(filePath))
+                        var store = new SingleFilesDataStore();
+                        store.SetFile(filePath);
+                        mapped.Use<FilesMiddleware>(new FilesConfig(store)
                         {
                             AllowDirectoryBrowsing = true
                         });

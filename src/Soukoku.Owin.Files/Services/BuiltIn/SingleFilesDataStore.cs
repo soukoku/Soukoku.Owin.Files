@@ -21,11 +21,11 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         private string _fileName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SingleFilesDataStore" /> class.
+        /// Sets the file to serve.
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <exception cref="System.ArgumentException">Invalid root path.;rootPath</exception>
-        public SingleFilesDataStore(string filePath)
+        public void SetFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath)) { throw new ArgumentException("Invalid file path.", "filePath"); }
             _filePath = Path.GetFullPath(filePath);
@@ -33,13 +33,13 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SingleFilesDataStore" /> class.
+        /// Sets the file to serve.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="data">The data.</param>
         /// <exception cref="System.ArgumentException">Invalid root path.;rootPath</exception>
         /// <exception cref="System.ArgumentNullException">data</exception>
-        public SingleFilesDataStore(string fileName, byte[] data)
+        public void SetFile(string fileName, byte[] data)
         {
             if (string.IsNullOrWhiteSpace(fileName)) { throw new ArgumentException("Invalid file name.", "fileName"); }
             if (data == null) { throw new ArgumentNullException("data"); }
