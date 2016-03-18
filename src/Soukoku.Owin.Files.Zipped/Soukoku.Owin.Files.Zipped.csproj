@@ -70,7 +70,6 @@
       <Link>Sign.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Soukoku.Owin.Files.Zipped.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Soukoku.Owin.Files\Soukoku.Owin.Files.csproj">

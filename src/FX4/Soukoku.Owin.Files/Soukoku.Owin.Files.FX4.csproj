@@ -169,9 +169,6 @@
     <None Include="..\..\Sign.snk">
       <Link>Sign.snk</Link>
     </None>
-    <None Include="..\..\Soukoku.Owin.Files\Soukoku.Owin.Files.nuspec">
-      <Link>Soukoku.Owin.Files.nuspec</Link>
-    </None>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

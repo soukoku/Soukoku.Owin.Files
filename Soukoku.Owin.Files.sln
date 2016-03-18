@@ -33,6 +33,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.FX4", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Zipped.FX4", "src\FX4\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.FX4.csproj", "{397E04A3-90F0-47FF-AD03-8892FA96890D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{23956434-1FF6-4CD3-B76C-1BC678AB077A}"
+	ProjectSection(SolutionItems) = preProject
+		build\pack-pkg.cmd = build\pack-pkg.cmd
+		build\Soukoku.Owin.Files.nuspec = build\Soukoku.Owin.Files.nuspec
+		build\Soukoku.Owin.Files.Zipped.nuspec = build\Soukoku.Owin.Files.Zipped.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
