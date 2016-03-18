@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Soukoku.Owin.Files.Internal;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -83,7 +84,7 @@ namespace Soukoku.Owin.Files
         /// <returns></returns>
         public Task WriteAsync(string content, CancellationToken cancellationToken)
         {
-            if (content == null) { return Task.FromResult(0); }
+            if (content == null) { return TaskUtil.FromResult(0); }
             var buff = Encoding.UTF8.GetBytes(content);
             return Body.WriteAsync(buff, 0, buff.Length, cancellationToken);
         }

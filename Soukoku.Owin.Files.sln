@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}"
 EndProject
@@ -26,6 +26,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Zipped", "src\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.csproj", "{FA3BDB1B-4B8C-448C-B4F7-681D81B11548}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Webdav", "src\Soukoku.Owin.Files.Webdav\Soukoku.Owin.Files.Webdav.csproj", "{50CBC52E-3167-4DBC-9187-48887BE90171}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FX4", "FX4", "{67F309C1-5810-47D6-89A8-5A3D7A768D57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.FX4", "src\FX4\Soukoku.Owin.Files\Soukoku.Owin.Files.FX4.csproj", "{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soukoku.Owin.Files.Zipped.FX4", "src\FX4\Soukoku.Owin.Files.Zipped\Soukoku.Owin.Files.Zipped.FX4.csproj", "{397E04A3-90F0-47FF-AD03-8892FA96890D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +75,14 @@ Global
 		{50CBC52E-3167-4DBC-9187-48887BE90171}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50CBC52E-3167-4DBC-9187-48887BE90171}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50CBC52E-3167-4DBC-9187-48887BE90171}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{397E04A3-90F0-47FF-AD03-8892FA96890D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{397E04A3-90F0-47FF-AD03-8892FA96890D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{397E04A3-90F0-47FF-AD03-8892FA96890D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{397E04A3-90F0-47FF-AD03-8892FA96890D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +97,8 @@ Global
 		{32E77631-7A7C-40DB-BF96-7EE266B1D073} = {BC0F5CBE-3217-4DCE-B73D-3F8A2802D35D}
 		{FA3BDB1B-4B8C-448C-B4F7-681D81B11548} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
 		{50CBC52E-3167-4DBC-9187-48887BE90171} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
+		{67F309C1-5810-47D6-89A8-5A3D7A768D57} = {47C6BFD7-23C5-4D13-9369-17FAB5A5BA5E}
+		{7A9E0DC4-DBC2-47FE-B751-8E242640FB9A} = {67F309C1-5810-47D6-89A8-5A3D7A768D57}
+		{397E04A3-90F0-47FF-AD03-8892FA96890D} = {67F309C1-5810-47D6-89A8-5A3D7A768D57}
 	EndGlobalSection
 EndGlobal

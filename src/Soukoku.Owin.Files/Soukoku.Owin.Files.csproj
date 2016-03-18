@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="FilesExtensions.cs" />
     <Compile Include="HttpConsts.cs" />
+    <Compile Include="Internal\TaskUtil.cs" />
     <Compile Include="Services\BuiltIn\GetHandler.cs" />
     <Compile Include="Services\BuiltIn\SingleFilesDataStore.cs" />
     <Compile Include="Services\BuiltIn\MimeTypeProvider.cs" />
