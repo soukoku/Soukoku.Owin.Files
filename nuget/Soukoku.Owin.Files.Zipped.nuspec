@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Soukoku.Owin.Files.Zipped</id>
-    <version>0.2.4.1</version>
+    <version>0.2.4.3</version>
     <title>Soukoku.Owin.Files.Zipped</title>
     <authors>Yin-Chun Wang</authors>
     <owners>Yin-Chun Wang</owners>
@@ -16,11 +16,11 @@
     <tags>owin files</tags>
     <dependencies>
       <group>
+        <dependency id="Soukoku.Owin.Files" version="0.2.4.2" />
         <dependency id="DotNetZip.Reduced" version="1.9.1.8" />
       </group>
       <group targetFramework="net40">
         <dependency id="Microsoft.Bcl" version="1.1.8" />
-        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
         <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
       </group>
       <group targetFramework="net45"></group>
