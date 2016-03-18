@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Soukoku.Owin.Files.Zipped</id>
+    <version>0.2.4.1</version>
+    <title>Soukoku.Owin.Files.Zipped</title>
+    <authors>Yin-Chun Wang</authors>
+    <owners>Yin-Chun Wang</owners>
+    <projectUrl>https://github.com/soukoku/Soukoku.Owin.Files</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/soukoku/Soukoku.Owin.Files/master/LICENSE</licenseUrl>
+    <!--<iconUrl>http://i.imgur.com/WAYKszr.png</iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Allows serving files from a zipped store.</description>
+    <!--<releaseNotes>Summary of changes made in this release of the package.</releaseNotes>-->
+    <copyright>Copyright © Yin-Chun Wang 2015</copyright>
+    <tags>owin files</tags>
+    <dependencies>
+      <group>
+        <dependency id="DotNetZip.Reduced" version="1.9.1.8" />
+      </group>
+      <group targetFramework="net40">
+        <dependency id="Microsoft.Bcl" version="1.1.8" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
+      </group>
+      <group targetFramework="net45"></group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Soukoku.Owin.Files.Zipped\bin\release\Soukoku.Owin.Files.Zipped.dll" target="lib\net45"/>
+    <file src="..\src\Soukoku.Owin.Files.Zipped\bin\release\Soukoku.Owin.Files.Zipped.xml" target="lib\net45"/>
+    <file src="..\src\FX4\Soukoku.Owin.Files.Zipped\bin\release\Soukoku.Owin.Files.Zipped.dll" target="lib\net4-client"/>
+    <file src="..\src\FX4\Soukoku.Owin.Files.Zipped\bin\release\Soukoku.Owin.Files.Zipped.xml" target="lib\net4-client"/>
+  </files>
+</package>
