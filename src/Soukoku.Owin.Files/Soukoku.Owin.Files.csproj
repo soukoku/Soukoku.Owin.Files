@@ -62,7 +62,7 @@
     <Compile Include="OwinContext.cs" />
     <Compile Include="OwinExtensions.cs" />
     <Compile Include="OwinHeaders.cs" />
-    <Compile Include="OwinConsts.cs" />
+    <Compile Include="Internal\OwinConsts.cs" />
     <Compile Include="OwinRequest.cs" />
     <Compile Include="OwinResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,7 +86,6 @@
     <None Include="..\Sign.snk">
       <Link>Sign.snk</Link>
     </None>
-    <None Include="Soukoku.Owin.Files.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">

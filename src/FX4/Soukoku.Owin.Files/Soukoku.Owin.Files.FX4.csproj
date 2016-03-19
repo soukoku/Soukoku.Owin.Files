@@ -89,11 +89,11 @@
     <Compile Include="..\..\Soukoku.Owin.Files\HttpConsts.cs">
       <Link>HttpConsts.cs</Link>
     </Compile>
+    <Compile Include="..\..\Soukoku.Owin.Files\Internal\OwinConsts.cs">
+      <Link>Internal\OwinConsts.cs</Link>
+    </Compile>
     <Compile Include="..\..\Soukoku.Owin.Files\Internal\TaskUtil.cs">
       <Link>Internal\TaskUtil.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Soukoku.Owin.Files\OwinConsts.cs">
-      <Link>OwinConsts.cs</Link>
     </Compile>
     <Compile Include="..\..\Soukoku.Owin.Files\OwinContext.cs">
       <Link>OwinContext.cs</Link>

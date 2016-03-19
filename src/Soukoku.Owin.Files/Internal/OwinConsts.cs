@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soukoku.Owin.Files
+namespace Soukoku.Owin.Files.Internal
 {
     static class OwinConsts
     {
