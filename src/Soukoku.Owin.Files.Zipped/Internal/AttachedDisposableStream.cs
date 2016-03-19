@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soukoku.Owin.Files
+namespace Soukoku.Owin.Files.Internal
 {
     /// <summary>
     /// A stream wrapper that disposes other IDisposables when disposed.

@@ -1,13 +1,9 @@
-﻿using System;
+﻿using Soukoku.Owin.Files.Internal;
+using Soukoku.Owin.Files.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using Soukoku.Owin;
-using Ionic.Zip;
-using Soukoku.Owin.Files.Services;
 
 namespace Soukoku.Owin.Files
 {
@@ -19,7 +15,7 @@ namespace Soukoku.Owin.Files
         byte[] _zipData;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LooseFilesDataStore" /> class.
+        /// Initializes a new instance of the <see cref="ZippedFileDataStore" /> class.
         /// </summary>
         /// <param name="zipData">The zip data.</param>
         public ZippedFileDataStore(byte[] zipData)
@@ -41,25 +37,29 @@ namespace Soukoku.Owin.Files
             }
 
             using (var ms = new MemoryStream(_zipData))
-            using (var zipFile = ZipFile.Read(ms))
+#if FX4
+            using (var zip = new IonicZipFile(ms))
+#else
+            using (var zip = new FXZipFile(ms))
+#endif
             {
-                var hit = zipFile.FirstOrDefault(entry =>
+                var hit = zip.Entries.FirstOrDefault(entry =>
                 {
-                    return string.Equals(entry.FileName.Trim('/'), zipPath, StringComparison.OrdinalIgnoreCase);
+                    return string.Equals(entry.FullPath.Trim('/'), zipPath, StringComparison.OrdinalIgnoreCase);
                 });
 
                 if (hit == null)
                 {
                     return new ResourceResult { StatusCode = System.Net.HttpStatusCode.NotFound };
                 }
-                else if (hit.IsDirectory)
+                else if (hit.IsFolder)
                 {
                     return new ResourceResult
                     {
                         Resource = new Resource(context, logicalPath, true)
                         {
-                            CreationDateUtc = hit.CreationTime.ToUniversalTime(),
-                            ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
+                            CreationDateUtc = hit.Created,
+                            ModifiedDateUtc = hit.Modified
                         }
                     };
                 }
@@ -69,9 +69,9 @@ namespace Soukoku.Owin.Files
                     {
                         Resource = new Resource(context, logicalPath, false)
                         {
-                            CreationDateUtc = hit.CreationTime.ToUniversalTime(),
-                            ModifiedDateUtc = hit.LastModified.ToUniversalTime(),
-                            Length = hit.UncompressedSize,
+                            CreationDateUtc = hit.Created,
+                            ModifiedDateUtc = hit.Modified,
+                            Length = hit.OrigSize,
                         }
                     };
                 }
@@ -87,31 +87,35 @@ namespace Soukoku.Owin.Files
                 var zipPath = parentFolder.LogicalPath.Trim('/');
 
                 using (var ms = new MemoryStream(_zipData))
-                using (var zipFile = ZipFile.Read(ms))
+#if FX4
+                using (var zip = new IonicZipFile(ms))
+#else
+                using (var zip = new FXZipFile(ms))
+#endif
                 {
-                    var hits = zipFile.Where(entry =>
+                    var hits = zip.Entries.Where(entry =>
                     {
-                        return string.Equals(GetZipDirectoryName(entry.FileName), zipPath, StringComparison.OrdinalIgnoreCase);
+                        return string.Equals(GetZipDirectoryName(entry.FullPath), zipPath, StringComparison.OrdinalIgnoreCase);
                     }).Select(entry =>
                     {
-                        if (entry.IsDirectory)
+                        if (entry.IsFolder)
                         {
                             return new ResourceResult
                             {
-                                Resource = new Resource(context, entry.FileName, true)
+                                Resource = new Resource(context, entry.FullPath, true)
                                 {
-                                    CreationDateUtc = entry.CreationTime.ToUniversalTime(),
-                                    ModifiedDateUtc = entry.LastModified.ToUniversalTime(),
+                                    CreationDateUtc = entry.Created,
+                                    ModifiedDateUtc = entry.Modified
                                 }
                             };
                         }
                         return new ResourceResult
                         {
-                            Resource = new Resource(context, entry.FileName, false)
+                            Resource = new Resource(context, entry.FullPath, false)
                             {
-                                CreationDateUtc = entry.CreationTime.ToUniversalTime(),
-                                ModifiedDateUtc = entry.LastModified.ToUniversalTime(),
-                                Length = entry.UncompressedSize,
+                                CreationDateUtc = entry.Created,
+                                ModifiedDateUtc = entry.Modified,
+                                Length = entry.OrigSize,
                             }
                         };
                     });
@@ -130,24 +134,28 @@ namespace Soukoku.Owin.Files
             var zipPath = resource.LogicalPath.Trim('/');
 
             Stream zipStream = null;
-            ZipFile zipFile = null;
+            IZipFile zip = null;
             Stream fileStream = null;
             bool attached = false;
             try
             {
                 zipStream = new MemoryStream(_zipData);
-                zipFile = ZipFile.Read(zipStream);
+#if FX4
+                zip = new IonicZipFile(zipStream);
+#else
+                zip = new FXZipFile(zipStream);
+#endif
 
-                var hit = zipFile.FirstOrDefault(entry =>
+                var hit = zip.Entries.FirstOrDefault(entry =>
                 {
-                    return string.Equals(entry.FileName, zipPath, StringComparison.OrdinalIgnoreCase);
+                    return string.Equals(entry.FullPath, zipPath, StringComparison.OrdinalIgnoreCase);
                 });
 
-                if (hit != null && !hit.IsDirectory)
+                if (hit != null && !hit.IsFolder)
                 {
-                    fileStream = hit.OpenReader();
+                    fileStream = hit.Open();
                     attached = true;
-                    return new AttachedDisposableStream(fileStream, zipFile, zipStream);
+                    return new AttachedDisposableStream(fileStream, zip, zipStream);
                 }
             }
             finally
@@ -155,7 +163,7 @@ namespace Soukoku.Owin.Files
                 if (!attached)
                 {
                     if (fileStream != null) { fileStream.Dispose(); }
-                    if (zipFile != null) { zipFile.Dispose(); }
+                    if (zip != null) { zip.Dispose(); }
                     if (zipStream != null) { zipStream.Dispose(); }
                 }
             }

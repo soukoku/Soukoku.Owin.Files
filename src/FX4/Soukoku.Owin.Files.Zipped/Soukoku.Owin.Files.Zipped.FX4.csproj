@@ -7,7 +7,7 @@
     <ProjectGuid>{397E04A3-90F0-47FF-AD03-8892FA96890D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Soukoku.Owin.Files.Zipped</RootNamespace>
+    <RootNamespace>Soukoku.Owin.Files</RootNamespace>
     <AssemblyName>Soukoku.Owin.Files.Zipped</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FX4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;FX4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Soukoku.Owin.Files.Zipped.XML</DocumentationFile>
@@ -59,8 +59,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Soukoku.Owin.Files.Zipped\AttachedDisposableStream.cs">
-      <Link>AttachedDisposableStream.cs</Link>
+    <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Internal\AttachedDisposableStream.cs">
+      <Link>Internal\AttachedDisposableStream.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Internal\IZipFile.cs">
+      <Link>Internal\IZipFile.cs</Link>
     </Compile>
     <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
@@ -71,6 +74,7 @@
     <Compile Include="..\..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Internal\IonicZipFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Sign.snk">
