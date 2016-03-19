@@ -90,6 +90,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\index.html" />
+    <EmbeddedResource Include="Resources\Images\beard.gif" />
     <Content Include="wwwroot\dummy.txt" />
     <Content Include="wwwroot\subfolder\New%2520Bitmap Image.png" />
   </ItemGroup>

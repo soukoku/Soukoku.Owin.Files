@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,11 +15,6 @@ namespace FilesRunner
 {
     class Program
     {
-        const string looseRoot = "/loose";
-        const string zippedRoot = "/zipped";
-        const string pdfjsRoot = "/pdfjs";
-        const string webdavRoot = "/webdav";
-
         static void Main(string[] args)
         {
             var urlRoot = "http://localhost:12345";
@@ -26,9 +22,7 @@ namespace FilesRunner
             {
                 Console.WriteLine("Press enter to exit...");
 
-                //using (Process.Start(urlRoot + looseRoot)) { }
-                //using (Process.Start(urlRoot + zippedRoot)) { }
-                using (Process.Start(urlRoot + pdfjsRoot)) { }
+                using (Process.Start(urlRoot + "/index.html")) { }
                 Console.ReadLine();
             }
         }
@@ -39,32 +33,19 @@ namespace FilesRunner
             {
                 //app.UseErrorPage();
 
-                //app.Map(looseRoot, mapped =>
-                //{
-                //    var path = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot");
-                //    var cfg = new FilesConfig(new LooseFilesDataStore(path))
-                //    {
-                //        AllowDirectoryBrowsing = true,
-                //        Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
-                //    };
-                //    mapped.Use<FilesMiddleware>(cfg);
-                //});
+                // serve files from a fs folder.
+                app.Map("/loose", mapped =>
+                {
+                    var path = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot");
+                    var cfg = new FilesConfig(new LooseFilesDataStore(path))
+                    {
+                        AllowDirectoryBrowsing = true,
+                        Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                    };
+                    mapped.Use<FilesMiddleware>(cfg);
+                });
 
-                //app.Map(zippedRoot, mapped =>
-                //{
-                //    var zipPath = Path.Combine(Environment.CurrentDirectory, @"wwwroot.zip");
-                //    if (File.Exists(zipPath))
-                //    {
-                //        var ms = new MemoryStream(File.ReadAllBytes(zipPath));
-                //        var cfg = new FilesConfig(new ZippedFileDataStore(ms))
-                //        {
-                //            AllowDirectoryBrowsing = true,
-                //            Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
-                //        };
-                //        mapped.Use<FilesMiddleware>(cfg);
-                //    }
-                //});
-
+                // server only a single file.
                 app.Map("/single", mapped =>
                 {
                     var filePath = Path.Combine(Environment.CurrentDirectory, @"..\..\wwwroot\dummy.txt");
@@ -79,7 +60,8 @@ namespace FilesRunner
                     }
                 });
 
-                app.Map(pdfjsRoot, mapped =>
+                // serve files from a zip file
+                app.Map("/pdfjs", mapped =>
                 {
                     var zipPath = Path.Combine(Environment.CurrentDirectory, @"pdfjs-1.1.114-dist.zip");
                     if (File.Exists(zipPath))
@@ -91,14 +73,12 @@ namespace FilesRunner
                         };
                         mapped.Use<FilesMiddleware>(cfg);
                     }
+                });
 
-                    //var path = Path.Combine(Environment.CurrentDirectory, @"pdfjs-1.1.114-dist");
-                    //var cfg = new FilesConfig(new LooseFilesDataStore(path))
-                    //{
-                    //    AllowDirectoryBrowsing = true,
-                    //    Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
-                    //};
-                    //mapped.Use<FilesMiddleware>(cfg);
+                // serve files from this assembly's resource
+                app.Use<FilesMiddleware>(new FilesConfig(new AssemblyResourceDataStore(Assembly.GetExecutingAssembly(), "FilesRunner.Resources"))
+                {
+                    AllowDirectoryBrowsing = true,
                 });
             }
         }

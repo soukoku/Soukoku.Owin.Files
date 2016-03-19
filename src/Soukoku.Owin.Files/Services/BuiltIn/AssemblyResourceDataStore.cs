@@ -36,7 +36,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             _ass = assembly;
 
             _knownResourceNames = assembly.GetManifestResourceNames()
-                .Where(n => n.StartsWith(rootNamespace))
+                .Where(n => n.StartsWith(rootNamespace, StringComparison.OrdinalIgnoreCase))
                 .Select(n => new Tuple<string, string>(n.Substring(rootNamespace.Length + 1), n))
                 .ToList();
         }
@@ -55,7 +55,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
 
             var hit = _knownResourceNames.FirstOrDefault(entry =>
             {
-                return string.Equals(entry.Item2, resPath, StringComparison.OrdinalIgnoreCase);
+                return string.Equals(entry.Item1, resPath, StringComparison.OrdinalIgnoreCase);
             });
 
             if (hit == null)

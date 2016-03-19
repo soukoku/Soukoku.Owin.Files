@@ -52,7 +52,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
 
         public ResourceResult GetResource(OwinContext context, string logicalPath)
         {
-            if (logicalPath == "/")
+            if (logicalPath == "/" || logicalPath == "")
             {
                 return new ResourceResult
                 {

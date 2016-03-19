@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Soukoku.Owin.Files.Zipped</id>
-    <version>0.2.4.4</version>
+    <version>0.2.5.0</version>
     <title>Soukoku.Owin.Files.Zipped</title>
     <authors>Yin-Chun Wang</authors>
     <owners>Yin-Chun Wang</owners>
@@ -16,7 +16,7 @@
     <tags>owin files</tags>
     <dependencies>
       <group>
-        <dependency id="Soukoku.Owin.Files" version="0.2.4.4" />
+        <dependency id="Soukoku.Owin.Files" version="0.2.5.0" />
       </group>
       <group targetFramework="net4-client">
         <dependency id="DotNetZip.Reduced" version="1.9.1.8" />
