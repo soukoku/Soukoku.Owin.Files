@@ -54,7 +54,7 @@ namespace Soukoku.Owin.Files.Internal
                 get
                 {
                     // normalize to use /
-                    return _entry.FullName.Replace('\\', '/');
+                    return _entry.FileName.Replace('\\', '/');
                 }
             }
 
