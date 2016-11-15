@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Soukoku.Owin.Files.Zipped</id>
-    <version>0.2.5.0</version>
+    <version>0.3.0.0</version>
     <title>Soukoku.Owin.Files.Zipped</title>
     <authors>Yin-Chun Wang</authors>
     <owners>Yin-Chun Wang</owners>
@@ -10,13 +10,13 @@
     <licenseUrl>https://raw.githubusercontent.com/soukoku/Soukoku.Owin.Files/master/LICENSE</licenseUrl>
     <!--<iconUrl>http://i.imgur.com/WAYKszr.png</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Allows serving files from a zipped store.</description>
+    <description>Allows serving files from a zip file store.</description>
     <!--<releaseNotes>Summary of changes made in this release of the package.</releaseNotes>-->
-    <copyright>Copyright © Yin-Chun Wang 2015</copyright>
+    <copyright>Copyright © Yin-Chun Wang 2016</copyright>
     <tags>owin files</tags>
     <dependencies>
       <group>
-        <dependency id="Soukoku.Owin.Files" version="0.2.5.0" />
+        <dependency id="Soukoku.Owin.Files" version="0.3.0.0" />
       </group>
       <group targetFramework="net4-client">
         <dependency id="DotNetZip.Reduced" version="1.9.1.8" />

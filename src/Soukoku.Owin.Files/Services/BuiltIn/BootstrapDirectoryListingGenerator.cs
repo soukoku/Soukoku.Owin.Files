@@ -35,7 +35,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             }
 
             var title = WebUtility.HtmlEncode(context.Request.PathBase + parentResource.LogicalPath);
-            var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync(), title, rows);
+            var content = string.Format(CultureInfo.InvariantCulture, await GetDirectoryListingTemplateAsync().ConfigureAwait(false), title, rows);
             return content;
         }
 
@@ -44,7 +44,7 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
         {
             if (_template == null)
             {
-                _template = await typeof(BootstrapDirectoryListingGenerator).Assembly.GetManifestResourceStream("Soukoku.Owin.Files.Services.BuiltIn.BootstrapDirectoryListing.html").ReadStringAsync();
+                _template = await typeof(BootstrapDirectoryListingGenerator).Assembly.GetManifestResourceStream("Soukoku.Owin.Files.Services.BuiltIn.BootstrapDirectoryListing.html").ReadStringAsync().ConfigureAwait(false);
             }
             return _template;
         }

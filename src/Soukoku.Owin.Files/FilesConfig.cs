@@ -32,6 +32,12 @@ namespace Soukoku.Owin.Files
             _defaultDirGen = new BootstrapDirectoryListingGenerator();
             _defaultMime = new MimeTypeProvider();
             _defaultETag = new ModifiedDateETagGenerator();
+
+            DefaultDocuments = new List<string>
+            {
+                "index.html",
+                "index.htm",
+            };
         }
 
         /// <summary>
@@ -41,8 +47,8 @@ namespace Soukoku.Owin.Files
         /// <c>true</c> to allow directory browsing; otherwise, <c>false</c>.
         /// </value>
         public bool AllowDirectoryBrowsing { get; set; }
-        
-                /// <summary>
+
+        /// <summary>
         /// Gets the data store.
         /// </summary>
         /// <value>
@@ -107,6 +113,14 @@ namespace Soukoku.Owin.Files
             get { return _etag ?? _defaultETag; }
             set { _etag = value; }
         }
+
+        /// <summary>
+        /// Gets the default document name list. This has no effect if <see cref="AllowDirectoryBrowsing"/> is set.
+        /// </summary>
+        /// <value>
+        /// The default documents.
+        /// </value>
+        public IList<string> DefaultDocuments { get; private set; }
     }
 
 }

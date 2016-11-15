@@ -53,7 +53,8 @@ namespace Soukoku.Owin.Files.Internal
             {
                 get
                 {
-                    return _entry.FileName;
+                    // normalize to use /
+                    return _entry.FullName.Replace('\\', '/');
                 }
             }
 

@@ -75,6 +75,21 @@ namespace FilesRunner
                     }
                 });
 
+                // server files from windows zip (path is a\b\c)
+                app.Map("/winzip", mapped =>
+                {
+                    var zipPath = Path.Combine(Environment.CurrentDirectory, @"help.zip");
+                    if (File.Exists(zipPath))
+                    {
+                        var cfg = new FilesConfig(new ZippedFileDataStore(File.ReadAllBytes(zipPath)))
+                        {
+                            AllowDirectoryBrowsing = false,
+                            Log = new TraceLog(System.Diagnostics.TraceLevel.Verbose)
+                        };
+                        mapped.Use<FilesMiddleware>(cfg);
+                    }
+                });
+
                 // serve files from this assembly's resource
                 app.Use<FilesMiddleware>(new FilesConfig(new AssemblyResourceDataStore(Assembly.GetExecutingAssembly(), "FilesRunner.Resources"))
                 {

@@ -16,19 +16,39 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             if (resource != null)
             {
                 var config = resource.Context.GetFilesConfig();
+                var context = resource.Context;
 
-                var headOnly = string.Equals(resource.Context.Request.Method, HttpMethodNames.Head, StringComparison.OrdinalIgnoreCase);
+                var headOnly = string.Equals(context.Request.Method, HttpMethodNames.Head, StringComparison.OrdinalIgnoreCase);
 
                 if (resource.IsFolder)
                 {
                     if (config.AllowDirectoryBrowsing)
                     {
-                        await ShowDirectoryListingAsync(config, resource, headOnly);
+                        await ShowDirectoryListingAsync(config, resource, headOnly).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        if (context.Request.Path.EndsWith("/"))
+                        {
+                            // try find default docs
+                            var defaultFile = config.DataStore.GetSubResources(context, resource)
+                                .FirstOrDefault(sf => config.DefaultDocuments.Contains(sf.Resource.DisplayName, StringComparer.OrdinalIgnoreCase));
+                            if (defaultFile != null)
+                            {
+                                await SendFileAsync(config, defaultFile.Resource, headOnly).ConfigureAwait(false);
+                            }
+                        }
+                        else
+                        {
+                            // redirect to path with /
+                            context.Response.Headers.Add("Location", new[] { context.Request.PathBase + context.Request.Path + "/" + context.Request.QueryString });
+                            return (int)HttpStatusCode.Moved;
+                        }
                     }
                 }
                 else
                 {
-                    await SendFileAsync(config, resource, headOnly);
+                    await SendFileAsync(config, resource, headOnly).ConfigureAwait(false);
                 }
                 return (int)HttpStatusCode.OK;
             }
@@ -42,8 +62,8 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
             if (!headOnly)
             {
                 var subRes = config.DataStore.GetSubResources(resource.Context, resource);
-                var content = await config.DirectoryGenerator.GenerateAsync(resource.Context, resource, subRes.Select(r => r.Resource));
-                await resource.Context.Response.WriteAsync(content, resource.Context.CancellationToken);
+                var content = await config.DirectoryGenerator.GenerateAsync(resource.Context, resource, subRes.Select(r => r.Resource)).ConfigureAwait(false);
+                await resource.Context.Response.WriteAsync(content, resource.Context.CancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -68,9 +88,9 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
                     byte[] buff = new byte[4096];
                     int read = 0;
 
-                    while ((read = await fs.ReadAsync(buff, 0, buff.Length)) > 0)
+                    while ((read = await fs.ReadAsync(buff, 0, buff.Length).ConfigureAwait(false)) > 0)
                     {
-                        await resource.Context.Response.Body.WriteAsync(buff, 0, read, resource.Context.CancellationToken);
+                        await resource.Context.Response.Body.WriteAsync(buff, 0, read, resource.Context.CancellationToken).ConfigureAwait(false);
                     }
                 }
             }

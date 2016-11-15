@@ -73,12 +73,12 @@ namespace Soukoku.Owin.Files
                     IMethodHandler handler;
                     if (Handlers.TryGetValue(context.Request.Method, out handler))
                     {
-                        code = await handler.HandleAsync(test.Resource);
+                        code = await handler.HandleAsync(test.Resource).ConfigureAwait(false);
                     }
 
                     if (code == 0)
                     {
-                        await _next.Invoke(environment);
+                        await _next.Invoke(environment).ConfigureAwait(false);
                     }
                     else
                     {
