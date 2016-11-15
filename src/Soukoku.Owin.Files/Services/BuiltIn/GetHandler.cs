@@ -31,11 +31,14 @@ namespace Soukoku.Owin.Files.Services.BuiltIn
                         if (context.Request.Path.EndsWith("/"))
                         {
                             // try find default docs
-                            var defaultFile = config.DataStore.GetSubResources(context, resource)
-                                .FirstOrDefault(sf => config.DefaultDocuments.Contains(sf.Resource.DisplayName, StringComparer.OrdinalIgnoreCase));
-                            if (defaultFile != null)
+                            if (config.DefaultDocuments.Count > 0)
                             {
-                                await SendFileAsync(config, defaultFile.Resource, headOnly).ConfigureAwait(false);
+                                var defaultFile = config.DataStore.GetSubResources(context, resource)
+                                    .FirstOrDefault(sf => !sf.Resource.IsFolder && config.DefaultDocuments.Contains(sf.Resource.DisplayName, StringComparer.OrdinalIgnoreCase));
+                                if (defaultFile != null)
+                                {
+                                    await SendFileAsync(config, defaultFile.Resource, headOnly).ConfigureAwait(false);
+                                }
                             }
                         }
                         else
