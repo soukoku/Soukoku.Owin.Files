@@ -16,7 +16,7 @@
     <tags>owin files</tags>
     <dependencies>
       <group>
-        <dependency id="Soukoku.Owin.Files" version="0.3.0.0" />
+        <dependency id="Soukoku.Owin.Files" version="0.3.0.1" />
       </group>
       <group targetFramework="net4-client">
         <dependency id="DotNetZip.Reduced" version="1.9.1.8" />
