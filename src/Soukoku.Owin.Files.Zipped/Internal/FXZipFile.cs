@@ -12,16 +12,35 @@ namespace Soukoku.Owin.Files.Internal
     class FXZipFile : IZipFile
     {
         ZipArchive _zip;
+        IEnumerable<IZipEntry> _folders;
+
         public FXZipFile(Stream stream)
         {
             _zip = new ZipArchive(stream, ZipArchiveMode.Read);
+
+            ReadForFolders();
+        }
+        private void ReadForFolders()
+        {
+            // why?, cuz some zip files don't have folder entries
+            // so just always make them ourselves.
+            _folders = _zip.Entries
+                .Where(e => !e.IsDirectory())
+                .Select(e => Path.GetDirectoryName(e.FullName))
+                .Where(path => !string.IsNullOrEmpty(path))
+                .Distinct()
+                .Select(path => new DummyFolderZipEntry(path))
+                .ToList();
         }
 
         public IEnumerable<IZipEntry> Entries
         {
             get
             {
-                return _zip.Entries.Select(e => new FXZipEntry(e));
+                return _zip.Entries
+                    .Where(e => !e.IsDirectory())
+                    .Select(e => new FXZipEntry(e))
+                    .Union(_folders);
             }
         }
 
@@ -61,7 +80,7 @@ namespace Soukoku.Owin.Files.Internal
             {
                 get
                 {
-                    return string.IsNullOrEmpty(_entry.Name);
+                    return _entry.IsDirectory();
                 }
             }
 
@@ -84,6 +103,11 @@ namespace Soukoku.Owin.Files.Internal
             public Stream Open()
             {
                 return _entry.Open();
+            }
+
+            public override string ToString()
+            {
+                return FullPath;
             }
         }
     }

@@ -54,6 +54,8 @@
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Internal\AttachedDisposableStream.cs" />
+    <Compile Include="Internal\DummyFolderZipEntry.cs" />
+    <Compile Include="Internal\FXZipExtensions.cs" />
     <Compile Include="Internal\FXZipFile.cs" />
     <Compile Include="Internal\IZipFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -13,16 +13,35 @@ namespace Soukoku.Owin.Files.Internal
     class IonicZipFile : IZipFile
     {
         ZipFile _zip;
+        IEnumerable<IZipEntry> _folders;
+
         public IonicZipFile(Stream stream)
         {
             _zip = ZipFile.Read(stream);
+
+            ReadForFolders();
+        }
+
+        private void ReadForFolders()
+        {
+            // why?, cuz some zip files don't have folder entries
+            // so just always make them ourselves.
+            _folders = _zip.Entries
+                .Select(e => Path.GetDirectoryName(e.FileName))
+                .Where(path => !string.IsNullOrEmpty(path))
+                .Distinct()
+                .Select(path => new DummyFolderZipEntry(path))
+                .ToList();
         }
 
         public IEnumerable<IZipEntry> Entries
         {
             get
             {
-                return _zip.Entries.Select(e => new IonicZipEntry(e));
+                return _zip.Entries
+                    .Where(e => !e.IsDirectory)
+                    .Select(e => new IonicZipEntry(e))
+                    .Union(_folders);
             }
         }
 
@@ -85,6 +104,11 @@ namespace Soukoku.Owin.Files.Internal
             public Stream Open()
             {
                 return _entry.OpenReader();
+            }
+
+            public override string ToString()
+            {
+                return FullPath;
             }
         }
     }

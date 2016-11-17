@@ -62,6 +62,9 @@
     <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Internal\AttachedDisposableStream.cs">
       <Link>Internal\AttachedDisposableStream.cs</Link>
     </Compile>
+    <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Internal\DummyFolderZipEntry.cs">
+      <Link>Internal\DummyFolderZipEntry.cs</Link>
+    </Compile>
     <Compile Include="..\..\Soukoku.Owin.Files.Zipped\Internal\IZipFile.cs">
       <Link>Internal\IZipFile.cs</Link>
     </Compile>
