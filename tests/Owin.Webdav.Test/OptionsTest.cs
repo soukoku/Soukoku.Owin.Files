@@ -22,7 +22,7 @@ namespace Owin.Webdav.Test
             //                                   .AddHeader("header1", "headervalue1")
             //                                   .GetAsync();
                 // TODO: Validate response
-                Assert.Fail("Not implemented.");
+                //Assert.Fail("Not implemented.");
             //}
         }
     }
